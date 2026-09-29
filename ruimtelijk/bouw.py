@@ -171,7 +171,7 @@ ILL_TB = ('<symbol id="ill-toolbox" viewBox="0 0 100 80"><g fill="none" stroke="
 vervang('<symbol id="ill-persoonlijk"', ILL + '\n' + ILL_WL + '\n' + ILL_ANKER + '\n' + ILL_VOORTGANG + '\n' + ILL_HUIS + '\n' + ILL_LJ + '\n' + ILL_KM + '\n' + ILL_TB + '\n' + BEZEM + '\n' + EXTRA_ICONEN + '\n<symbol id="ill-persoonlijk"')
 
 # 5. Stijl: achteraan in het bestaande <style>-blok.
-css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n"
+css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n\n" + lees("nate.css") + "\n"
 vervang('</style>\n</head>', css + '</style>\n</head>')
 
 # 6. Scripts: vlak vóór het blok dat start() aanroept.
@@ -185,7 +185,20 @@ kennis = json.loads(KENNIS_PAD.read_text(encoding="utf-8"))
 for sleutel in ("meta", "richtingen", "aanpak", "vragen", "tips", "huishouden", "onderbouwing", "bronnen"):
     assert sleutel in kennis, f"kennisbank mist '{sleutel}'"
 kennis_js = "const FM_KENNIS = " + json.dumps(kennis, ensure_ascii=False).replace("</", "<\\/") + ";"
-blokken = f"<script>\n\"use strict\";\n// Kennisbank (gegenereerd uit kennis/huishouden.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js"))
+# 6b. ADHD-kennisbasis voor Nate (kennis/adhd-theorie.json) en een ingebouwde reservekopie van Nate's uiterlijk.
+ADHD_PAD = HIER.parent / "kennis" / "adhd-theorie.json"
+adhd = json.loads(ADHD_PAD.read_text(encoding="utf-8"))
+for sleutel in ("meta", "bewijsniveaus", "domeinen", "bronnen"):
+    assert sleutel in adhd, f"ADHD-kennisbasis mist '{sleutel}'"
+for d in adhd["domeinen"]:
+    for veld in ("id", "naam", "theorie", "interventies", "minimaleInterventie", "appAdvies"):
+        assert veld in d, f"domein {d.get('id')} mist '{veld}'"
+    for i in d["interventies"]:
+        assert i["bewijs"] in adhd["bewijsniveaus"], f"onbekend bewijsniveau bij {d['id']}: {i['bewijs']}"
+NATE_SVG = HIER.parent / "assets" / "nate" / "nate.svg"
+kennis_js += "\nconst NATE_ADHD = " + json.dumps(adhd, ensure_ascii=False).replace("</", "<\\/") + ";"
+kennis_js += "\nconst NATE_SVG_DATA = " + json.dumps("data:image/svg+xml;base64," + base64.b64encode(NATE_SVG.read_bytes()).decode()) + ";"
+blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js"))
 html = html[:j] + blokken + html[j:]
 
 # 8. Merk: Brain-Mate Nate.
@@ -209,7 +222,12 @@ for oud, nieuw in (("FutureMe · alles op dit toestel", f"{APP_NAAM} · alles op
                    ("`FutureMe — logboek`", f"`{APP_NAAM} — logboek`"),
                    ("PRODID:-//FutureMe//NL", "PRODID:-//BrainMateNate//NL"),
                    ('"FutureMe op mijn beginscherm zetten', '"Nate op mijn beginscherm zetten'),
-                   ('"FutureMe ingericht.', f'"{APP_NAAM} ingericht.')):
+                   ('"FutureMe ingericht.', f'"{APP_NAAM} ingericht.'),
+                   # De inbox is nu van Nate: welkomstbericht en afzender aangepast.
+                   ('titel: "Welkom in je inbox",', 'titel: "Hoi, ik ben Nate",'),
+                   ('tekst: "Hier komen belangrijke berichten en herinneringen samen — ingedeeld op soort en onderwerp. Vanaf de 1e van de maand komt hier automatisch een maandoverzicht, en op de 17e een financieel overzicht.",\n    onderwerp: "FutureMe"',
+                    'tekst: "Hier bewaar ik berichten en herinneringen voor je. Vanaf de 1e van de maand zet ik hier een maandoverzicht klaar, en op de 17e een financieel overzicht.",\n    onderwerp: "Nate"'),
+                   ('onderwerp: "FutureMe", kleur: "", titel: "Tijd voor een back-up"', 'onderwerp: "Back-up", kleur: "", titel: "Tijd voor een back-up"')):
     html = html.replace(oud, nieuw)
 
 UIT.write_text(html, encoding="utf-8")

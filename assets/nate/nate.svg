@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Nate, een capibara">
+  <!-- Placeholder-Nate: een abstracte capibara. Vervang dit bestand door een eigen
+       tekening met dezelfde naam (vierkant, bij voorkeur SVG) en Nate ziet er overal anders uit. -->
+  <ellipse cx="60" cy="112" rx="34" ry="5" fill="#000" opacity=".08"/>
+  <!-- lijf -->
+  <rect x="22" y="58" width="76" height="52" rx="26" fill="#a87752"/>
+  <!-- kop -->
+  <rect x="30" y="22" width="60" height="50" rx="22" fill="#b98760"/>
+  <!-- oortjes -->
+  <circle cx="40" cy="25" r="7" fill="#8f6242"/>
+  <circle cx="80" cy="25" r="7" fill="#8f6242"/>
+  <!-- snuit -->
+  <rect x="42" y="46" width="36" height="22" rx="11" fill="#d2a47d"/>
+  <ellipse cx="53" cy="53" rx="2.6" ry="2" fill="#4a3223"/>
+  <ellipse cx="67" cy="53" rx="2.6" ry="2" fill="#4a3223"/>
+  <path d="M55 61 Q60 64 65 61" fill="none" stroke="#4a3223" stroke-width="2" stroke-linecap="round"/>
+  <!-- ogen: rustig, half dicht -->
+  <path d="M40 39 Q44 36 48 39" fill="none" stroke="#3a281c" stroke-width="3" stroke-linecap="round"/>
+  <path d="M72 39 Q76 36 80 39" fill="none" stroke="#3a281c" stroke-width="3" stroke-linecap="round"/>
+  <!-- wangetjes -->
+  <circle cx="38" cy="50" r="4" fill="#e59a86" opacity=".45"/>
+  <circle cx="82" cy="50" r="4" fill="#e59a86" opacity=".45"/>
+  <!-- pootjes -->
+  <rect x="36" y="100" width="14" height="10" rx="5" fill="#8f6242"/>
+  <rect x="70" y="100" width="14" height="10" rx="5" fill="#8f6242"/>
+</svg>
