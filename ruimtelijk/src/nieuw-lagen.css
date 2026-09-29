@@ -1,0 +1,73 @@
+/* 83. Nieuw in lagen */
+/* Kaarten iets breder dan hoog: bredere ingeklapte strook, hoogte max. 80 px (zie nwoHoogte). */
+.nwl-rail{--nw-strook:112px;gap:12px}
+.nwl-rail .nw-paneel{left:calc(var(--nw-strook) + 12px)}
+.nwl-kaart .ill3d.nwl-ico{width:34px !important;height:34px !important;right:18px;opacity:.95;filter:none}
+.nwl-kaart .ill3d.nwl-ico{top:50%;transform:translateY(-50%);right:34px}
+.nwl-dieper{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;border-radius:6px;background:rgba(255,255,255,.22);vertical-align:-2px}
+.nwl-dieper svg{width:12px;height:12px;color:#fff}
+.nwl-diep .nw-paneel .vw-naarvg{display:none}
+
+/* Snel typen: klein vierkant blokje, icoon linksboven */
+.nwl-snel{position:relative;z-index:1;width:56px;height:56px;border-radius:16px;background:#ea580c;color:#fff;
+  box-shadow:0 4px 0 0 color-mix(in srgb,#ea580c 55%,#000),0 8px 16px -6px color-mix(in srgb,#ea580c 55%,transparent)}
+.nwl-snel svg{position:absolute;top:8px;left:8px;width:20px;height:20px}
+.nwl-snel:active{transform:translateY(3px);box-shadow:0 1px 0 0 color-mix(in srgb,#ea580c 55%,#000)}
+
+/* Kruimelpad: de lagen waar je doorheen ging, als dunne kaarten gestapeld */
+.nwl-stapel{display:flex;align-items:flex-start;gap:8px;margin:12px 0 2px}
+.nwl-terug{flex:0 0 auto;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--card);box-shadow:var(--shadow);color:var(--text)}
+.nwl-terug svg{width:18px;height:18px}
+.nwl-stapel ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;flex:1;min-width:0}
+.nwl-stapel li{display:flex;align-items:center}
+.nwl-stapel li+li::before{content:"›";color:var(--faint);margin-right:6px;font-weight:700}
+.nwl-laag{min-height:44px;padding:0 12px;border-radius:12px;background:color-mix(in srgb,var(--k) 12%,var(--card));color:var(--text);font-weight:650;font-size:calc(13.5px * var(--t));
+  opacity:calc(1 - var(--d) * .22);transform:scale(calc(1 - var(--d) * .03));transition:opacity .3s,transform .3s}
+.nwl-stapel li.nu span{min-height:44px;display:inline-flex;align-items:center;padding:0 12px;border-radius:12px;background:var(--k);color:#fff;font-weight:750;font-size:calc(13.5px * var(--t))}
+.nwl-stapel.nwl-krimp li.nu span{opacity:0;transform:scale(.9);transition:opacity .25s,transform .25s}
+
+/* Wisselen: de gekozen kaart vliegt naar voren, de rest schuift terug en vervaagt */
+.nwl-rail .nw-slot>.knop3d{transition:height .3s cubic-bezier(.22,1,.36,1),opacity .28s ease,transform .3s cubic-bezier(.3,.7,.3,1),filter .28s}
+.nwl-weg-in .nw-slot:not(.nwl-gekozen)>.knop3d{opacity:0;transform:scale(.88) translateY(4px);filter:blur(2px)}
+.nwl-weg-in .nwl-gekozen{z-index:3}
+.nwl-weg-in .nwl-gekozen>.knop3d{transform:scale(1.07);opacity:.15}
+.nwl-weg-terug .nw-slot>.knop3d{opacity:0;transform:scale(1.1);filter:blur(2px)}
+.nwl-weg-in .nwl-snel,.nwl-weg-terug .nwl-snel{opacity:0;transition:opacity .2s}
+.nwl-weg-in .nw-paneel,.nwl-weg-terug .nw-paneel{opacity:0 !important;transform:translateX(16px) !important}
+.nwl-binnen .nw-slot>.knop3d{animation:nwl-vlieg-in .5s cubic-bezier(.2,.8,.25,1) both;animation-delay:calc(var(--i) * 45ms)}
+.nwl-terugkomst .nw-slot>.knop3d{animation:nwl-vlieg-terug .45s cubic-bezier(.2,.8,.25,1) both;animation-delay:calc(var(--i) * 35ms)}
+.nwl-binnen .nw-paneel,.nwl-terugkomst .nw-paneel{animation:nwl-paneel .45s ease both .12s}
+@keyframes nwl-vlieg-in{from{opacity:0;transform:scale(1.12) translateY(-10px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+@keyframes nwl-vlieg-terug{from{opacity:0;transform:scale(.88) translateY(8px)}to{opacity:1;transform:none}}
+@keyframes nwl-paneel{from{opacity:0;transform:translateX(18px)}}
+.nwl-stapel{animation:nwl-stapel .4s cubic-bezier(.2,.8,.25,1) both}
+@keyframes nwl-stapel{from{opacity:0;transform:translateY(8px) scale(.98)}}
+.nwl-pico svg{width:17px;height:17px}
+
+/* Donker thema: randen van de kaarten glanzend, zacht donkerrood en langzaam pulserend */
+@property --nwl-glans{syntax:"<percentage>";inherits:false;initial-value:0%}
+@media (prefers-color-scheme:dark){html:not([data-thema="licht"]) :is(.nwl-kaart,.nwl-snel){--nwl-rand:1}}
+html[data-thema="donker"] :is(.nwl-kaart,.nwl-snel){--nwl-rand:1}
+:is(.nwl-kaart,.nwl-snel)::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:1.6px;pointer-events:none;z-index:2;opacity:0;
+  background:linear-gradient(115deg,#5c1016 0%,#8f2029 calc(var(--nwl-glans) - 18%),#e7858d var(--nwl-glans),#8f2029 calc(var(--nwl-glans) + 18%),#5c1016 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+:is(.nwl-kaart,.nwl-snel){box-shadow:var(--nwl-gloed,none)}
+@media (prefers-color-scheme:dark){html:not([data-thema="licht"]) :is(.nwl-kaart,.nwl-snel)::before{opacity:1;animation:nwl-glans 5.5s ease-in-out infinite,nwl-puls 3.2s ease-in-out infinite}
+  html:not([data-thema="licht"]) .nwl-kaart{animation:nwl-gloed 3.2s ease-in-out infinite}}
+html[data-thema="donker"] :is(.nwl-kaart,.nwl-snel)::before{opacity:1;animation:nwl-glans 5.5s ease-in-out infinite,nwl-puls 3.2s ease-in-out infinite}
+html[data-thema="donker"] .nwl-kaart{animation:nwl-gloed 3.2s ease-in-out infinite}
+@keyframes nwl-glans{0%{--nwl-glans:-20%}60%,100%{--nwl-glans:120%}}
+@keyframes nwl-puls{0%,100%{opacity:.62}50%{opacity:1}}
+@keyframes nwl-gloed{0%,100%{box-shadow:0 0 0 0 rgba(150,32,42,0),0 6px 14px -8px rgba(0,0,0,.5)}50%{box-shadow:0 0 14px 1px rgba(150,32,42,.38),0 6px 14px -8px rgba(0,0,0,.5)}}
+/* Tijdens het wisselen wint de vlieg-animatie van de gloed */
+.nwl-binnen .nw-slot>.nwl-kaart{animation:nwl-vlieg-in .5s cubic-bezier(.2,.8,.25,1) both !important;animation-delay:calc(var(--i) * 45ms) !important}
+.nwl-terugkomst .nw-slot>.nwl-kaart{animation:nwl-vlieg-terug .45s cubic-bezier(.2,.8,.25,1) both !important;animation-delay:calc(var(--i) * 35ms) !important}
+
+@media (prefers-reduced-motion:reduce){
+  .nwl-binnen .nw-slot>.knop3d,.nwl-terugkomst .nw-slot>.knop3d,.nwl-binnen .nw-slot>.nwl-kaart,.nwl-terugkomst .nw-slot>.nwl-kaart{animation:nwl-fade .15s ease both !important}
+  .nwl-stapel,.nwl-binnen .nw-paneel,.nwl-terugkomst .nw-paneel{animation:nwl-fade .15s ease both}
+  :is(.nwl-kaart,.nwl-snel)::before,.nwl-kaart{animation:none !important}
+  :is(.nwl-kaart,.nwl-snel)::before{--nwl-glans:50%}
+}
+@keyframes nwl-fade{from{opacity:0}}

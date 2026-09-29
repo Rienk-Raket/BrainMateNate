@@ -1,0 +1,75 @@
+/* ==========================================================================
+   50b. Ruimtelijke laag v4 — Dagring en Ritmekaart
+   Kleur is nooit het enige signaal: bogen en punten hebben een vorm, afgeronde
+   taken een vinkstijl (holle cirkel), en alles staat ook als tekst in .fm-sr.
+   ========================================================================== */
+.fm-dr-kop{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px}
+.fm-dr-kop h2{margin:0;font-size:calc(16px * var(--t));font-weight:750;letter-spacing:-.01em}
+.fm-dr-wrap{display:flex;align-items:center;gap:14px}
+.fm-dr{width:min(220px,60vw);height:auto;flex:0 0 auto;overflow:visible}
+.fm-dr-baan{fill:none;stroke:var(--line);stroke-width:10}
+.fm-dr-licht{fill:none;stroke:color-mix(in srgb,var(--amber) 30%,transparent);stroke-width:6;stroke-linecap:round}
+.fm-dr-streep{stroke:var(--faint);stroke-width:1;opacity:.6}
+.fm-dr-streep.sterk{stroke-width:2;opacity:.9}
+.fm-dr-label{fill:var(--muted);font-size:10px;font-weight:700;text-anchor:middle}
+.fm-dr-voortgang-baan{fill:none;stroke:color-mix(in srgb,var(--green) 16%,transparent);stroke-width:7}
+.fm-dr-voortgang{fill:none;stroke:var(--green);stroke-width:7;stroke-linecap:round;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--green) 55%,transparent));transition:stroke-dashoffset 1s var(--fm-ease,ease)}
+.fm-dr-boog{fill:none;stroke:var(--purple);stroke-width:10;stroke-linecap:round;cursor:pointer;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--purple) 50%,transparent))}
+.fm-dr-boog:hover,.fm-dr-boog:focus-visible{stroke-width:13;outline:none}
+.fm-dr-punt{fill:var(--accent);stroke:var(--card);stroke-width:2.5;cursor:pointer;filter:drop-shadow(0 0 4px var(--fm-gloed,transparent))}
+.fm-dr-punt.af{fill:var(--card);stroke:var(--green);stroke-width:2.5}
+.fm-dr-punt:focus-visible{outline:none;stroke:var(--text);stroke-width:3}
+.fm-dr-wijzer{stroke:var(--red);stroke-width:2;stroke-linecap:round;opacity:.85}
+.fm-dr-nu{fill:var(--red);filter:drop-shadow(0 0 6px var(--red))}
+.fm-dr-tijd{fill:var(--text);font-size:24px;font-weight:800;text-anchor:middle;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.fm-dr-sub{fill:var(--muted);font-size:11px;font-weight:600;text-anchor:middle}
+.fm-dr-legenda{list-style:none;margin:0;padding:0;display:grid;gap:7px;font-size:calc(12.5px * var(--t));color:var(--muted)}
+.fm-dr-legenda li{display:flex;align-items:center;gap:8px}
+.fm-dr-legenda i{display:inline-block;flex:0 0 auto}
+.fm-dr-legenda i.boog{width:16px;height:6px;border-radius:3px;background:var(--purple)}
+.fm-dr-legenda i.punt{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.fm-dr-legenda i.punt.af{background:transparent;border:2px solid var(--green)}
+.fm-dr-legenda i.licht{width:16px;height:5px;border-radius:3px;background:color-mix(in srgb,var(--amber) 45%,transparent)}
+.fm-dr-leeg{margin:6px 0 0}
+@media (max-width:340px){.fm-dr-wrap{flex-direction:column;align-items:stretch}.fm-dr{margin:0 auto}}
+
+/* Opbouw: baan → bogen → punten → wijzer (alleen met de ruimtelijke laag aan). */
+html[data-ruimte="1"] .fm-dagring.rt-in .fm-dr-boog,
+html[data-ruimte="1"] .fm-dagring.rt-in .fm-dr-punt{animation:fm-dr-op .6s var(--fm-veer-zacht) backwards;animation-delay:calc(260ms + var(--i,0) * 70ms);transform-box:fill-box;transform-origin:center}
+html[data-ruimte="1"] .fm-dagring.rt-in .fm-dr-wijzer{animation:fm-dr-wijzer .9s var(--fm-ease) backwards .2s;transform-origin:110px 110px;transform-box:view-box}
+@keyframes fm-dr-op{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+@keyframes fm-dr-wijzer{from{opacity:0;transform:rotate(-40deg)}to{opacity:.85;transform:none}}
+html[data-ruimte="1"][data-beweging="vol"] .fm-dr-nu{animation:fm-dr-adem 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes fm-dr-adem{50%{transform:scale(1.5);opacity:.55}}
+
+/* ---------- Ritmekaart ---------- */
+.fm-rk-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 10px}
+.fm-rk-stats>div{display:flex;flex-direction:column;align-items:flex-start;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--card2) 70%,transparent)}
+.fm-rk-stats b{font-size:calc(20px * var(--t));font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.fm-rk-stats span{font-size:calc(11.5px * var(--t));color:var(--muted)}
+.fm-rk-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fm-rk{width:100%;min-width:250px;height:auto;display:block}
+.fm-rk-maand{fill:var(--muted);font-size:9px;font-weight:700}
+.fm-rk-wd{fill:var(--faint);font-size:8.5px;font-weight:700;text-anchor:end}
+.fm-rk-cel{cursor:pointer}
+svg .fm-rk-cel.n0{fill:color-mix(in srgb,var(--line) 80%,transparent)}
+svg .fm-rk-cel.n1{fill:color-mix(in srgb,var(--green) 30%,transparent)}
+svg .fm-rk-cel.n2{fill:color-mix(in srgb,var(--green) 52%,transparent)}
+svg .fm-rk-cel.n3{fill:color-mix(in srgb,var(--green) 76%,transparent)}
+svg .fm-rk-cel.n4{fill:var(--green);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--green) 60%,transparent))}
+svg .fm-rk-cel:hover{stroke:var(--text);stroke-width:1.5}
+.fm-rk-legenda{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:6px;font-size:calc(11px * var(--t));color:var(--muted)}
+.fm-rk-legenda i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.fm-rk-legenda .n0{background:color-mix(in srgb,var(--line) 80%,transparent)}
+.fm-rk-legenda .n1{background:color-mix(in srgb,var(--green) 30%,transparent)}
+.fm-rk-legenda .n2{background:color-mix(in srgb,var(--green) 52%,transparent)}
+.fm-rk-legenda .n3{background:color-mix(in srgb,var(--green) 76%,transparent)}
+.fm-rk-legenda .n4{background:var(--green)}
+.fm-rk-legenda span{margin:0 3px}
+/* Golf: cellen komen diagonaal op (kolom + rij bepaalt de vertraging). */
+html[data-ruimte="1"][data-beweging="vol"] .fm-ritme.rt-in .fm-rk-cel{animation:fm-rk-op .5s var(--fm-veer-zacht) backwards;animation-delay:calc(120ms + (var(--k) + var(--r)) * 22ms);transform-box:fill-box;transform-origin:center}
+@keyframes fm-rk-op{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+/* Sporen van andere modules (sectie 80) */
+.fm-dr-spoor{stroke:var(--card);stroke-width:2;cursor:pointer}
+.fm-dr-spoor:focus-visible{outline:none;stroke:var(--text);stroke-width:2.5}
+.fm-dr-legenda i.spoor{width:9px;height:9px;border-radius:2px;background:var(--muted);transform:rotate(45deg);margin:0 1px}

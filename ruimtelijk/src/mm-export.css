@@ -1,0 +1,58 @@
+/* 62. Mindmap exporteren */
+.mx-bron{display:flex;flex-direction:column;gap:2px;padding:12px 14px;margin:2px 0 12px;border-radius:14px;background:var(--card2)}
+.mx-bron b{font-size:calc(16px * var(--t))}
+.mx-bron span{font-size:calc(12.5px * var(--t));color:var(--muted)}
+.mx-doelen{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.mx-doel{--dk:var(--accent);display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:9px;row-gap:2px;align-items:center;text-align:left;
+  padding:11px 12px;border-radius:15px;border:1.5px solid var(--line);background:var(--card);min-height:64px;transition:border-color .2s,background .2s,transform .15s}
+.mx-doel svg{grid-row:1 / span 2;width:22px;height:22px;color:var(--dk)}
+.mx-doel b{font-size:calc(14.5px * var(--t))}
+.mx-doel span{font-size:calc(11.5px * var(--t));color:var(--muted);line-height:1.3}
+.mx-doel[aria-checked="true"]{border-color:var(--dk);background:color-mix(in srgb,var(--dk) 11%,var(--card))}
+.mx-doel:active{transform:scale(.97)}
+.mx-doel:last-child:nth-child(odd){grid-column:1 / -1}
+.mx-seg{flex-wrap:wrap}
+.mx-seg button{white-space:normal;line-height:1.2;padding:6px 8px}
+.mx-seg button[disabled]{opacity:.4}
+.mx-eerder{display:flex;gap:9px;align-items:flex-start;padding:11px 13px;border-radius:13px;background:color-mix(in srgb,var(--accent) 10%,transparent);
+  font-size:calc(13px * var(--t));color:var(--text);margin:4px 0 2px}
+.mx-eerder svg{flex:0 0 auto;color:var(--accent);margin-top:2px}
+.mx-som{font-size:calc(13px * var(--t));font-weight:700;margin:6px 2px 8px;color:var(--text)}
+.mx-voorbeeld{border:1px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--card);max-height:300px;overflow-y:auto}
+.mx-r{--nv:0;padding:3px 0 3px calc(var(--nv) * 14px);font-size:calc(13px * var(--t));line-height:1.35;color:var(--muted);display:flex;gap:8px;justify-content:space-between}
+.mx-r.item::before{content:"☐";margin-right:-2px;color:var(--faint)}
+.mx-r.item{justify-content:flex-start}
+.mx-r.titel{font-weight:800;color:var(--text);font-size:calc(14px * var(--t));padding-bottom:5px}
+.mx-r.kop{font-weight:750;color:var(--text)}
+.mx-r.k1{text-transform:uppercase;letter-spacing:.04em;font-size:calc(11.5px * var(--t));padding-top:8px}
+.mx-r.eenheid{font-weight:650;color:var(--text)}
+.mx-r.subkop{font-weight:650}
+.mx-r.meer{font-style:italic;color:var(--faint)}
+.mx-rx{flex:0 0 auto;font-size:calc(11.5px * var(--t));color:var(--faint);font-variant-numeric:tabular-nums}
+.mx-sync{margin:10px 2px 0}
+.mx-chip{background:color-mix(in srgb,var(--purple,#7a4fd6) 14%,transparent);color:var(--purple,#7a4fd6)}
+.mx-terug{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:calc(12.5px * var(--t));color:var(--accent);font-weight:650;min-height:32px}
+
+/* Checklist met kopjes op drie niveaus */
+.cl-structuur .cl-kop{--kk:var(--accent);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:4px;border-bottom:1px solid var(--line)}
+.cl-kopknop{display:flex;align-items:center;gap:8px;text-align:left;min-height:44px;padding:8px 6px 8px 13px;min-width:0}
+.cl-kopknop svg{flex:0 0 auto;color:var(--muted)}
+.cl-koptekst{flex:1;min-width:0;overflow-wrap:anywhere}
+.cl-koptel{font-size:calc(12px * var(--t));font-variant-numeric:tabular-nums;color:var(--muted);font-weight:700;white-space:nowrap}
+.cl-kopbalk{grid-column:1 / -1;height:3px;background:var(--line);margin:-3px 13px 0;border-radius:2px;overflow:hidden;display:none}
+.cl-kopbalk i{display:block;height:100%;background:var(--kk);border-radius:2px;transition:width .3s}
+.cl-kopweg{min-width:34px;min-height:34px;grid-row:1;grid-column:2}
+.cl-kop.n1{background:color-mix(in srgb,var(--kk) 9%,var(--card2));border-left:4px solid var(--kk)}
+.cl-kop.n1 .cl-koptekst{font-size:calc(12.5px * var(--t));font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.cl-kop.n1 .cl-kopbalk{display:block;margin-bottom:6px}
+.cl-kop.n2 .cl-kopknop{padding-left:27px}
+.cl-kop.n2 .cl-koptekst{font-weight:750;font-size:calc(14.5px * var(--t))}
+.cl-kop.n3 .cl-kopknop{padding-left:41px}
+.cl-kop.n3 .cl-koptekst{font-weight:650;font-size:calc(13.5px * var(--t));color:var(--muted)}
+.cl-kop.klaar .cl-koptel{color:var(--green)}
+.cl-item{--in:0;padding:8px 13px 8px calc(13px + var(--in) * 14px) !important;border-bottom:1px solid var(--line)}
+
+/* Groepskoppen in project en SCRUM-epics */
+.mx-groepkop .sectie h2{display:flex;align-items:center;gap:7px}
+.mx-groepkop .sectie h2::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--kk);flex:0 0 auto}
+.mx-epic{--kk:var(--sh);font-size:calc(10.5px * var(--t));font-weight:750;padding:1px 7px;border-radius:999px;color:var(--kk);background:color-mix(in srgb,var(--kk) 14%,transparent)}

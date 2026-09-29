@@ -1,0 +1,70 @@
+/* 68. Side Hustle — Ideeënbank */
+.shi-snel{padding:12px;display:flex;flex-direction:column;gap:8px}
+.shi-snel .knoprij .knop:last-child{flex:0 0 48px}
+.shi-tip{display:flex;flex-direction:column;gap:3px;text-align:left;width:100%;border-left:4px solid #d97706}
+.shi-tipkop{font-size:calc(11.5px * var(--t));font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#d97706}
+.shi-tip b{font-size:calc(16px * var(--t))}
+.shi-filters{margin:12px -16px 0;padding:0 16px}
+.shi-filters .keuze{white-space:nowrap;flex:0 0 auto}
+.shi-balk{display:flex;gap:8px;align-items:center;margin:10px 0 4px}
+.shi-balk .segment{flex:1}
+.shi-sort{display:flex;align-items:center;gap:5px;height:38px;padding:0 8px;border-radius:11px;border:1.5px solid var(--line);background:var(--card);color:var(--muted);flex:0 0 auto}
+.shi-sort select{border:0;background:transparent;color:var(--text);font:inherit;font-size:calc(13px * var(--t));font-weight:600;appearance:none;-webkit-appearance:none;cursor:pointer}
+.shi-lijst{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+.shi-kaart{--st:var(--accent);display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:12px 12px 12px 12px;border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow);border-left:4px solid var(--st)}
+.shi-ring{width:46px;height:46px;font-size:calc(13px * var(--t))}
+.shi-ring>span{width:36px;height:36px}
+.shi-ring.groot{width:64px;height:64px;font-size:calc(18px * var(--t))}
+.shi-ring.groot>span{width:52px;height:52px}
+.shi-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.shi-titel{font-weight:700;font-size:calc(15px * var(--t));line-height:1.3;overflow-wrap:anywhere}
+.shi-pitch{font-size:calc(12.5px * var(--t));color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.shi-chips{display:flex;flex-wrap:wrap;gap:5px}
+.shi-chip,.shi-status{font-size:calc(11px * var(--t));font-weight:650;padding:2px 8px;border-radius:999px;background:var(--card2);color:var(--muted);white-space:nowrap}
+.shi-status{color:var(--st);background:color-mix(in srgb,var(--st) 13%,transparent)}
+.shi-volgende{font-size:calc(12px * var(--t));color:var(--text);font-weight:600}
+/* Kansenkaart */
+.shi-kaartvak{margin-top:10px}
+.shi-matrix{width:100%;height:auto;display:block}
+.shi-kw{fill:var(--card2);stroke:var(--card);stroke-width:2}
+.shi-kwt{font-size:9.5px;font-weight:700;fill:var(--muted)}
+.shi-as{font-size:9.5px;fill:var(--faint);font-weight:650}
+.shi-punt{cursor:pointer}
+.shi-punt .raak{fill:transparent}
+.shi-punt circle:not(.raak){stroke:var(--card);stroke-width:2}
+.shi-punt text{font-size:8.5px;font-weight:800;fill:#fff;pointer-events:none}
+.shi-punt:hover circle:not(.raak),.shi-punt:focus circle:not(.raak){stroke:var(--text)}
+.shi-legenda{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column}
+.shi-legenda button{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;text-align:left;min-height:36px;border-bottom:1px solid var(--line);padding:4px 2px}
+.shi-legenda li:last-child button{border-bottom:0}
+.shi-legenda b{width:20px;height:20px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:11px}
+.shi-legenda span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(13.5px * var(--t))}
+.shi-legenda i{font-style:normal;font-weight:800;font-variant-numeric:tabular-nums}
+/* Blad */
+.shi-tabs{margin:2px 0 14px}
+.shi-held{display:flex;gap:14px;align-items:center;margin-bottom:10px}
+.shi-heldtitel{font-size:calc(19px * var(--t));font-weight:800;letter-spacing:-.01em;line-height:1.25;overflow-wrap:anywhere}
+.shi-pitchgroot{font-size:calc(15px * var(--t));margin:0 0 12px;line-height:1.45}
+.shi-delen{display:flex;flex-direction:column;gap:7px;margin:4px 0 14px;padding:12px;background:var(--card2);border-radius:14px}
+.shi-delen>div{display:grid;grid-template-columns:72px 1fr 34px;gap:10px;align-items:center;font-size:calc(13px * var(--t))}
+.shi-delen .balk{height:8px}
+.shi-delen b{text-align:right;font-variant-numeric:tabular-nums}
+.shi-veldtoon{margin-bottom:10px}
+.shi-veldtoon span{display:block;font-size:calc(11.5px * var(--t));font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.shi-veldtoon p{margin:3px 0 0;white-space:pre-wrap;line-height:1.45}
+.shi-start{margin-top:6px}
+.shi-scoreuitkomst{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--card2);margin-bottom:12px}
+.shi-scoreuitkomst>div{display:flex;flex-direction:column;gap:2px}
+.shi-scoregroep{margin-bottom:14px}
+.shi-scorekop{display:flex;flex-direction:column;margin:0 2px 6px}
+.shi-scorekop b{font-size:calc(15px * var(--t))}
+.shi-scorekop span{font-size:calc(12px * var(--t));color:var(--muted)}
+.shi-crit{padding:10px 0;border-bottom:1px solid var(--line)}
+.shi-critkop{display:flex;flex-direction:column;margin-bottom:7px}
+.shi-critkop b{font-size:calc(14px * var(--t))}
+.shi-critkop span{font-size:calc(12px * var(--t));color:var(--muted)}
+.shi-stippen{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.shi-stippen button{height:40px;border-radius:11px;border:1.5px solid var(--line);background:var(--card);font-weight:750;color:var(--muted);font-variant-numeric:tabular-nums}
+.shi-stippen button[aria-checked="true"]{background:#d97706;border-color:#d97706;color:#fff}
+.shi-stapnieuw{display:flex;gap:8px;margin-top:10px}
+.shi-stapnieuw .invoer{flex:1;min-width:0}

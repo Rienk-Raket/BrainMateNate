@@ -1,0 +1,1314 @@
+{
+ "meta": {
+  "titel": "Kennisbank Huishouden",
+  "ondertitel": "Eén klus tegelijk, in de tijd die je hebt",
+  "versie": "1.0",
+  "datum": "2026-09-26",
+  "status": "Gebouwd en getest",
+  "product": "FutureMe, een Nederlandstalige, persoonlijke PWA die offline werkt",
+  "uitleg": "Dit bestand is de enige bron voor de werking van Huishouden en de aanpak per profielrichting. De app leest het in bij het bouwen (als FM_KENNIS); de webpagina toont hetzelfde bestand.",
+  "webpagina": "https://claude.ai/artifact/P1grwNUkLsG7FnQ2HtkjD4"
+ },
+ "doel": {
+  "probleem": "Huishoudklussen vragen precies de vaardigheden die bij ADHD en autisme vaak meer moeite kosten: beginnen, volhouden zonder afgeleid te raken, tijd inschatten, wisselen tussen deeltaken en prikkels verdragen. Bij weinig energie komt daar een harde grens aan inspanning bij. Het gevolg is uitstel en rommel, en rommel hangt samen met stress.",
+  "oplossing": "Huishouden maakt van 'ik moet het huis doen' een reeks kleine, afgebakende stappen die in de beschikbare tijd passen. Er is steeds maar één stap in beeld, en de aanpak past bij hoe iemands brein werkt. Het profiel levert daarvoor de richting.",
+  "binnen": [
+   "Profiel: naam, geboortedatum, lengte, gewicht, aanpak-richting en begroeting met naam",
+   "App-brede aanpak en tips per onderdeel",
+   "Schoonmaaklijsten en import van checklist-sjablonen die met 'Schoonmaken' beginnen",
+   "Planner op basis van beschikbare tijd",
+   "Sessiescherm met tesseract en kaartjes, samenvatting en persoonlijke tijdkalibratie",
+   "Koppelingen met Voortgang, Logboek, Anker en Checklists"
+  ],
+  "buiten": [
+   "Diagnostiek of medisch advies: de vragenlijst is geen test",
+   "Synchronisatie tussen apparaten of delen met anderen",
+   "Pushmeldingen"
+  ]
+ },
+ "principes": [
+  [
+   "Eén ding tegelijk",
+   "De sessie toont één kaartje. Dat vermindert keuzestress en helpt bij beginnen."
+  ],
+  [
+   "De tijd zichtbaar maken",
+   "Een aftellende klok en een balk vervangen het innerlijke tijdsgevoel."
+  ],
+  [
+   "De planning past altijd",
+   "Het plan gaat nooit over de opgegeven tijd heen. Wat niet past, schuift zonder oordeel door."
+  ],
+  [
+   "Geen schuld, geen reeksen",
+   "Stoppen telt ook, en overslaan is neutraal. Er is geen reeks om vol te houden."
+  ],
+  [
+   "Jij houdt de regie",
+   "Niets start vanzelf. Elk voorstel is aan te passen of te negeren."
+  ],
+  [
+   "Prikkels kunnen uit",
+   "Rust, Prikkelarm en minder beweging zetten animatie, geluid en trillen uit. Alles blijft bruikbaar."
+  ],
+  [
+   "Eerlijk over bewijs",
+   "Bij elke keuze staat hoe sterk het bewijs is."
+  ],
+  [
+   "Privé",
+   "Er gaat niets van het toestel af."
+  ]
+ ],
+ "richtingen": {
+  "adhd": {
+   "naam": "ADHD-kenmerken",
+   "kort": "Aandacht en beginnen",
+   "ico": "⚡",
+   "uitleg": "Beginnen, afleiding en tijd zijn het lastigst. Korte blokken, snel succes en zichtbare tijd helpen."
+  },
+  "autisme": {
+   "naam": "Autisme-kenmerken",
+   "kort": "Voorspelbaarheid en prikkels",
+   "ico": "🧩",
+   "uitleg": "Voorspelbaarheid, prikkels en wisselen kosten energie. Een vaste volgorde, vooraf alles zien en een seintje voor een wissel helpen."
+  },
+  "audhd": {
+   "naam": "ADHD- én autisme-kenmerken",
+   "kort": "Beide",
+   "ico": "🔀",
+   "uitleg": "Zowel beginnen en afleiding als prikkels en wisselen. Korte blokken in een vaste volgorde, met een seintje voor elke wissel."
+  },
+  "energie": {
+   "naam": "Weinig energie",
+   "kort": "Energie verdelen",
+   "ico": "🔋",
+   "uitleg": "Je energie is beperkt. Kleine porties, vaak rust en zwaar werk verdelen (pacing) helpen."
+  },
+  "geen": {
+   "naam": "Geen duidelijke richting",
+   "kort": "Algemeen",
+   "ico": "🌿",
+   "uitleg": "Geen uitgesproken richting. Je krijgt de standaardaanpak, die je altijd kunt aanpassen."
+  }
+ },
+ "aanpak": {
+  "adhd": {
+   "blokMax": 10,
+   "pauzeElke": 25,
+   "pauzeMin": 5,
+   "buffer": 1.25,
+   "volgorde": "snelsucces",
+   "wisselSein": false,
+   "variatie": true,
+   "afkoelUur": 72,
+   "maxSessie": null,
+   "ankerProfiel": "anders"
+  },
+  "autisme": {
+   "blokMax": 15,
+   "pauzeElke": 30,
+   "pauzeMin": 5,
+   "buffer": 1.2,
+   "volgorde": "vast",
+   "wisselSein": true,
+   "variatie": false,
+   "afkoelUur": 24,
+   "maxSessie": null,
+   "ankerProfiel": "anders"
+  },
+  "audhd": {
+   "blokMax": 10,
+   "pauzeElke": 25,
+   "pauzeMin": 5,
+   "buffer": 1.3,
+   "volgorde": "vast",
+   "wisselSein": true,
+   "variatie": false,
+   "afkoelUur": 72,
+   "maxSessie": null,
+   "ankerProfiel": "anders"
+  },
+  "energie": {
+   "blokMax": 8,
+   "pauzeElke": 15,
+   "pauzeMin": 8,
+   "buffer": 1.3,
+   "volgorde": "zwaarEerst",
+   "wisselSein": false,
+   "variatie": false,
+   "afkoelUur": 24,
+   "maxSessie": 45,
+   "ankerProfiel": "energie"
+  },
+  "geen": {
+   "blokMax": 20,
+   "pauzeElke": 45,
+   "pauzeMin": 5,
+   "buffer": 1.15,
+   "volgorde": "vast",
+   "wisselSein": false,
+   "variatie": false,
+   "afkoelUur": 24,
+   "maxSessie": null,
+   "ankerProfiel": null
+  }
+ },
+ "aanpakUitleg": {
+  "blokMax": "Langste werkblok in minuten; daarna wordt een klus opgeknipt",
+  "pauzeElke": "Na zoveel minuten werk komt een geplande pauze",
+  "pauzeMin": "Lengte van die pauze in minuten",
+  "buffer": "Factor op de geschatte tijd (planning-fallacy, tijdsblindheid)",
+  "volgorde": "snelsucces, vast (per ruimte) of zwaarEerst",
+  "wisselSein": "Seintje één minuut voor een wissel van ruimte",
+  "variatie": "Zware en lichte klussen afwisselen tegen verveling",
+  "afkoelUur": "Wishlist-afkoelperiode in uren voor aankopen boven € 50",
+  "maxSessie": "Langste aangeraden sessie in minuten",
+  "ankerProfiel": "Bijpassend profiel in Anker"
+ },
+ "volgordeNamen": {
+  "snelsucces": "Snel succes eerst",
+  "vast": "Vaste volgorde per ruimte",
+  "zwaarEerst": "Zwaar werk vroeg, dan licht"
+ },
+ "energieVlag": {
+  "drempel": 0.62,
+  "pauzeElkeMax": 20,
+  "pauzeMinMin": 8,
+  "maxSessie": 60
+ },
+ "vragen": {
+  "schaal": [
+   "Nooit",
+   "Zelden",
+   "Soms",
+   "Vaak",
+   "Heel vaak"
+  ],
+  "lijst": [
+   [
+    "A",
+    "Ik stel klussen uit, ook als ik ze belangrijk vind, omdat beginnen zwaar voelt."
+   ],
+   [
+    "A",
+    "Midden in een klus raak ik afgeleid en maak ik hem niet af."
+   ],
+   [
+    "A",
+    "Ik schat verkeerd in hoe lang iets duurt, of ik kom te laat."
+   ],
+   [
+    "A",
+    "Saaie, herhalende taken maken me onrustig; ik zoek snel iets nieuws."
+   ],
+   [
+    "S",
+    "Geluid, geur, licht of texturen (zoals schoonmaakmiddel) zijn me snel te veel."
+   ],
+   [
+    "S",
+    "Onverwachte veranderingen in mijn planning brengen me flink van slag."
+   ],
+   [
+    "S",
+    "Wisselen van de ene taak naar de andere kost me veel moeite."
+   ],
+   [
+    "S",
+    "Ik doe dingen het liefst op een vaste manier en in een vaste volgorde."
+   ],
+   [
+    "E",
+    "Na een gewone inspanning ben ik uren of dagen uitgeput."
+   ],
+   [
+    "E",
+    "Ik moet mijn energie per dag zuinig verdelen om niet in te storten."
+   ]
+  ],
+  "dimensies": {
+   "A": "Aandacht en beginnen",
+   "S": "Prikkels en voorspelbaarheid",
+   "E": "Energie"
+  },
+  "drempels": {
+   "beide": 0.56,
+   "enkel": 0.5,
+   "energie": 0.62
+  },
+  "regel": [
+   "A = som A-vragen / 16, S = som S-vragen / 16, E = som E-vragen / 8 (elke vraag 0–4)",
+   "A ≥ 0,56 én S ≥ 0,56 → ADHD- én autisme-kenmerken",
+   "anders A ≥ 0,50 en A ≥ S → ADHD-kenmerken",
+   "anders S ≥ 0,50 → autisme-kenmerken",
+   "anders E ≥ 0,62 → weinig energie",
+   "anders → geen duidelijke richting",
+   "Een handmatige keuze gaat altijd voor de uitkomst van de vragen."
+  ],
+  "geenDiagnose": "Dit is zelfreflectie om handvatten te kiezen, geen test. De vragen zijn niet gevalideerd. Herken je veel? Praat met je huisarts; die kan verwijzen voor een echte beoordeling. Gevalideerde screeners zijn bijvoorbeeld de ASRS (ADHD) en de AQ-10 (autisme)."
+ },
+ "tips": {
+  "taken": {
+   "adhd": "Begin met iets van 2 minuten. Beginnen is het moeilijkste deel; daarna gaat het vaak vanzelf.",
+   "autisme": "Schrijf bij elke taak de eerste concrete stap. Dan weet je precies wat er gebeurt.",
+   "audhd": "Zet de eerste stap erbij en begin met iets kleins. Plan geen twee wissels vlak na elkaar.",
+   "energie": "Kies vandaag maximaal drie taken. Wat niet lukt, schuift gewoon door.",
+   "geen": "Maak er een als-dan-plan van: “Als ik koffie heb, dan begin ik aan …”."
+  },
+  "planning": {
+   "adhd": "Plan 25% extra tijd en zet een vertrekwekker, niet alleen een afspraakwekker.",
+   "autisme": "Zet overgangen in je agenda: een blok van 10 minuten tussen afspraken.",
+   "audhd": "Plan 30% extra tijd en een rustblok na elke afspraak.",
+   "energie": "Houd na een drukke afspraak een rustblok vrij (pacing).",
+   "geen": "Plan wat buffer tussen afspraken; dingen duren vaak langer dan je denkt."
+  },
+  "sidehustle": {
+   "adhd": "Werk aan één side hustle tegelijk en knip het werk in blokken van 25 minuten.",
+   "autisme": "Kies een vast moment in de week voor je side hustle; dat maakt het voorspelbaar.",
+   "audhd": "Eén hustle tegelijk, op een vast moment, in korte blokken.",
+   "energie": "Houd je side hustle klein: één kleine stap per keer, alleen op goede dagen.",
+   "geen": "Zet elke week één concrete volgende stap."
+  },
+  "wishlist": {
+   "adhd": "Afkoelen: wacht 72 uur voor je iets boven € 50 koopt. Impulsen zakken vaak weg.",
+   "autisme": "Vergelijk op vaste punten (prijs, gebruik, prikkels) en beslis op een vast moment.",
+   "audhd": "Wacht 72 uur en vergelijk op vaste punten voor je iets boven € 50 koopt.",
+   "energie": "Vraag bij elke wens: bespaart dit energie? Dan telt dat mee.",
+   "geen": "Slaap er een nacht over bij grotere aankopen."
+  },
+  "huishouden": {
+   "adhd": "Korte blokken, snel succes eerst, en de tijd zichtbaar. Muziek of een podcast helpt.",
+   "autisme": "Vaste volgorde per ruimte, alles vooraf te zien, en een seintje voor elke wissel.",
+   "audhd": "Korte blokken in een vaste volgorde, met een seintje voor elke wissel.",
+   "energie": "Kleine porties, zwaar werk vroeg, en echte rust in de pauzes.",
+   "geen": "Werk per ruimte en neem op tijd pauze."
+  }
+ },
+ "tipPlekken": {
+  "taken": "Persoonlijk (taken)",
+  "planning": "Komend (planning)",
+  "sidehustle": "Side Hustle",
+  "wishlist": "Wishlist",
+  "huishouden": "Huishouden"
+ },
+ "huishouden": {
+  "schattingen": [
+   [
+    "oven",
+    15
+   ],
+   [
+    "koelkast|vriezer",
+    12
+   ],
+   [
+    "ramen|raam",
+    12
+   ],
+   [
+    "douche|bad\\b|badkuip",
+    10
+   ],
+   [
+    "bed (verschonen|opmaken)|verschonen",
+    10
+   ],
+   [
+    "stofzuig",
+    12
+   ],
+   [
+    "dweil",
+    10
+   ],
+   [
+    "vouw",
+    10
+   ],
+   [
+    "ophang",
+    8
+   ],
+   [
+    "afwas|vaat(?!wasser)",
+    10
+   ],
+   [
+    "stof",
+    8
+   ],
+   [
+    "opruim",
+    8
+   ],
+   [
+    "vaatwasser",
+    5
+   ],
+   [
+    "kookplaat|fornuis|gasfornuis",
+    5
+   ],
+   [
+    "wc|toilet",
+    6
+   ],
+   [
+    "veeg|vegen",
+    5
+   ],
+   [
+    "aanrecht",
+    4
+   ],
+   [
+    "gootsteen|wastafel|kraan",
+    4
+   ],
+   [
+    "spiegel",
+    2
+   ],
+   [
+    "afval|vuilnis|prullenbak|container",
+    2
+   ],
+   [
+    "planten",
+    3
+   ],
+   [
+    "handdoek",
+    2
+   ],
+   [
+    "was (draaien|aanzetten|in)",
+    3
+   ],
+   [
+    "bank|kussens",
+    4
+   ]
+  ],
+  "standaardMin": 5,
+  "zwaar": "stofzuig|dweil|ramen|raam|douche|badkuip|\\bbad\\b|oven|koelkast|bed verschonen|verschonen|vloer",
+  "licht": "spiegel|afval|vuilnis|prullenbak|planten|handdoek|was draaien|kussens|terugleggen",
+  "prikkel": "wc|toilet|douche|oven|badkuip|\\bbad\\b|ramen|dweil|kookplaat|middel",
+  "taakTips": [
+   [
+    "wc|toilet",
+    "Eerst middel in de pot, laten inwerken, intussen de bril en buitenkant."
+   ],
+   [
+    "douche|badkuip|\\bbad\\b",
+    "Spray eerst en laat het inwerken terwijl je iets anders doet."
+   ],
+   [
+    "stofzuig",
+    "Begin in de verste hoek en werk naar de deur toe."
+   ],
+   [
+    "dweil",
+    "Werk van achter naar de deur, zodat je niet over nat loopt."
+   ],
+   [
+    "stof",
+    "Van boven naar beneden: wat valt, zuig je daarna op."
+   ],
+   [
+    "afwas|vaat(?!wasser)",
+    "Eerst alles verzamelen, dan pas wassen. Glazen eerst, pannen laatst."
+   ],
+   [
+    "opruim|terugleggen",
+    "Neem een wasmand mee: alles wat hier niet hoort gaat erin."
+   ],
+   [
+    "ramen|raam|spiegel",
+    "Niet in de volle zon, dan krijg je strepen."
+   ],
+   [
+    "bed|verschonen",
+    "Hoeslaken eerst, diagonaal de hoeken om."
+   ],
+   [
+    "aanrecht",
+    "Eerst leegmaken, dan afnemen. Een leeg aanrecht voelt al half klaar."
+   ],
+   [
+    "oven",
+    "Laat een ovenreiniger inwerken en doe intussen de kookplaat."
+   ],
+   [
+    "afval|vuilnis|prullenbak",
+    "Neem meteen een nieuwe zak mee naar de prullenbak."
+   ],
+   [
+    "was",
+    "Zet een wekker voor als de was klaar is, anders blijft hij staan."
+   ]
+  ],
+  "richtingTips": {
+   "prikkel": "Geurvrij middel of handschoenen als het te veel is.",
+   "eersteKlus": "Alleen deze. Niet aan het geheel denken.",
+   "zwaarEnergie": "Mag zittend of in twee keer."
+  },
+  "pauzeTips": {
+   "energie": "Echt rusten: zitten of liggen, ogen dicht. Niet je telefoon.",
+   "autisme": "Even prikkelarm: zachter licht, stilte of oordoppen.",
+   "adhd": "Water drinken en even bewegen. Blijf in de buurt, de timer loopt.",
+   "geen": "Even zitten, water drinken."
+  },
+  "startlijsten": [
+   {
+    "sleutel": "reset",
+    "naam": "Reset in 5 dingen",
+    "emoji": "⚡",
+    "ritme": 1,
+    "taken": [
+     [
+      "Overal",
+      "Afval weggooien",
+      3,
+      "moet"
+     ],
+     [
+      "Overal",
+      "Afwas verzamelen naar de keuken",
+      4,
+      "moet"
+     ],
+     [
+      "Overal",
+      "Wasgoed naar de wasmand",
+      3,
+      "normaal"
+     ],
+     [
+      "Overal",
+      "Dingen met een vaste plek terugleggen",
+      6,
+      "normaal"
+     ],
+     [
+      "Overal",
+      "Dingen zonder plek in één bak",
+      3,
+      "bonus"
+     ]
+    ]
+   },
+   {
+    "sleutel": "keuken",
+    "naam": "Keuken",
+    "emoji": "🍳",
+    "ritme": 3,
+    "taken": [
+     [
+      "Keuken",
+      "Aanrecht leegmaken",
+      3,
+      "moet"
+     ],
+     [
+      "Keuken",
+      "Vaatwasser uitruimen",
+      5,
+      "moet"
+     ],
+     [
+      "Keuken",
+      "Vaatwasser inruimen",
+      5,
+      "moet"
+     ],
+     [
+      "Keuken",
+      "Aanrecht afnemen",
+      3,
+      "normaal"
+     ],
+     [
+      "Keuken",
+      "Kookplaat schoonmaken",
+      5,
+      "normaal"
+     ],
+     [
+      "Keuken",
+      "Gootsteen schoonmaken",
+      3,
+      "normaal"
+     ],
+     [
+      "Keuken",
+      "Vuilnis wegbrengen",
+      2,
+      "moet"
+     ],
+     [
+      "Keuken",
+      "Vloer vegen",
+      5,
+      "bonus"
+     ]
+    ]
+   },
+   {
+    "sleutel": "badkamer",
+    "naam": "Badkamer",
+    "emoji": "🛁",
+    "ritme": 7,
+    "taken": [
+     [
+      "Badkamer",
+      "Wastafel en kraan",
+      4,
+      "moet"
+     ],
+     [
+      "Badkamer",
+      "Spiegel",
+      2,
+      "normaal"
+     ],
+     [
+      "Badkamer",
+      "Wc schoonmaken",
+      6,
+      "moet"
+     ],
+     [
+      "Badkamer",
+      "Douche schoonmaken",
+      10,
+      "normaal"
+     ],
+     [
+      "Badkamer",
+      "Handdoeken verwisselen",
+      2,
+      "normaal"
+     ],
+     [
+      "Badkamer",
+      "Vloer dweilen",
+      6,
+      "bonus"
+     ]
+    ]
+   },
+   {
+    "sleutel": "week",
+    "naam": "Weekschoonmaak",
+    "emoji": "🏠",
+    "ritme": 7,
+    "taken": [
+     [
+      "Woonkamer",
+      "Opruimen",
+      8,
+      "moet"
+     ],
+     [
+      "Woonkamer",
+      "Stof afnemen",
+      8,
+      "normaal"
+     ],
+     [
+      "Woonkamer",
+      "Stofzuigen",
+      12,
+      "moet"
+     ],
+     [
+      "Slaapkamer",
+      "Bed verschonen",
+      10,
+      "normaal"
+     ],
+     [
+      "Slaapkamer",
+      "Opruimen",
+      5,
+      "normaal"
+     ],
+     [
+      "Keuken",
+      "Aanrecht en kookplaat",
+      8,
+      "moet"
+     ],
+     [
+      "Keuken",
+      "Vuilnis wegbrengen",
+      2,
+      "moet"
+     ],
+     [
+      "Badkamer",
+      "Wc schoonmaken",
+      6,
+      "moet"
+     ],
+     [
+      "Badkamer",
+      "Wastafel en spiegel",
+      5,
+      "normaal"
+     ],
+     [
+      "Hal",
+      "Schoenen en jassen opruimen",
+      3,
+      "bonus"
+     ],
+     [
+      "Overal",
+      "Vloeren dweilen",
+      15,
+      "bonus"
+     ]
+    ]
+   }
+  ],
+  "tijden": [
+   5,
+   10,
+   15,
+   20,
+   30,
+   45,
+   60,
+   90
+  ],
+  "kalibratie": {
+   "minMetingen": 2,
+   "minFactor": 0.5,
+   "maxFactor": 3,
+   "toonVanaf": 0.1
+  },
+  "meewerker": {
+   "naam": "Tess",
+   "elkeSec": 150,
+   "zinnen": [
+    "Ik ben er nog. Jij ook?",
+    "Rustig tempo is ook een tempo.",
+    "Eén ding tegelijk. Dit ding.",
+    "Even ademhalen mag.",
+    "Je bent al begonnen. Dat was het moeilijkste.",
+    "Ik werk gewoon met je mee."
+   ]
+  }
+ },
+ "sessieStappen": [
+  [
+   "Klaarzetten",
+   "Kies een lijst, hoeveel tijd je hebt en eventueel je energie. Je ziet meteen het plan: kaartjes, pauzes en wat nu niet past."
+  ],
+  [
+   "Eén kaartje",
+   "Een donker scherm met een draaiende tesseract. Daaronder één zwart kaartje met een dikke, geborduurde witte rand: de klus, de minuten en zo nodig een tip."
+  ],
+  [
+   "Start",
+   "De timer loopt: een aftellende klok en een balk. Is de tijd om, dan komt een zacht seintje en de knop +2 min."
+  ],
+  [
+   "Klaar of later",
+   "Veeg naar rechts (of tik Klaar) en het kaartje gaat naar de stapel gedaan. Veeg naar links en het komt één keer achteraan terug."
+  ],
+  [
+   "Pauze",
+   "Pauzes zijn eigen kaartjes met een timer en een tip die bij je richting past."
+  ],
+  [
+   "Feller",
+   "Elke gedane klus maakt de tesseract feller; de kleur schuift van cyaan naar goud."
+  ],
+  [
+   "Ontploffing",
+   "Na de laatste klus ontploft de tesseract: schokgolf, deeltjes en een witte flits."
+  ],
+  [
+   "Samenvatting",
+   "Terug in Huishouden: wat je deed, hoe lang het duurde tegenover de planning, en wat doorschuift. De app leert van je echte tijden."
+  ]
+ ],
+ "mechanieken": [
+  {
+   "titel": "De planner",
+   "stappen": [
+    "Capaciteit is de gekozen tijd, begrensd door de maximale sessieduur. Bij energie 1–2 gaat de buffer 10 procentpunt omhoog en vallen zware klussen weg, tenzij ze moeten.",
+    "Schatting per klus: basisminuten × persoonlijke kalibratiefactor.",
+    "Kosten van een selectie: werk × buffer + (aantal pauzes) × pauzeduur.",
+    "Bij snel succes wordt eerst de kortste klus van hooguit 5 minuten gereserveerd.",
+    "Daarna: moet → normaal → bonus, in lijstvolgorde, zolang het past. Past er niets, dan toch de kleinste klus.",
+    "Volgorde volgens de aanpak; klussen langer dan het blokmaximum worden opgeknipt in delen.",
+    "Na elke 'pauze na'-minuten werk komt een pauzekaartje, nooit als laatste.",
+    "Tips per klus en per richting; een wisselseintje als de volgende klus in een andere ruimte is.",
+    "Garantie: gaat het totaal door afronden over de tijd, dan gaat er telkens een minuut af van het langste kaartje."
+   ]
+  },
+  {
+   "titel": "Persoonlijke tijdkalibratie",
+   "stappen": [
+    "Per klus een sleutel: de tekst in kleine letters, zonder duur en leestekens.",
+    "Factor = som van werkelijke minuten / som van basisminuten, over alle gedane keren.",
+    "Pas vanaf 2 metingen, begrensd tussen 0,5 en 3.",
+    "Wijkt de factor meer dan 10% af, dan staat 'aangepast op jouw tempo' op het kaartje."
+   ]
+  },
+  {
+   "titel": "De tesseract",
+   "stappen": [
+    "16 hoekpunten (±1 in vier dimensies) en 32 ribben.",
+    "Rotatie in de vlakken XW, YW en ZW plus een langzame kanteling; sneller naarmate de helderheid stijgt.",
+    "Perspectief van 4D naar 3D en van 3D naar 2D.",
+    "Twee lagen licht: een brede gloed en een witte kern; tint van cyaan naar goud.",
+    "Helderheid = gedane klussen / totaal, vloeiend bijgewerkt.",
+    "Explosie: 192 deeltjes langs de ribben, een schokgolf en een witte flits van ongeveer 1,5 seconde.",
+    "Met minder beweging: één stilstaand beeld en geen explosie."
+   ]
+  },
+  {
+   "titel": "Vegen",
+   "stappen": [
+    "De richting ligt vast na 10 px beweging; verticaal scrollen blijft mogelijk.",
+    "Tijdens het slepen draait het kaartje mee en gloeit het groen (gedaan) of amber (later).",
+    "Loslaten voorbij 100 px handelt het kaartje af; anders veert het terug.",
+    "Knoppen en pijltjestoetsen doen hetzelfde: vegen is nooit nodig."
+   ]
+  }
+ ],
+ "onderbouwing": [
+  {
+   "id": "W1",
+   "bevinding": "Kinderen en jongeren met ADHD schatten tijd minder nauwkeurig en minder precies in, en overschatten tijd vaker (27 studies, 1.620 met ADHD, 1.249 controles).",
+   "keuze": "Aftellende klok en balk op elk kaartje; tijdbuffer; kalibratie op de werkelijke duur.",
+   "bron": 1,
+   "sterkte": "redelijk",
+   "kanttekening": "Onderzoek bij jongeren; doorgetrokken naar volwassenen."
+  },
+  {
+   "id": "W2",
+   "bevinding": "Mensen onderschatten stelselmatig hoe lang hun eigen taken duren (planning-fallacy). Scriptiestudenten dachten 34 dagen nodig te hebben en deden er 55,5 over.",
+   "keuze": "Buffer van 15–30% per richting; de planner leert van de werkelijke tijden.",
+   "bron": 2,
+   "sterkte": "sterk",
+   "kanttekening": "Klassiek en vaak herhaald."
+  },
+  {
+   "id": "W3",
+   "bevinding": "Vaste, geplande pauzes gaven minder vermoeidheid en afleiding en meer concentratie en motivatie dan zelf gekozen pauzes, bij evenveel afgerond werk.",
+   "keuze": "Pauzes staan in het plan, als eigen kaartje met timer.",
+   "bron": 3,
+   "sterkte": "matig",
+   "kanttekening": "Eén gerandomiseerde studie bij studenten."
+  },
+  {
+   "id": "W4",
+   "bevinding": "Als-dan-plannen (implementatie-intenties) verhogen de kans dat een doel lukt: d = 0,65 over 94 studies en ruim 8.000 deelnemers. Ze helpen vooral bij het beginnen.",
+   "keuze": "Kaartjes beschrijven een concrete handeling; tips geven de eerste stap; de tip bij Taken stelt een als-dan-plan voor.",
+   "bron": 4,
+   "sterkte": "sterk",
+   "kanttekening": "Meta-analyse over veel soorten doelen."
+  },
+  {
+   "id": "W5",
+   "bevinding": "Bij ADHD is er een sterke voorkeur voor kleine, directe beloningen boven grotere, latere (uitstelaversie).",
+   "keuze": "Snel succes eerst (kortste klus vooraan); directe feedback: kaartje naar de stapel, tesseract feller.",
+   "bron": 5,
+   "sterkte": "sterk",
+   "kanttekening": "Sterk voor het fenomeen; deze vorm van feedback is niet getoetst."
+  },
+  {
+   "id": "W6",
+   "bevinding": "Iets leuks alleen samen met een moetje doen (temptation bundling) gaf in het begin 51% meer sportschoolbezoek; het effect zakte later weg.",
+   "keuze": "Luistertip: 'Alleen tijdens schoonmaken luister ik naar …', met herinnering op het eerste kaartje.",
+   "bron": 6,
+   "sterkte": "matig",
+   "kanttekening": "Eén veldexperiment; het effect neemt af."
+  },
+  {
+   "id": "W7",
+   "bevinding": "Body doubling (werken in aanwezigheid van een ander) wordt veel gebruikt. Eerste studies (EEG, n = 26; VR, n = 12) zijn positief; grote gerandomiseerde studies ontbreken.",
+   "keuze": "Meewerker Tess: een rustige aanwezigheid met af en toe een zinnetje; uit te zetten.",
+   "bron": 7,
+   "bron2": 8,
+   "sterkte": "zwak",
+   "kanttekening": "Vroeg onderzoek; als experiment gepresenteerd."
+  },
+  {
+   "id": "W8",
+   "bevinding": "Visuele activiteitenschema's gelden bij autisme als evidence-based practice. Welk onderdeel precies werkt, is onduidelijk.",
+   "keuze": "Hele plan vooraf te zien, vaste volgorde per ruimte, seintje één minuut voor een wissel.",
+   "bron": 9,
+   "bron2": 10,
+   "sterkte": "redelijk",
+   "kanttekening": "Het onderdeel voorspelbaarheid op zich is onzeker."
+  },
+  {
+   "id": "W9",
+   "bevinding": "Veel autistische volwassenen melden moeite met dagelijks schoonmaken; executieve functies hangen samen met dagelijkse vaardigheden. Geur en textuur spelen mee.",
+   "keuze": "Prikkeltip bij klussen met middelen; prikkelarme pauze.",
+   "bron": 11,
+   "sterkte": "matig",
+   "kanttekening": "Correlationeel onderzoek."
+  },
+  {
+   "id": "W10",
+   "bevinding": "Bij energiebeperkende aandoeningen raden richtlijnen energiemanagement (pacing) aan: opdelen, rust inplannen, pieken vermijden.",
+   "keuze": "Blokken van hooguit 8 minuten, pauzes van 8 minuten, sessie maximaal 45 minuten, zwaar werk vroeg, energiecheck.",
+   "bron": 12,
+   "sterkte": "redelijk",
+   "kanttekening": "Richtlijn op basis van consensus en bewijs."
+  },
+  {
+   "id": "W11",
+   "bevinding": "Rommel thuis hangt samen met een ongunstiger stresspatroon (cortisol).",
+   "keuze": "'Reset in 5 dingen' maakt zichtbare rommel snel kleiner.",
+   "bron": 13,
+   "sterkte": "zwak",
+   "kanttekening": "Correlationeel, 60 deelnemers."
+  },
+  {
+   "id": "W12",
+   "bevinding": "De vijf-dingen-aanpak (afval, afwas, was, dingen met een plek, dingen zonder plek) maakt opruimen behapbaar voor wie overweldigd raakt.",
+   "keuze": "Startlijst 'Reset in 5 dingen'.",
+   "bron": 14,
+   "sterkte": "praktijk",
+   "kanttekening": "Praktijkbron, niet wetenschappelijk."
+  },
+  {
+   "id": "W13",
+   "bevinding": "Screeners zoals de ASRS-6 (ADHD) en de AQ-10 (autisme) zijn gevalideerd; een zelfgemaakte vragenlijst is dat niet.",
+   "keuze": "De tien vragen zijn zelfreflectie, geen test; uitkomst is een richting met verwijzing naar de huisarts.",
+   "bron": 15,
+   "bron2": 16,
+   "sterkte": "principe",
+   "kanttekening": "Keuze uit eerlijkheid."
+  }
+ ],
+ "sterktes": {
+  "sterk": "Sterk",
+  "redelijk": "Redelijk",
+  "matig": "Matig",
+  "zwak": "Zwak",
+  "praktijk": "Praktijkbron",
+  "principe": "Principe"
+ },
+ "eisen": [
+  {
+   "groep": "Profiel",
+   "items": [
+    "Naam, geboortedatum, lengte en gewicht: optioneel, altijd te wijzigen, meteen opgeslagen.",
+    "Leeftijd berekend uit de geboortedatum.",
+    "Gewicht: de laatste meting uit Gezondheid gaat voor; BMI alleen als indicatie.",
+    "Vier uitklapbare secties: Over jou, Lichaam, Aanpak die bij je past, In de app.",
+    "Tien vragen op een vijfpuntsschaal in drie dimensies; alle vragen verplicht.",
+    "Uitkomst met scores per dimensie; handmatig te overschrijven.",
+    "Bij elke uitkomst: 'Geen diagnose', met verwijzing naar de huisarts.",
+    "Anker krijgt een passend profiel als daar nog niets gekozen is.",
+    "Begroeting met voornaam op de landingspagina; profielkaart bovenaan Instellingen."
+   ]
+  },
+  {
+   "groep": "App-brede aanpak",
+   "items": [
+    "Eén functie levert de aanpak (ndAanpak); andere modules lezen alleen die.",
+    "Eén tip per onderdeel: Persoonlijk, Komend, Side Hustle, Wishlist en Huishouden; uit te zetten."
+   ]
+  },
+  {
+   "groep": "Schoonmaaklijsten",
+   "items": [
+    "Lijst met naam, icoon, ritme en taken (tekst, ruimte, minuten, zwaarte, prioriteit, aan/uit).",
+    "Vier startlijsten: Reset in 5 dingen, Keuken, Badkamer, Weekschoonmaak.",
+    "Duur uit de tekst ('(10 min)') of uit trefwoorden; zwaarte uit trefwoorden.",
+    "'Aan de beurt' sorteert op achterstand ten opzichte van het ritme."
+   ]
+  },
+  {
+   "groep": "Import uit Checklists",
+   "items": [
+    "Alleen sjablonen waarvan de naam met 'Schoonmaken' begint.",
+    "Kopjes worden ruimtes; ! = moet; (bonus) of ? = bonus; '(10 min)' = duur.",
+    "Opnieuw importeren werkt bij en bewaart eigen aanpassingen.",
+    "In een passend sjabloon staat de knop 'Gebruik in Huishouden'.",
+    "Geen passend sjabloon? Er kan een voorbeeld 'Schoonmaken – Keuken' worden aangemaakt."
+   ]
+  },
+  {
+   "groep": "Sessie klaarzetten",
+   "items": [
+    "Keuze voor lijst, tijd (5–90 min) en optionele energie (1–5).",
+    "Het plan wordt bij elke wijziging opnieuw berekend en getoond.",
+    "Het plan past altijd binnen de tijd of de maximale sessieduur."
+   ]
+  },
+  {
+   "groep": "De sessie",
+   "items": [
+    "Donker scherm met draaiende, pulserende tesseract en één zwart kaartje met geborduurde rand.",
+    "Kaartje: klus n van N, ruimte, titel, minuten, tip, Start en Sla over.",
+    "Klaar: vegen naar rechts, knop of pijl rechts. Later: vegen naar links, knop of pijl links.",
+    "Pauzes als eigen kaartjes; tijd om: seintje, amber klok en +2 min.",
+    "Wisselseintje één minuut vooraf (autisme en beide).",
+    "Tesseract feller per klus; explosie na de laatste; terug met samenvatting.",
+    "Stoppen met twee keer tikken; wat af is blijft bewaard. Het scherm blijft aan."
+   ]
+  },
+  {
+   "groep": "Samenvatting en leren",
+   "items": [
+    "Bemoedigende zin, klussen gedaan, minuten, afwijking tegenover de planning, per klus de tijd.",
+    "Persoonlijke kalibratie vanaf twee metingen; 'Wat de app over jouw tijd leerde'."
+   ]
+  },
+  {
+   "groep": "Extra's en koppelingen",
+   "items": [
+    "Reset in 5 min, Gooi een klus, luistertip, meewerker Tess, geluid en trillen apart.",
+    "Logboekregel per sessie; Voortgang-bronnen en mijlpalen; doelcontrole na elke sessie."
+   ]
+  }
+ ],
+ "datamodel": [
+  {
+   "store": "hh_lijsten",
+   "sleutel": "id",
+   "velden": [
+    [
+     "naam, emoji",
+     "weergave"
+    ],
+    [
+     "ritme",
+     "elke n dagen (0 = geen)"
+    ],
+    [
+     "bron",
+     "start, checklist of eigen (met id van het sjabloon)"
+    ],
+    [
+     "taken",
+     "tekst, ruimte, min, zwaar 0–2, prio, uit"
+    ],
+    [
+     "laatstGedaan",
+     "gezet na een sessie met minstens één gedane klus"
+    ]
+   ]
+  },
+  {
+   "store": "hh_sessies",
+   "sleutel": "id (index op datum)",
+   "velden": [
+    [
+     "lijstId, lijstNaam",
+     "waaruit gepland is"
+    ],
+    [
+     "datum, ts, gestart",
+     "datum, eindtijd, starttijd"
+    ],
+    [
+     "beschikbaar, energie, richting",
+     "invoer en aanpak bij het plannen"
+    ],
+    [
+     "werkMin, pauzeMin",
+     "gepland"
+    ],
+    [
+     "resultaat[]",
+     "per kaartje: tekst, minuten, basisMin, status (gedaan, overgeslagen, niet) en seconden"
+    ],
+    [
+     "werkSec, duurSec, afgebroken",
+     "gewerkt, totaal, gestopt"
+    ]
+   ]
+  },
+  {
+   "store": "instellingen → profiel",
+   "sleutel": "sleutel 'profiel'",
+   "velden": [
+    [
+     "naam, geboortedatum, lengte, gewicht",
+     "profiel"
+    ],
+    [
+     "nd.antwoorden, richting, handmatig, energie, datum",
+     "vragenlijst en keuze"
+    ]
+   ]
+  }
+ ],
+ "tests": [
+  [
+   "Database van versie 11 opent als 12, gegevens intact",
+   true
+  ],
+  [
+   "Leeftijd uit 14-03-1992 is 34",
+   true
+  ],
+  [
+   "Vragen met veel A → ADHD-kenmerken; Anker-profiel 'anders'",
+   true
+  ],
+  [
+   "Begroeting 'Goedenavond Kas'",
+   true
+  ],
+  [
+   "Tips in Persoonlijk, Komend, Wishlist (72 uur) en Side Hustle",
+   true
+  ],
+  [
+   "Tegel Huishouden in Persoonlijk",
+   true
+  ],
+  [
+   "Import toont alleen 'Schoonmaken – …'-sjablonen",
+   true
+  ],
+  [
+   "Omzetting: ruimtes, moet, bonus, duur",
+   true
+  ],
+  [
+   "Alle plannen passen in de tijd; geen kaartje boven het blokmaximum",
+   true
+  ],
+  [
+   "ADHD: eerste kaartje ≤ 3 min; energie: maximaal 45 min",
+   true
+  ],
+  [
+   "Sessie: timer, vegen naar gedaan, overslaan naar achteren, +2 min",
+   true
+  ],
+  [
+   "Laatste kaartje → explosie → samenvatting, logregel en opgeslagen sessie",
+   true
+  ],
+  [
+   "Kalibratie leert factor 1,8",
+   true
+  ],
+  [
+   "Stoppen bewaart een gestopte sessie",
+   true
+  ],
+  [
+   "Dobbelsteen kiest een klus van ≤ 5 min",
+   true
+  ],
+  [
+   "Voortgang kent de huishoud-bronnen",
+   true
+  ],
+  [
+   "Export en herladen bewaren alles",
+   true
+  ]
+ ],
+ "teTesten": [
+  "Vegen met de duim als app op het beginscherm",
+  "Scherm blijft aan (iOS 16.4+)",
+  "Flits en explosie op een 120-Hz-scherm",
+  "VoiceOver door een volledige sessie",
+  "Geluidje met de stille modus aan"
+ ],
+ "extras": {
+  "gebouwd": [
+   [
+    "⚡",
+    "Reset in 5 min",
+    "Snelste zichtbare resultaat met de minste beslissingen"
+   ],
+   [
+    "🎲",
+    "Gooi een klus",
+    "Keuzestress weg: de dobbelsteen kiest, jij begint"
+   ],
+   [
+    "🎧",
+    "Luistertip",
+    "Je podcast of luisterboek alleen tijdens het schoonmaken"
+   ],
+   [
+    "👥",
+    "Meewerker Tess",
+    "Het gevoel dat je niet alleen bezig bent"
+   ],
+   [
+    "📈",
+    "Wat de app over jouw tijd leerde",
+    "Je echte tempo; de planning klopt steeds beter"
+   ],
+   [
+    "🔁",
+    "Aan de beurt",
+    "Het ritme per lijst laat zien wat het langst bleef liggen"
+   ],
+   [
+    "🏁",
+    "Mijlpalen in Voortgang",
+    "10, 25, 50 … klussen, zonder reeks die je kunt breken"
+   ],
+   [
+    "🧵",
+    "Stapel gedaan",
+    "Kaartjes stapelen zich zichtbaar op"
+   ]
+  ],
+  "voorstellen": [
+   [
+    "Kamerkaart",
+    "Plattegrond met per ruimte een kleur voor hoe lang geleden."
+   ],
+   [
+    "Samen schoonmaken",
+    "Twee telefoons tonen elkaars kaartjes. Vraagt wel een verbinding."
+   ],
+   [
+    "Timer-soundtracks",
+    "Een afspeellijst zo lang als het plan."
+   ],
+   [
+    "Foto voor en na",
+    "Alleen lokaal, als zichtbare beloning."
+   ],
+   [
+    "Doe het nu",
+    "Een klus van ≤ 2 minuten krijgt een eigen snelknop."
+   ],
+   [
+    "Seizoenslijsten",
+    "De voorjaarsschoonmaak als voorstel in maart."
+   ],
+   [
+    "Aanpak meten",
+    "Vergelijk blokken van 10 en 15 minuten in je eigen gegevens."
+   ]
+  ]
+ },
+ "begrippen": [
+  [
+   "Taakinitiatie",
+   "Het vermogen om aan een taak te beginnen."
+  ],
+  [
+   "Tijdsblindheid",
+   "Een afwijkende beleving en inschatting van tijd, vaak bij ADHD."
+  ],
+  [
+   "Planning-fallacy",
+   "De algemene neiging om de eigen taakduur te onderschatten."
+  ],
+  [
+   "Pacing",
+   "Energie verdelen door activiteiten op te delen en rust in te plannen."
+  ],
+  [
+   "Body doubling",
+   "Een taak doen in aanwezigheid van een ander."
+  ],
+  [
+   "Temptation bundling",
+   "Iets aantrekkelijks alleen koppelen aan een minder leuke taak."
+  ],
+  [
+   "Tesseract",
+   "Een vierdimensionale kubus, hier geprojecteerd naar 2D."
+  ]
+ ],
+ "bronnen": [
+  {
+   "nr": 1,
+   "tekst": "Zheng, Q., Wang, X., Chiu, K. Y., & Shum, K. K. (2022). Time perception deficits in children and adolescents with ADHD: a meta-analysis. Journal of Attention Disorders.",
+   "url": "https://journals.sagepub.com/doi/abs/10.1177/1087054720978557"
+  },
+  {
+   "nr": 2,
+   "tekst": "Buehler, R., Griffin, D., & Ross, M. (1994). Exploring the 'planning fallacy'. Journal of Personality and Social Psychology, 67(3), 366–381.",
+   "url": "https://web.mit.edu/curhan/www/docs/Articles/biases/67_J_Personality_and_Social_Psychology_366,_1994.pdf"
+  },
+  {
+   "nr": 3,
+   "tekst": "Biwer, F., e.a. (2023). Understanding effort regulation: comparing 'Pomodoro' breaks and self-regulated breaks. British Journal of Educational Psychology.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36859717/"
+  },
+  {
+   "nr": 4,
+   "tekst": "Gollwitzer, P. M., & Sheeran, P. (2006). Implementation intentions and goal achievement: a meta-analysis of effects and processes. Advances in Experimental Social Psychology, 38.",
+   "url": "https://psycnet.apa.org/record/2007-19538-002"
+  },
+  {
+   "nr": 5,
+   "tekst": "Marx, I., Hacker, T., Yu, X., Cortese, S., & Sonuga-Barke, E. (2021). ADHD and the choice of small immediate over larger delayed rewards. Journal of Attention Disorders.",
+   "url": "https://journals.sagepub.com/doi/abs/10.1177/1087054718772138"
+  },
+  {
+   "nr": 6,
+   "tekst": "Milkman, K. L., Minson, J. A., & Volpp, K. G. M. (2014). Holding the Hunger Games hostage at the gym: an evaluation of temptation bundling. Management Science, 60(2), 283–299.",
+   "url": "https://pubsonline.informs.org/doi/10.1287/mnsc.2013.1784"
+  },
+  {
+   "nr": 7,
+   "tekst": "Reading between the lines: exploring body doubling in ADHD using EEG (2025). ACM SIGACCESS ASSETS.",
+   "url": "https://dl.acm.org/doi/full/10.1145/3663547.3759743"
+  },
+  {
+   "nr": 8,
+   "tekst": "You are not alone: designing body doubling for ADHD in virtual reality (2025). arXiv.",
+   "url": "https://arxiv.org/pdf/2509.12153"
+  },
+  {
+   "nr": 9,
+   "tekst": "Knight, V., Sartini, E., & Spriggs, A. D. (2015). Evaluating visual activity schedules as evidence-based practice for individuals with autism spectrum disorders. J. Autism Dev. Disord.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25081593/"
+  },
+  {
+   "nr": 10,
+   "tekst": "Mouzakes e.a. (2025). A closer examination of the visual schedule component of interventions to improve transitions. Behavioral Interventions.",
+   "url": "https://onlinelibrary.wiley.com/doi/10.1002/bin.70028"
+  },
+  {
+   "nr": 11,
+   "tekst": "Executive functions in daily living skills: a study in adults with autism spectrum disorder (2023).",
+   "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10127455/"
+  },
+  {
+   "nr": 12,
+   "tekst": "NICE (2021). Myalgic encephalomyelitis (or encephalopathy)/chronic fatigue syndrome: diagnosis and management (NG206).",
+   "url": "https://www.nice.org.uk/guidance/ng206"
+  },
+  {
+   "nr": 13,
+   "tekst": "Saxbe, D. E., & Repetti, R. (2010). No place like home: home tours correlate with daily patterns of mood and cortisol. Personality and Social Psychology Bulletin.",
+   "url": "https://journals.sagepub.com/doi/10.1177/0146167209352864"
+  },
+  {
+   "nr": 14,
+   "tekst": "Davis, K. C. (2022). How to Keep House While Drowning. Simon Element. (praktijkbron)",
+   "url": null
+  },
+  {
+   "nr": 15,
+   "tekst": "Kessler, R. C., e.a. (2007). Validity of the WHO Adult ADHD Self-Report Scale (ASRS) Screener in a representative sample of health plan members.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17623385/"
+  },
+  {
+   "nr": 16,
+   "tekst": "Booth, T., e.a. (2013). Brief report: an evaluation of the AQ-10 as a brief screening instrument for ASD in adults.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23640304/"
+  }
+ ]
+}

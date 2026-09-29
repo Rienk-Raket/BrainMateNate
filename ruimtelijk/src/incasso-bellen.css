@@ -1,0 +1,58 @@
+/* 64. Incasso's op komst als zeepbelletjes */
+.ib{--boven:0px;--onder:0px;position:relative;margin:12px 0;padding:var(--boven) 0 var(--onder);transition:padding .5s cubic-bezier(.22,1,.36,1)}
+.ib-knop{position:relative;z-index:2;display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:13px 14px;min-height:var(--tap);
+  border-radius:15px;background:var(--card);box-shadow:var(--shadow);transition:transform .15s,box-shadow .3s}
+.ib-knop:active{transform:scale(.98)}
+.ib.open .ib-knop{box-shadow:var(--shadow),0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+.ib-titel{flex:1;min-width:0;font-weight:700;font-size:calc(14.5px * var(--t))}
+.ib-hint{font-size:calc(11px * var(--t));color:var(--faint);font-weight:650;flex:0 0 auto}
+html[data-retro="1"] .ib-hint{font-family:var(--pixel);font-weight:400;font-size:calc(7.5px * var(--t))}
+.ib-veld{position:absolute;inset:0;z-index:3;pointer-events:none}
+.ib-bel{position:absolute;width:34px;height:34px;border-radius:50%;pointer-events:auto;padding:0;color:var(--text);
+  transition:left .45s cubic-bezier(.22,1,.36,1),top .45s cubic-bezier(.22,1,.36,1),width .45s cubic-bezier(.22,1,.36,1),height .45s cubic-bezier(.22,1,.36,1),border-radius .45s,opacity .3s,filter .3s}
+.ib-bel .ib-binnen{position:absolute;inset:0;border-radius:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  background:
+    radial-gradient(circle at 28% 24%,rgba(255,255,255,.9) 0 5%,rgba(255,255,255,0) 12%),
+    radial-gradient(circle at 70% 78%,rgba(255,255,255,.35) 0 5%,rgba(255,255,255,0) 11%),
+    radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--card) 55%,transparent) 50%,color-mix(in srgb,var(--accent) 32%,transparent) 100%);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:inset -3px -5px 9px color-mix(in srgb,var(--accent) 28%,transparent),inset 3px 3px 7px rgba(255,255,255,.45),0 4px 10px rgba(20,30,60,.16);
+  backdrop-filter:blur(7px) saturate(1.4);-webkit-backdrop-filter:blur(7px) saturate(1.4);
+  animation:ib-zweef var(--zweef,4.2s) ease-in-out var(--fase,0s) infinite}
+/* Groot euroteken als watermerk, zo groot als de bel */
+.ib-bel .ib-binnen::before{content:"€";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;
+  font-size:calc(33px * var(--t));font-weight:900;line-height:1;color:var(--accent);opacity:.16;transform:translateY(1px);transition:opacity .25s}
+.ib-bel.snel .ib-binnen::before{color:var(--red)}
+.ib-bel.alle .ib-binnen::before,.ib-bel.open .ib-binnen::before{content:none}
+.ib-bel .ib-binnen::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.55;mix-blend-mode:screen;
+  background:conic-gradient(from 200deg,rgba(255,120,200,.0),rgba(255,120,200,.35),rgba(120,200,255,.35),rgba(140,255,190,.3),rgba(255,230,120,.3),rgba(255,120,200,.0));
+  -webkit-mask:radial-gradient(circle,transparent 58%,#000 72%);mask:radial-gradient(circle,transparent 58%,#000 72%)}
+.ib-bedrag{font-weight:800;font-size:calc(9.5px * var(--t));font-variant-numeric:tabular-nums;letter-spacing:-.04em;line-height:1;position:relative;white-space:nowrap}
+.ib-bedrag.lang{font-size:calc(8px * var(--t))}
+.ib-wanneer{font-size:calc(9.5px * var(--t));color:var(--muted);font-weight:650;line-height:1.1;position:relative}
+.ib-bel.snel .ib-bedrag{color:var(--red)}
+.ib-bel.alle .ib-bedrag{color:var(--accent)}
+@keyframes ib-zweef{0%,100%{transform:translate(0,0)}33%{transform:translate(var(--zx,3px),var(--zy,-6px))}66%{transform:translate(calc(var(--zx,3px) * -1),calc(var(--zy,-6px) * .4))}}
+.ib-bel.pop{animation:ib-pop .55s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes ib-pop{0%{transform:translate(var(--fx),var(--fy)) scale(.15);opacity:0}55%{opacity:1}100%{transform:none;opacity:1}}
+.ib-bel.terug{animation:ib-terug .34s cubic-bezier(.5,0,.75,0) both}
+@keyframes ib-terug{to{transform:translate(var(--fx),var(--fy)) scale(.1);opacity:0}}
+.ib-veld.focus .ib-bel:not(.open){opacity:.28;filter:blur(1px)}
+/* Open: het belletje schuift open tot een kaartje */
+.ib-bel.open{z-index:5;border-radius:22px;text-align:left}
+.ib-bel.open .ib-binnen{animation:none;border-radius:22px;
+  background:radial-gradient(circle at 12% 10%,rgba(255,255,255,.7) 0 3%,rgba(255,255,255,0) 9%),color-mix(in srgb,var(--card) 88%,var(--accent));
+  box-shadow:inset -6px -9px 18px color-mix(in srgb,var(--accent) 18%,transparent),0 16px 36px rgba(20,30,60,.26)}
+.ib-bel.open .ib-binnen>*{opacity:0}
+.ib-bel.zonder-overgang{transition:none}
+.ib-info{position:absolute;left:0;top:0;display:flex;flex-direction:column;gap:5px;padding:14px 16px 14px;opacity:0;transition:opacity .25s;pointer-events:none}
+.ib-bel.open .ib-info{opacity:1;transition-delay:.2s;pointer-events:auto}
+.ib-naam{font-weight:750;font-size:calc(15px * var(--t))}
+.ib-groot{font-weight:800;font-size:calc(26px * var(--t));letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.ib-regel{display:flex;align-items:center;gap:6px;font-size:calc(12.5px * var(--t));color:var(--muted)}
+.ib-regel svg{flex:0 0 auto}
+.ib-acties{display:flex;gap:8px;margin-top:6px}
+.ib-acties .knop{flex:1;justify-content:center}
+@media (prefers-reduced-motion:reduce){.ib-bel .ib-binnen{animation:none}.ib-bel{transition-duration:.01s}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ib-bel .ib-binnen::before{opacity:.26}}
+:root[data-theme="dark"] .ib-bel .ib-binnen::before{opacity:.26}

@@ -1,0 +1,205 @@
+/* 81. Lijstjes (basisstijl van de app; modulekleur alleen op tegel en icoon) */
+.lj-intro{text-align:center;padding:22px 18px}
+.lj-intro h2{font-size:calc(18px * var(--t));margin:10px 0 6px}
+.lj-intro p{margin:0}
+.lj-introico{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:18px;color:#e0532f;background:color-mix(in srgb,#e0532f 12%,transparent)}
+.lj-introico svg{width:28px;height:28px}
+.lj-soortgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lj-soort{display:flex;align-items:center;gap:10px;padding:12px 14px;min-height:52px;font-weight:650;font-size:calc(14.5px * var(--t));text-align:left}
+.lj-soort svg{width:20px;height:20px;color:var(--accent);flex:0 0 auto}
+.lj-emoji{font-size:1.2em;line-height:1}
+
+/* Held */
+.lj-held{padding:16px;display:flex;flex-direction:column;gap:14px}
+.lj-heldcijfers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lj-heldcijfers div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lj-heldcijfers b{font-size:calc(24px * var(--t));font-weight:800;letter-spacing:-.02em;line-height:1.05;font-variant-numeric:tabular-nums}
+.lj-heldcijfers span{font-size:calc(11.5px * var(--t));color:var(--muted);line-height:1.3}
+.lj-jaarheld{gap:4px}
+.lj-jaarheld .lj-heldcijfers{margin-top:12px}
+.lj-jaargetal{font-size:calc(52px * var(--t));font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+
+/* Rijen */
+.lj-bezigkaart,.lj-lijst{overflow:hidden}
+.lj-bezig,.lj-rij{display:flex;align-items:center;gap:6px;padding:0 10px 0 12px;border-bottom:1px solid var(--line)}
+.lj-bezig:last-of-type,.lj-rij:last-of-type{border-bottom:0}
+.lj-bezighoofd,.lj-rijhoofd{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:9px 0;min-height:56px;text-align:left}
+.lj-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lj-naam{font-size:calc(15px * var(--t));font-weight:650;line-height:1.3;overflow-wrap:anywhere}
+.lj-meta{font-size:calc(12.5px * var(--t));color:var(--muted);line-height:1.35;overflow-wrap:anywhere}
+.lj-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.lj-tags i{font-style:normal;font-size:calc(11px * var(--t));color:var(--muted);background:var(--card2);border-radius:6px;padding:1px 6px}
+.lj-balk{display:block;height:5px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:5px}
+.lj-balk i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+.lj-rang{flex:0 0 auto;width:22px;text-align:right;font-weight:800;font-size:calc(13px * var(--t));color:var(--faint);font-variant-numeric:tabular-nums}
+.lj-stof{color:var(--amber);font-weight:650}
+.lj-zin{display:inline-flex;gap:1px;color:var(--accent);vertical-align:-1px}
+.lj-rij.lj-in{animation:lj-in .45s cubic-bezier(.22,1,.36,1)}
+@keyframes lj-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+.lj-duim{flex:0 0 auto;width:46px;height:64px;border-radius:9px;object-fit:cover;background:var(--card2)}
+.lj-duim.klein{width:38px;height:52px;border-radius:8px}
+.lj-duim.zonder{display:grid;place-items:center;color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card2))}
+.lj-duim.zonder svg{width:20px;height:20px}
+.lj-plus,.lj-start,.lj-klaarknop{flex:0 0 auto;min-width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:calc(14px * var(--t));
+  color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent);font-variant-numeric:tabular-nums}
+.lj-plus{padding:0 10px}
+.lj-plus:active,.lj-start:active,.lj-klaarknop:active{transform:scale(.94)}
+.lj-start svg,.lj-klaarknop svg{width:17px;height:17px}
+.lj-rechtsinfo{flex:0 0 auto;text-align:right;color:var(--muted);font-size:calc(12px * var(--t))}
+
+/* Sterren */
+.lj-sterren{display:inline-flex;gap:1px;font-size:calc(13px * var(--t));line-height:1;vertical-align:-1px;white-space:nowrap}
+.lj-s{color:var(--line2)}
+.lj-s.vol{color:var(--amber)}
+.lj-s.half{background:linear-gradient(90deg,var(--amber) 50%,var(--line2) 50%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lj-sterinvoer{display:inline-flex;align-items:center;gap:2px}
+.lj-sterinvoer .lj-s{width:44px;height:44px;font-size:30px;line-height:44px;border-radius:10px;text-align:center}
+.lj-sterinvoer .lj-s:active{transform:scale(.9)}
+.lj-sterwaarde{margin-left:8px;font-weight:800;font-size:calc(15px * var(--t));color:var(--muted);font-variant-numeric:tabular-nums;min-width:28px}
+
+/* Lijstjes-raster */
+.lj-lijstgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.lj-lijstkaart{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px;text-align:left;min-height:118px}
+.lj-lijstico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;margin-bottom:6px;color:var(--mk);background:color-mix(in srgb,var(--mk) 13%,transparent)}
+.lj-lijstico svg{width:20px;height:20px}
+.lj-lijstnaam{font-weight:700;font-size:calc(15px * var(--t));overflow-wrap:anywhere}
+.lj-lijstsub{font-size:calc(12px * var(--t));color:var(--muted)}
+.lj-nieuwkaart{align-items:center;justify-content:center;border:1.5px dashed var(--line2);border-radius:18px;color:var(--muted)}
+.lj-nieuwkaart svg{width:22px;height:22px;margin-bottom:4px}
+
+/* Hulpjes (één rijvorm) */
+.lj-hulp{overflow:hidden}
+.lj-hulp > button{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);min-height:58px}
+.lj-hulp > button:last-child{border-bottom:0}
+.lj-hulp > button > svg:first-child{width:20px;height:20px;color:var(--accent);flex:0 0 auto}
+.lj-hulp span{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.lj-hulp b{font-size:calc(14.5px * var(--t))}
+.lj-hulp small{font-size:calc(12.5px * var(--t));color:var(--muted);line-height:1.35}
+.lj-tel{font-style:normal;display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--amber);color:#fff;font-size:11px;margin-left:4px;vertical-align:1px}
+
+/* Snel loggen */
+.lj-snel{padding:12px;display:flex;flex-direction:column;gap:8px}
+.lj-preview{display:flex;flex-wrap:wrap;gap:5px;min-height:0}
+.lj-preview:empty{display:none}
+.lj-pchip{display:inline-flex;align-items:center;gap:4px;font-size:calc(12px * var(--t));padding:3px 8px;border-radius:8px;background:var(--card2);color:var(--muted);font-weight:600}
+.lj-pchip.titel{color:var(--text)}
+.lj-pchip.status{color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.lj-snelhulp{font-size:calc(12.5px * var(--t));color:var(--muted)}
+.lj-snelhulp summary{cursor:pointer;min-height:32px;display:flex;align-items:center;font-weight:650}
+.lj-snelhulp p{margin:2px 0 4px;line-height:1.5}
+.lj-status{margin:12px 0 4px}
+.lj-status .keuze,.lj-tagrij .keuze{flex:0 0 auto;white-space:nowrap}
+.lj-balk2{display:flex;flex-direction:column;gap:8px;margin:6px 0 10px}
+.lj-sortlabel{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;color:var(--muted);font-size:calc(13px * var(--t));min-height:36px}
+.lj-sortlabel select{background:transparent;border:0;color:var(--text);font:inherit;font-weight:650}
+
+/* Detail */
+.lj-hero{display:grid;place-items:center;height:120px;border-radius:20px;background:var(--card2);overflow:hidden;margin-top:6px}
+.lj-hero.met{height:auto;max-height:340px;background:none}
+.lj-hero img{width:100%;max-height:340px;object-fit:cover}
+.lj-heroico{color:var(--accent)}
+.lj-heroico svg{width:54px;height:54px}
+.lj-heroico .lj-emoji{font-size:56px}
+.lj-kop{margin:14px 2px 10px}
+.lj-titel{font-size:calc(22px * var(--t));font-weight:800;letter-spacing:-.02em;line-height:1.2;overflow-wrap:anywhere}
+.lj-seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card2)}
+.lj-seg button{min-height:40px;border-radius:10px;font-size:calc(12px * var(--t));font-weight:650;color:var(--muted);line-height:1.2;padding:2px 4px}
+.lj-seg button[aria-checked="true"]{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lj-hoofd{margin:12px 0}
+.lj-oordeel{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.lj-oordeelkop{display:flex;flex-direction:column;gap:4px}
+.lj-citaat{margin:0;padding:6px 0 6px 12px;border-left:3px solid var(--accent);font-style:italic;color:var(--text);white-space:pre-wrap}
+.lj-oordeel .knop{align-self:flex-start}
+.lj-voortgang{margin-top:10px}
+.lj-vgkop{display:flex;justify-content:space-between;align-items:baseline;font-variant-numeric:tabular-nums}
+.lj-vgkop span{color:var(--muted);font-weight:700}
+.lj-feiten{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.lj-feiten div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.lj-feiten span{font-size:calc(11.5px * var(--t));color:var(--muted)}
+.lj-feiten b{font-size:calc(13.5px * var(--t));overflow-wrap:anywhere}
+.lj-keer{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:calc(13.5px * var(--t))}
+.lj-afbveld{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.lj-afbveld img,.lj-afbveld > span{width:58px;height:80px;border-radius:10px;object-fit:cover;background:var(--card2);display:grid;place-items:center;color:var(--accent);flex:0 0 auto}
+.lj-afbveld > span svg{width:24px;height:24px}
+
+/* Wat nu? */
+.lj-rad{margin-top:6px;min-height:40px}
+.lj-rol{height:74px;display:grid;place-items:center;border-radius:16px;background:var(--card2);overflow:hidden}
+.lj-rol span{font-weight:800;font-size:calc(19px * var(--t));text-align:center;padding:0 14px;line-height:1.25}
+.lj-rol span.tik{animation:lj-tik .14s ease-out}
+@keyframes lj-tik{from{transform:translateY(-60%);opacity:.2}to{transform:none;opacity:1}}
+.lj-keuze{display:flex;flex-direction:column;gap:12px;animation:lj-in .4s cubic-bezier(.22,1,.36,1)}
+.lj-keuzekop{display:flex;gap:12px;align-items:center}
+.lj-keuzekop > div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lj-keuzetitel{font-size:calc(18px * var(--t));line-height:1.25;overflow-wrap:anywhere}
+.lj-redenen{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lj-redenen li{display:flex;gap:8px;align-items:flex-start;font-size:calc(13.5px * var(--t));line-height:1.4}
+.lj-redenen svg{flex:0 0 auto;color:var(--green);margin-top:3px}
+
+/* Duels */
+.lj-duelvraag{text-align:center;font-weight:700;margin:4px 0 12px}
+.lj-duel{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:stretch}
+.lj-duelkaart{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 10px;text-align:center;transition:transform .2s,box-shadow .2s}
+.lj-duelkaart .lj-duim{width:72px;height:100px;border-radius:12px}
+.lj-duelkaart b{font-size:calc(14.5px * var(--t));line-height:1.25;overflow-wrap:anywhere}
+.lj-duelkaart:active{transform:scale(.97)}
+.lj-duelkaart.wint{transform:scale(1.04);box-shadow:0 0 0 2px var(--accent)}
+.lj-vs{align-self:center;font-weight:800;color:var(--faint);font-size:calc(12px * var(--t))}
+.lj-duelteller{height:4px;border-radius:2px;background:var(--line);margin-top:14px;overflow:hidden}
+.lj-duelteller span{display:block;height:100%;background:var(--accent);transition:width .3s}
+.lj-top{margin:0 0 12px;padding-left:24px;display:flex;flex-direction:column;gap:6px}
+.lj-top li{font-size:calc(14px * var(--t))}
+.lj-top li span{font-weight:650;margin-right:6px}
+.lj-inzicht{display:flex;gap:8px;align-items:flex-start;font-size:calc(13.5px * var(--t));line-height:1.4;margin:0 0 10px}
+.lj-inzicht svg{flex:0 0 auto;color:var(--accent);margin-top:2px}
+
+/* Opruimen */
+.lj-stapel{display:grid;place-items:center;padding:6px 0;touch-action:none}
+.lj-ruimkaart{position:relative;width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 16px;text-align:center;
+  transition:transform .25s cubic-bezier(.22,1,.36,1),opacity .25s;touch-action:none;user-select:none;-webkit-user-select:none}
+.lj-ruimkaart .lj-duim{width:80px;height:112px;border-radius:12px}
+.lj-ruimkaart b{font-size:calc(18px * var(--t));line-height:1.25}
+.lj-veeg{position:absolute;top:14px;font-weight:800;font-size:12px;padding:3px 8px;border-radius:8px;opacity:0;transition:opacity .15s;pointer-events:none}
+.lj-veeg.weg{right:14px;color:var(--red);border:2px solid var(--red)}
+.lj-veeg.houd{left:14px;color:var(--green);border:2px solid var(--green)}
+.lj-veeg.graag{left:50%;transform:translateX(-50%);color:var(--accent);border:2px solid var(--accent)}
+.lj-ruimkaart[data-richting="weg"] .lj-veeg.weg,.lj-ruimkaart[data-richting="houd"] .lj-veeg.houd,.lj-ruimkaart[data-richting="graag"] .lj-veeg.graag{opacity:1}
+.lj-ruimkaart.uit-weg{transform:translateX(-120%) rotate(-12deg);opacity:0}
+.lj-ruimkaart.uit-houd{transform:translateX(120%) rotate(12deg);opacity:0}
+.lj-ruimkaart.uit-graag{transform:translateY(-120%);opacity:0}
+.lj-ruimknoppen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.lj-ruimknoppen .knop{padding-left:6px;padding-right:6px;font-size:calc(13px * var(--t))}
+.lj-ruimklaar{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:16px 0}
+.lj-ruimklaar b{font-size:calc(18px * var(--t))}
+
+/* Jouw jaar */
+.lj-maanden{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;height:130px;align-items:end}
+.lj-maand{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px}
+.lj-maand i{display:block;width:100%;max-width:18px;min-height:2px;border-radius:4px 4px 2px 2px;background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.lj-maand.nu i{background:var(--accent)}
+.lj-maand.later i{background:var(--line)}
+.lj-maand small{font-size:10.5px;color:var(--faint);text-transform:uppercase}
+.lj-maandn{font-size:10.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;min-height:13px}
+.lj-hoogte{overflow:hidden}
+.lj-hoogte > div{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--line)}
+.lj-hoogte > div:last-child{border-bottom:0}
+.lj-hoogte svg{flex:0 0 auto;margin-top:2px}
+.lj-hoogte > div > span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lj-hoogte small{font-size:calc(12px * var(--t));color:var(--muted)}
+.lj-hoogte b{font-size:calc(14.5px * var(--t));overflow-wrap:anywhere}
+.lj-smaak{display:flex;flex-direction:column;gap:8px}
+.lj-smaak div{display:grid;grid-template-columns:minmax(0,110px) minmax(0,1fr) 28px;gap:8px;align-items:center;font-size:calc(13px * var(--t))}
+.lj-smaak span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650}
+.lj-smaak i{display:block;height:8px;border-radius:4px;background:var(--accent)}
+.lj-smaak b{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.lj-perlijst{padding:10px 14px;min-height:48px;border-bottom:1px solid var(--line);width:100%}
+.lj-perlijst svg{color:var(--accent)}
+.lj-perlijst:last-child{border-bottom:0}
+
+/* Delen */
+.lj-deelopties{display:flex;flex-direction:column;gap:8px}
+.lj-deelopties .card{display:flex;align-items:center;gap:12px;padding:12px 14px;text-align:left;width:100%}
+.lj-deelopties svg{width:20px;height:20px;color:var(--accent);flex:0 0 auto}
+.lj-deelopties span{display:flex;flex-direction:column;gap:1px}
+.lj-deelopties small{color:var(--muted);font-size:calc(12.5px * var(--t))}

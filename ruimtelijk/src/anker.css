@@ -1,0 +1,191 @@
+/* Anker-kleur alleen in de speler (sessie); de rest van Anker volgt de accentkleur. */
+:root{--mf-k:var(--accent)}
+#mf-speler,.mf-speler{--mf-k:#2f6d94}
+/* === SECTIE 73: ANKER – VORMGEVING ===
+   Volgt de variabelen en onderdelen van de app. Tikdoelen minimaal 48px.
+   Lettergrootte: .mf-l-normaal / .mf-l-groot / .mf-l-extra (--mf-f). */
+.mf-l-normaal{--mf-f:1}
+.mf-l-groot{--mf-f:1.18}
+.mf-l-extra{--mf-f:1.38}
+.mf-scherm{font-size:calc(15px * var(--t) * var(--mf-f,1));line-height:1.5}
+.mf-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mf-titel{font-size:calc(22px * var(--t) * var(--mf-f,1));font-weight:800;letter-spacing:-.01em;margin:6px 2px 6px;line-height:1.25}
+.mf-vet{font-weight:700;margin:0 2px 14px}
+.mf-kop3{font-size:calc(15px * var(--t) * var(--mf-f,1));font-weight:750;margin:18px 2px 8px}
+.mf-klein{font-size:calc(13px * var(--t) * var(--mf-f,1));color:var(--muted);margin:6px 2px}
+.mf-voet{font-size:calc(12.5px * var(--t) * var(--mf-f,1));color:var(--muted);margin:16px 2px;text-align:center}
+.mf-link{color:var(--accent);font-weight:650;min-height:48px;padding:0 2px;text-decoration:underline;text-underline-offset:3px}
+.mf-blok p{margin:0 0 8px}
+.mf-blok p:last-child{margin-bottom:0}
+.mf-blok .mf-kop3{margin-top:0}
+.mf-verder{margin-top:6px}
+/* De grote knop: één tik naar rust */
+.mf-snelknop{display:flex;align-items:center;justify-content:center;width:100%;min-height:72px;border-radius:20px;margin:6px 0 10px;
+  background:var(--mf-k);color:#fff;font-size:calc(18px * var(--t) * var(--mf-f,1));font-weight:750;box-shadow:0 6px 0 0 color-mix(in srgb,var(--mf-k) 70%,#000),0 10px 20px -6px color-mix(in srgb,var(--mf-k) 50%,transparent);
+  transition:transform .1s,box-shadow .1s}
+.mf-snelknop:active{transform:translateY(4px);box-shadow:0 2px 0 0 #1f4d69}
+.mf-rij{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mf-rij .knop{min-height:48px}
+.mf-profielchip{display:block;margin:12px auto 0;min-height:48px;padding:0 16px;border-radius:999px;background:var(--card2);color:var(--text);font-weight:600;font-size:calc(13.5px * var(--t) * var(--mf-f,1))}
+.mf-week{text-align:center;color:var(--muted);margin:6px 0 4px;font-size:calc(13.5px * var(--t) * var(--mf-f,1))}
+/* Profielen */
+.mf-profielen{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mf-profiel{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;min-height:56px;padding:12px 14px;border-radius:16px;border:2px solid var(--line);background:var(--card)}
+.mf-profiel b{font-size:calc(15px * var(--t) * var(--mf-f,1))}
+.mf-profiel span{color:var(--muted);font-size:calc(13px * var(--t) * var(--mf-f,1))}
+.mf-profiel.aan,.mf-profiel[aria-pressed="true"]{border-color:var(--mf-k);background:color-mix(in srgb,var(--mf-k) 9%,var(--card))}
+.mf-overslaan{min-height:48px}
+/* Oefeningkaarten */
+.mf-oefenlijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mf-oef{background:var(--card);border-radius:16px;box-shadow:var(--shadow);display:flex;align-items:stretch;overflow:hidden}
+.mf-oefhoofd{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px 10px 12px 14px;min-height:64px}
+.mf-oefhoofd b{font-size:calc(15.5px * var(--t) * var(--mf-f,1))}
+.mf-oefwat{font-size:calc(13.5px * var(--t) * var(--mf-f,1));color:var(--text)}
+.mf-oefmeta{font-size:calc(12.5px * var(--t) * var(--mf-f,1));color:var(--muted)}
+.mf-oefknoppen{display:flex;align-items:center;gap:2px;padding:0 6px 0 0;flex-wrap:wrap;justify-content:flex-end;max-width:52%}
+.mf-duur,.mf-fav{min-width:48px;min-height:48px;border-radius:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.mf-duur{background:var(--card2);min-width:44px;margin:2px}
+.mf-fav{font-size:22px;color:#b7791f}
+.mf-fav[aria-pressed="false"]{color:var(--faint)}
+/* Menu en programma */
+.mf-menu{list-style:none;margin:14px 0 0;padding:0;background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.mf-menu button{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:0 14px;text-align:left;border-bottom:1px solid var(--line);font-size:calc(15px * var(--t) * var(--mf-f,1))}
+.mf-menu li:last-child button{border-bottom:0}
+.mf-menu svg{width:20px;height:20px;color:var(--muted);flex:0 0 auto}
+.mf-prog .knop{min-height:48px;margin:4px 0 10px}
+.mf-prog p{margin:0 0 10px}
+.mf-progdagen{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.mf-progdagen li{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:calc(13.5px * var(--t) * var(--mf-f,1))}
+.mf-progdagen li>span:first-child{width:24px;height:24px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto}
+.mf-progdagen li.af>span:first-child{background:var(--mf-k);color:#fff}
+.mf-progdagen li.nu{color:var(--text);font-weight:700}
+.mf-progdagen li.nu>span:first-child{border:2px solid var(--mf-k);background:transparent}
+/* Help me kiezen */
+.mf-vraag{border:0;margin:0 0 14px;padding:0}
+.mf-vraag legend{font-weight:700;margin:0 2px 8px;padding:0;font-size:calc(15px * var(--t) * var(--mf-f,1))}
+.mf-chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.mf-chip{min-height:48px;min-width:48px;padding:0 14px;border-radius:14px;border:2px solid var(--line);background:var(--card);font-weight:650}
+.mf-chip[aria-pressed="true"]{border-color:var(--mf-k);background:color-mix(in srgb,var(--mf-k) 12%,var(--card))}
+.mf-sla{color:var(--muted)}
+/* Jouw ervaring */
+.mf-tegels{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mf-tegels li{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px 8px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
+.mf-tegels b{font-size:calc(20px * var(--t) * var(--mf-f,1));font-variant-numeric:tabular-nums}
+.mf-tegels span{font-size:calc(11.5px * var(--t) * var(--mf-f,1));color:var(--muted);line-height:1.3}
+.mf-top{margin:0;padding-left:22px}
+.mf-top li{padding:6px 0;border-bottom:1px solid var(--line)}
+.mf-top li span{display:inline-block;min-width:60%}
+.mf-legenda{list-style:none;margin:0 2px 8px;padding:0;display:flex;gap:14px;font-size:calc(12px * var(--t));color:var(--muted)}
+.mf-legenda i,.mf-vbalk i{display:inline-block}
+.mf-legenda i{width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.mf-legenda i.b,.mf-vbalk i.b{background:var(--mf-k)}
+.mf-legenda i.h,.mf-vbalk i.h{background:var(--line2)}
+.mf-legenda i.r,.mf-vbalk i.r{background:#c2692d}
+.mf-verdeling{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.mf-verdeling li{display:flex;flex-direction:column;gap:3px}
+.mf-vnaam{font-weight:650}
+.mf-vbalk{display:flex;gap:2px;height:12px;border-radius:5px;overflow:hidden;background:var(--card)}
+.mf-vbalk i{height:100%}
+.mf-vtekst{font-size:calc(12.5px * var(--t) * var(--mf-f,1));color:var(--muted)}
+/* Instellingen */
+.mf-schakels{list-style:none;padding:0 14px}
+.mf-schakels .schakel{min-height:56px}
+.mf-schakels .toggle{min-width:52px;min-height:32px}
+.mf-uitgezet{opacity:.5}
+.mf-veld{display:flex;flex-direction:column;gap:6px;margin:0 0 10px}
+.mf-veld>span{font-weight:650;font-size:calc(13.5px * var(--t) * var(--mf-f,1))}
+.mf-seg button{min-height:48px}
+.mf-herinneringen{list-style:none;padding:0 6px 0 14px}
+.mf-herinneringen li{display:flex;align-items:center;justify-content:space-between;min-height:52px;border-bottom:1px solid var(--line)}
+.mf-herinneringen li:last-child{border-bottom:0}
+.mf-herinneringen .icon-btn{min-width:48px;min-height:48px}
+.mf-nieuweherinnering .knop{min-height:48px}
+.mf-veilig a{color:var(--accent);font-weight:700}
+.mf-bronnen{padding-left:22px}
+.mf-bronnen li{margin:0 0 14px}
+.mf-bronnen li>b{display:block}
+.mf-bronnen p{margin:4px 0}
+.mf-wel,.mf-niet{font-weight:700}
+/* Knoppen in Rookvrij, Financieel en Werk */
+.mf-pauzeknop{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:10px 14px;margin:10px 0;border-radius:16px;background:var(--card);box-shadow:var(--shadow);text-align:left}
+.mf-pauzeknop b{display:block;font-size:calc(15px * var(--t))}
+.mf-pauzeknop small{color:var(--muted);font-size:calc(12.5px * var(--t))}
+.mf-pauzeicoon{width:36px;height:36px;border-radius:50%;background:color-mix(in srgb,var(--mf-k) 14%,transparent);display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 auto}
+.mf-tegel{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+
+/* ---------- De sessiespeler (over de hele app heen) ---------- */
+html.mf-sessie-open,html.mf-sessie-open body{overflow:hidden}
+.mf-speler{position:fixed;inset:0;z-index:95;background:var(--bg);color:var(--text);display:flex;flex-direction:column;
+  padding:calc(var(--safe-t, 0px) + 8px) 16px calc(env(safe-area-inset-bottom, 0px) + 14px);font-size:calc(17px * var(--mf-f,1));overscroll-behavior:contain;touch-action:manipulation}
+.mf-kop{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px}
+.mf-kopnaam{font-weight:700;color:var(--muted);font-size:calc(14px * var(--mf-f,1));min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mf-stop{min-width:72px;min-height:48px;padding:0 16px;border-radius:14px;background:var(--card);border:2px solid var(--line2);font-weight:750;color:var(--text);flex:0 0 auto}
+.mf-voortgang{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:6px 0 0}
+.mf-voortgang i{display:block;height:100%;width:0;background:var(--mf-k);transition:width .2s linear}
+.mf-stil .mf-voortgang i{transition:none}
+.mf-midden{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;min-height:0;text-align:center}
+.mf-stap{font-size:calc(24px * var(--mf-f,1));font-weight:700;line-height:1.35;margin:0;max-width:22em;min-height:2.7em;display:flex;align-items:center;justify-content:center}
+.mf-onder{display:flex;align-items:center;gap:10px}
+.mf-tijd{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:650}
+.mf-knop{min-height:52px;min-width:52px;padding:0 18px;border-radius:16px;background:var(--card);border:2px solid var(--line);font-weight:700;font-size:calc(16px * var(--mf-f,1));color:var(--text)}
+.mf-knop.hoofd{background:var(--mf-k);border-color:var(--mf-k);color:#fff}
+.mf-knop.groot{min-height:88px;width:min(100%,340px);font-size:calc(19px * var(--mf-f,1))}
+.mf-knop[aria-pressed="true"]{border-color:var(--mf-k)}
+.mf-knoppen{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px;margin:8px auto 0}
+/* Ademcirkel: schaalt met transform (animatie uit = geen overgang, alleen tekst) */
+.mf-adem{display:flex;flex-direction:column;align-items:center;gap:14px}
+.mf-cirkel{width:min(62vw,250px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%,color-mix(in srgb,#5fa8d3 55%,var(--card)),color-mix(in srgb,var(--mf-k) 70%,var(--card)));
+  box-shadow:0 0 0 10px color-mix(in srgb,var(--mf-k) 12%,transparent);transform:scale(.55);transition-property:transform;transition-timing-function:ease-in-out}
+.mf-cirkelwoord{color:#fff;font-weight:800;font-size:calc(22px * var(--mf-f,1));text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.mf-ademtekst{display:none;flex-direction:column;align-items:center}
+.mf-ademwoord{font-size:calc(40px * var(--mf-f,1));font-weight:800}
+.mf-ademtel{font-size:calc(22px * var(--mf-f,1));color:var(--muted);font-variant-numeric:tabular-nums}
+.mf-stil .mf-cirkel{display:none}
+.mf-stil .mf-ademtekst{display:flex}
+.mf-pauze .mf-cirkel{transition-duration:0s !important}
+/* Teller, labels, keuzes, schuif */
+.mf-teller{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.mf-telgetal{font-size:calc(72px * var(--mf-f,1));font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.mf-labels,.mf-keuzes{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:420px}
+.mf-label{min-height:56px;min-width:96px;padding:6px 14px;border-radius:16px;background:var(--card);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mf-label b{font-size:calc(16px * var(--mf-f,1))}
+.mf-labeltel{font-size:calc(13px * var(--mf-f,1));color:var(--muted);font-variant-numeric:tabular-nums}
+.mf-kies{min-height:48px;padding:0 16px;border-radius:14px;background:var(--card);border:2px solid var(--line);font-weight:650;font-size:calc(15px * var(--mf-f,1))}
+.mf-kies[aria-pressed="true"]{border-color:var(--mf-k);background:color-mix(in srgb,var(--mf-k) 14%,var(--card))}
+.mf-schuif{width:min(100%,360px)}
+.mf-schuif input{width:100%;height:48px;accent-color:var(--mf-k)}
+.mf-schuifwaarden{display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
+.mf-schuifnu{font-size:calc(26px * var(--mf-f,1));color:var(--text)}
+.mf-hint{color:var(--muted);font-size:calc(15px * var(--mf-f,1))}
+.mf-stapvak,.mf-golfvak{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+/* Voorscherm, afronding en tips */
+.mf-voor{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;overflow-y:auto;padding:10px 0}
+.mf-voortitel{font-size:calc(24px * var(--mf-f,1));margin:0;text-align:center}
+.mf-voortekst{text-align:center;margin:0 auto;max-width:28em;color:var(--text)}
+.mf-keuzelijst{list-style:none;margin:0 auto;padding:0;display:flex;flex-direction:column;gap:8px;width:100%;max-width:360px}
+.mf-keuzelijst.drie{flex-direction:row}
+.mf-keuzelijst.drie li{flex:1}
+.mf-keuze{width:100%;min-height:56px;border-radius:16px;border:2px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 10px}
+.mf-keuze span{color:var(--muted);font-size:calc(14px * var(--mf-f,1))}
+.mf-keuze.aan,.mf-keuze[aria-pressed="true"]{border-color:var(--mf-k);background:color-mix(in srgb,var(--mf-k) 12%,var(--card))}
+.mf-notitielabel{font-size:calc(14px * var(--mf-f,1));color:var(--muted);margin:4px auto 0;max-width:360px;width:100%}
+.mf-notitie{width:100%;max-width:360px;margin:0 auto;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--text);font:inherit;padding:10px 12px;min-height:56px}
+.mf-deel{margin:4px auto 0;min-height:48px;color:var(--accent);font-weight:650}
+.mf-uitkomst{background:var(--card);border-radius:16px;padding:12px 14px;max-width:360px;width:100%;margin:0 auto}
+.mf-uitkomst ul{list-style:none;margin:6px 0;padding:0}
+.mf-uitkomst li{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line)}
+.mf-golf{width:100%;height:auto}
+.mf-golfas{stroke:var(--line2);stroke-width:1}
+.mf-golflijn{fill:none;stroke:var(--mf-k);stroke-width:2.5;stroke-linejoin:round}
+.mf-golfpunt{fill:var(--mf-k);stroke:var(--card);stroke-width:2}
+.mf-golf text{font-size:11px;font-weight:700;fill:var(--text)}
+.mf-kaartje{background:var(--card);border-radius:16px;padding:14px;max-width:360px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.mf-kaartje p{margin:0}
+.mf-kaartje.zacht{background:color-mix(in srgb,var(--mf-k) 10%,var(--card))}
+@media (prefers-reduced-motion:reduce){.mf-cirkel{transition:none !important}.mf-snelknop{transition:none}}
+
+/* Nieuwe ademoefeningen: vasthouden, tip en bronnen per soort */
+.mf-cirkel.vast{box-shadow:0 0 0 6px color-mix(in srgb,var(--mf-k) 22%,transparent)}
+.mf-ademtip{text-align:center;margin:14px auto 0;max-width:30ch}
+.mf-bronkop{font-size:calc(18px * var(--mf-f,1));margin:26px 0 4px}

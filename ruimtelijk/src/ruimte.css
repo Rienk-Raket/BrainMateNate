@@ -1,0 +1,342 @@
+/* ==========================================================================
+   50. Ruimtelijke laag v4 — FutureMe Spatial Experience
+   Specificatie: docs/spatial/futureme-spatial-specificatie-v4.md
+   Actief zolang html[data-ruimte="1"]. Bewegingsniveau via html[data-beweging]
+   ("vol" | "rustig"). Uit bij prikkelarme modus en bij prefers-reduced-motion
+   (de basisstijl zet dan alle animaties en overgangen uit).
+   Adaptief budget: html[data-budget="licht"] haalt de zwaarste effecten weg
+   als het toestel tijdens overgangen frames verliest.
+   ========================================================================== */
+@property --p{syntax:"<number>";inherits:false;initial-value:0}
+@property --fm-hover{syntax:"<number>";inherits:false;initial-value:0}
+
+/* ---------- 1. Tokens (lichte basis) ---------- */
+html[data-ruimte="1"]{
+  /* Glas */
+  --fm-glas:color-mix(in srgb,var(--card) 74%,transparent);
+  --fm-glas-sterk:color-mix(in srgb,var(--card) 86%,transparent);
+  --fm-rand:rgba(255,255,255,.62);
+  --fm-glans:rgba(255,255,255,.85);
+  --fm-schaduw:0 1px 2px rgba(16,18,22,.05),0 16px 36px -16px rgba(16,18,22,.24);
+  --fm-schaduw-diep:0 2px 6px rgba(16,18,22,.08),0 28px 60px -22px rgba(16,18,22,.34);
+  --fm-gloed:color-mix(in srgb,var(--accent) 38%,transparent);
+  --fm-tik:color-mix(in srgb,var(--accent) 28%,transparent);
+  --fm-spec:rgba(255,255,255,.55);
+  /* Achtergrond (aurora) */
+  --fm-blob:.2;
+  --fm-energie:0;
+  --fm-a1:var(--accent);--fm-a2:var(--purple);--fm-a3:var(--green);--fm-a4:#22d3ee;
+  /* Beweging */
+  --fm-ease:cubic-bezier(.22,1,.36,1);
+  --fm-veer:cubic-bezier(.2,.9,.25,1.25);
+  --fm-veer-zacht:cubic-bezier(.22,1,.36,1);
+  --fm-d-druk:180ms;--fm-d-tab:420ms;--fm-d-scherm:460ms;--fm-d-lijst:500ms;--fm-d-data:900ms;
+  /* Diepte (z-lagen) */
+  --fm-z-achter:0;--fm-z-inhoud:1;--fm-z-nav:40;--fm-z-blad:60;--fm-z-focus:200;
+  /* Zwevende onderbalk */
+  --fm-nav-onder:max(10px,calc(var(--safe-b) - 4px));
+  --navh:calc(58px + var(--fm-nav-onder) + 6px);
+  /* Aliassen voor modules die de v3-namen gebruiken */
+  --rt-ease:var(--fm-ease);--rt-veer:var(--fm-veer);--rt-gloed:var(--fm-gloed);--rt-tik:var(--fm-tik);
+}
+/* Veren als echte veercurve waar linear() werkt (Safari 17.2+, Chrome 113+, Firefox 112+). */
+@supports (transition-timing-function:linear(0,1)){
+  html[data-ruimte="1"]{
+    --fm-veer:linear(0, 0.076, 0.254, 0.471, 0.682, 0.859, 0.99, 1.074, 1.116, 1.126, 1.115, 1.091, 1.064, 1.038, 1.016, 1, 0.99, 0.985, 0.984, 0.986, 0.989, 0.992, 0.996, 0.998, 1, 1.001, 1);
+    --fm-veer-zacht:linear(0, 0.081, 0.255, 0.449, 0.624, 0.765, 0.869, 0.939, 0.982, 1.006, 1.017, 1.02, 1.018, 1.015, 1.011, 1.008, 1.005, 1.003, 1.001, 1);
+  }
+}
+/* Donker */
+@media (prefers-color-scheme:dark){
+  html[data-ruimte="1"]:not([data-thema="licht"]){
+    --fm-rand:rgba(255,255,255,.08);--fm-glans:rgba(255,255,255,.12);
+    --fm-schaduw:0 1px 2px rgba(0,0,0,.5),0 20px 44px -18px rgba(0,0,0,.75);
+    --fm-schaduw-diep:0 2px 8px rgba(0,0,0,.55),0 32px 70px -24px rgba(0,0,0,.85);
+    --fm-tik:rgba(255,255,255,.22);--fm-spec:rgba(255,255,255,.16);--fm-blob:.3;
+  }
+}
+html[data-ruimte="1"][data-thema="donker"]{
+  --fm-rand:rgba(255,255,255,.08);--fm-glans:rgba(255,255,255,.12);
+  --fm-schaduw:0 1px 2px rgba(0,0,0,.5),0 20px 44px -18px rgba(0,0,0,.75);
+  --fm-schaduw-diep:0 2px 8px rgba(0,0,0,.55),0 32px 70px -24px rgba(0,0,0,.85);
+  --fm-tik:rgba(255,255,255,.22);--fm-spec:rgba(255,255,255,.16);--fm-blob:.3;
+}
+/* Rustig: kortere, vlakkere beweging zonder veren. */
+html[data-ruimte="1"][data-beweging="rustig"]{
+  --fm-veer:var(--fm-ease);--fm-veer-zacht:var(--fm-ease);
+  --fm-d-tab:220ms;--fm-d-scherm:240ms;--fm-d-lijst:260ms;--fm-d-data:400ms;
+}
+
+/* ---------- 2. Achtergrond: aurora die meeleeft met dagdeel en voortgang ---------- */
+html[data-ruimte="1"][data-dagdeel="ochtend"]{--fm-a1:#f59e0b;--fm-a2:var(--accent);--fm-a4:#fb7185}
+html[data-ruimte="1"][data-dagdeel="middag"]{--fm-a1:var(--accent);--fm-a2:var(--purple);--fm-a4:#22d3ee}
+html[data-ruimte="1"][data-dagdeel="avond"]{--fm-a1:#f97316;--fm-a2:var(--purple);--fm-a4:#ec4899}
+html[data-ruimte="1"][data-dagdeel="nacht"]{--fm-a1:#6366f1;--fm-a2:#312e81;--fm-a4:#0ea5e9;--fm-blob:.22}
+
+#rt-achtergrond{
+  position:fixed;inset:-12%;z-index:var(--fm-z-achter,0);pointer-events:none;overflow:hidden;
+  transform:translate3d(var(--rt-px,0px),calc(var(--rt-py,0px) + var(--rt-scroll,0px)),0);
+  transition:transform .7s var(--fm-ease);
+}
+#rt-achtergrond i{
+  position:absolute;width:74vmax;height:74vmax;border-radius:50%;opacity:var(--fm-blob);
+  background:radial-gradient(circle at 50% 50%,var(--rt-k) 0%,transparent 62%);
+  will-change:transform;animation:rt-drijf var(--rt-dur,46s) ease-in-out infinite alternate;
+  transition:opacity 1.6s var(--fm-ease);
+}
+#rt-achtergrond i:nth-child(1){--rt-k:var(--fm-a1);left:-22vmax;top:-20vmax;--rt-dur:46s}
+#rt-achtergrond i:nth-child(2){--rt-k:var(--fm-a2);right:-26vmax;top:16%;--rt-dur:58s;animation-delay:-21s}
+/* Het groene veld groeit mee met wat je vandaag afrondt (--fm-energie 0…1). */
+#rt-achtergrond i:nth-child(3){--rt-k:var(--fm-a3);left:6%;bottom:-32vmax;--rt-dur:52s;animation-delay:-37s;
+  opacity:calc(var(--fm-blob) * (.45 + var(--fm-energie) * 1.1))}
+#rt-achtergrond i:nth-child(4){--rt-k:var(--fm-a4);right:-30vmax;bottom:-10vmax;width:52vmax;height:52vmax;--rt-dur:64s;animation-delay:-12s;opacity:calc(var(--fm-blob) * .7)}
+/* Korrel: voorkomt kleurbanden in de verlopen (statisch, geen animatie). */
+#rt-achtergrond::after{
+  content:"";position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@keyframes rt-drijf{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(9vmax,-6vmax,0) scale(1.12)}
+  100%{transform:translate3d(-7vmax,8vmax,0) scale(.94)}
+}
+html[data-ruimte="1"][data-beweging="rustig"] #rt-achtergrond i,
+html[data-budget="licht"] #rt-achtergrond i,
+html[data-verborgen="1"] #rt-achtergrond i{animation-play-state:paused}
+
+/* ---------- 3. De app-laag ---------- */
+html[data-ruimte="1"] #app{
+  position:relative;z-index:var(--fm-z-inhoud);
+  transition:transform .36s var(--fm-ease),filter .36s var(--fm-ease),opacity .36s var(--fm-ease);
+}
+html[data-ruimte="1"][data-blad="1"] #app{transform:scale(.965) translateY(-3px);filter:blur(5px) saturate(.85);opacity:.8}
+
+html[data-ruimte="1"] header#top{
+  background:color-mix(in srgb,var(--bg) 70%,transparent);
+  backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);
+  box-shadow:inset 0 -1px 0 transparent;transition:box-shadow .3s;
+}
+html[data-ruimte="1"] header#top.scrolled{border-bottom-color:transparent;box-shadow:inset 0 -1px 0 var(--line),0 12px 32px -20px rgba(0,0,0,.35)}
+
+/* Zwevende onderbalk: een glazen eiland boven de thuisbalk. */
+html[data-ruimte="1"] nav#tabs{
+  left:0;right:0;margin:0 auto;bottom:var(--fm-nav-onder);width:min(560px,calc(100% - 20px));
+  padding:0 6px;border-radius:26px;
+  background:color-mix(in srgb,var(--bg) 78%,transparent);
+  backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  box-shadow:inset 0 1px 0 var(--fm-glans),var(--fm-schaduw-diep);
+}
+/* Zachte vervaging achter het eiland, zodat tekst eronder niet door de naden leest. */
+html[data-ruimte="1"] #app::after{
+  content:"";position:fixed;left:0;right:0;bottom:0;height:calc(var(--navh) + 18px);z-index:39;pointer-events:none;
+  background:linear-gradient(to bottom,transparent,color-mix(in srgb,var(--bg) 94%,transparent) 58%,var(--bg));
+}
+html[data-ruimte="1"] nav#tabs button.tab-plus{box-shadow:0 4px 0 0 color-mix(in srgb,var(--accent) 55%,#000),0 10px 22px -4px color-mix(in srgb,var(--accent) 65%,transparent),inset 0 1.5px 0 0 rgba(255,255,255,.4),0 0 0 4px color-mix(in srgb,var(--bg) 80%,transparent)}
+html[data-ruimte="1"] #timerbalk,html[data-ruimte="1"] #bulkbalk{
+  border-radius:20px;
+  backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+}
+
+/* Glazen panelen — via :where() zodat gekleurde varianten (.card.rood e.d.) blijven winnen. */
+html[data-ruimte="1"] :where(.card,.stat,.dagpaneel,.menu-kaart){
+  background-color:var(--fm-glas);
+  backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);
+  box-shadow:inset 0 1px 0 var(--fm-glans),inset 0 0 0 1px var(--fm-rand),var(--fm-schaduw);
+}
+html[data-budget="licht"][data-ruimte="1"] :where(.card,.stat,.dagpaneel,.menu-kaart){backdrop-filter:none;-webkit-backdrop-filter:none;background-color:var(--fm-glas-sterk)}
+html[data-ruimte="1"] :where(.segment){background:color-mix(in srgb,var(--card2) 72%,transparent)}
+html[data-ruimte="1"] :where(.knop){background:color-mix(in srgb,var(--card2) 82%,transparent)}
+html[data-ruimte="1"] :where(.invoer){background:color-mix(in srgb,var(--card2) 80%,transparent)}
+html[data-ruimte="1"] #scherm :where(.card){transform-origin:50% 0}
+
+/* Glanslicht dat de aanwijzer volgt (alleen muis/pen; op touch geen hover). */
+@media (hover:hover) and (pointer:fine){
+  html[data-ruimte="1"] :where(.card,.menu-kaart,.stat,.hs-kaart){
+    background-image:radial-gradient(220px 160px at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--fm-spec) calc(var(--fm-hover) * 100%),transparent),transparent 70%);
+    transition:--fm-hover .35s var(--fm-ease),transform .28s var(--fm-veer),box-shadow .28s var(--fm-ease);
+  }
+  html[data-ruimte="1"] :where(.card,.menu-kaart,.stat,.hs-kaart):hover{--fm-hover:1}
+  /* Kantelen richting de aanwijzer (max. 4°), niet tijdens indrukken. */
+  html[data-ruimte="1"][data-beweging="vol"]:not([data-budget="licht"]) :where(.knop3d,.menu-kaart,.hs-kaart,.stat):hover:not(:active){
+    transform:perspective(700px) rotateX(var(--fm-kx,0deg)) rotateY(var(--fm-ky,0deg)) translateZ(0);
+  }
+}
+
+/* ---------- 4. Knoppen: indrukken, veren, gloeien ---------- */
+html[data-ruimte="1"] :where(.knop,.icon-btn,.rijknop,.chip,.keuze,.segment button,.stat,.vink,.mini-vink,.sub-knop,.cijfers button,.menu-kaart,.dp-stat,.wk-tegel,.ug-cat,.hs-kaart){
+  transition:transform .28s var(--fm-veer),box-shadow .28s var(--fm-ease),background-color .2s,color .2s,opacity .2s,border-color .2s,--fm-hover .35s var(--fm-ease);
+}
+html[data-ruimte="1"] :where(.knop,.icon-btn,.chip,.keuze,.segment button,.sub-knop,.cijfers button,.ug-cat):active{transform:scale(.94);transition-duration:var(--fm-d-druk)}
+html[data-ruimte="1"] :where(.rijknop,.menu-kaart,.hs-kaart):active{transform:scale(.985)}
+html[data-ruimte="1"] :where(.stat,.dp-stat,.wk-tegel):active{transform:scale(.97)}
+html[data-ruimte="1"] :where(.vink,.mini-vink):active{transform:scale(.88)}
+html[data-ruimte="1"] .knop.primair{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 86%,#fff) 0%,var(--accent) 100%);
+  box-shadow:0 10px 24px -12px var(--accent),inset 0 1px 0 rgba(255,255,255,.3);
+}
+html[data-ruimte="1"] .knop.primair:active{box-shadow:0 4px 12px -8px var(--accent),inset 0 1px 0 rgba(255,255,255,.2)}
+html[data-ruimte="1"] .knop.rand{border-color:color-mix(in srgb,var(--line2) 80%,transparent);background:color-mix(in srgb,var(--card) 40%,transparent)}
+html[data-ruimte="1"] :where(.knop,.icon-btn,.rijknop,.chip,.keuze,.segment button,.menu-kaart,.toggle,.cijfers button):focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:0 0 0 6px var(--fm-gloed)}
+html[data-ruimte="1"] .knop3d{transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+html[data-ruimte="1"] .knop3d::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.28) 50%,transparent 68%);
+  transform:translateX(-130%);transition:transform .9s var(--fm-ease);
+}
+html[data-ruimte="1"] .knop3d:active::after{transform:translateX(130%);transition-duration:.55s}
+
+/* Lichtgloed vanuit het aanraakpunt */
+.rt-gloed{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none;z-index:2}
+.rt-gloed b{
+  position:absolute;border-radius:50%;transform:scale(0);opacity:1;
+  background:radial-gradient(circle,var(--fm-tik) 0%,color-mix(in srgb,var(--fm-tik) 40%,transparent) 32%,transparent 64%);
+  animation:rt-gloed .62s cubic-bezier(.2,.8,.2,1) forwards;
+}
+html[data-ruimte="1"] :where(.knop.primair,.knop3d,.tab-plus,.knop.gevaar,.ug-knop,.hs-kaart){--fm-tik:rgba(255,255,255,.55)}
+@keyframes rt-gloed{0%{transform:scale(0);opacity:1}70%{opacity:.7}100%{transform:scale(1);opacity:0}}
+
+/* ---------- 5. Onderbalk: actieve tab met lichtspoor ---------- */
+html[data-ruimte="1"] nav#tabs button{transition:transform .3s var(--fm-veer),color .25s}
+html[data-ruimte="1"] nav#tabs button:active{opacity:1;transform:scale(.9)}
+html[data-ruimte="1"] nav#tabs button.tab-plus:active{transform:translateY(3px) scale(.98)}
+html[data-ruimte="1"] nav#tabs button svg{transition:transform .38s var(--fm-veer),filter .38s}
+html[data-ruimte="1"] nav#tabs button[aria-current="true"]:not(.tab-plus) svg{transform:translateY(-1px) scale(1.1);filter:drop-shadow(0 0 7px var(--fm-gloed))}
+.rt-spoor{
+  position:absolute;left:0;bottom:5px;height:3px;width:0;border-radius:3px;opacity:0;
+  background:var(--accent);box-shadow:0 0 10px 1px var(--fm-gloed);pointer-events:none;transform-origin:0 50%;
+}
+
+/* ---------- 6. Schakelaar als fysiek onderdeel ---------- */
+html[data-ruimte="1"] .toggle{transition:background .3s,box-shadow .3s}
+html[data-ruimte="1"] .toggle::after{transition:transform .34s var(--fm-veer),width .16s ease;box-shadow:0 1px 3px rgba(0,0,0,.3),0 0 0 0 rgba(255,255,255,.6)}
+html[data-ruimte="1"] .toggle:active::after{width:33px}
+html[data-ruimte="1"] .toggle[aria-pressed="true"]:active::after{transform:translateX(15px)}
+html[data-ruimte="1"] .toggle[aria-pressed="true"]{box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 20%,transparent),0 0 16px color-mix(in srgb,var(--green) 45%,transparent)}
+
+/* ---------- 7. Vinkje als penseelstreek + lichtexplosie ---------- */
+html[data-ruimte="1"] .vink svg,html[data-ruimte="1"] .mini-vink svg{
+  stroke-dasharray:22;stroke-dashoffset:22;
+  transition:opacity .12s,transform .32s var(--fm-veer),stroke-dashoffset .4s cubic-bezier(.4,0,.2,1) .05s;
+}
+html[data-ruimte="1"] .taak.af .vink svg,html[data-ruimte="1"] .vink.gedaan svg,html[data-ruimte="1"] .subtaak.af .mini-vink svg{stroke-dashoffset:0}
+html[data-ruimte="1"] .vink::before,html[data-ruimte="1"] .mini-vink::before{transition:background .25s,border-color .25s,transform .34s var(--fm-veer),box-shadow .3s}
+html[data-ruimte="1"] .taak.af .vink::before,html[data-ruimte="1"] .vink.gedaan::before{box-shadow:0 0 14px color-mix(in srgb,var(--green) 55%,transparent);animation:rt-vinkpop .48s var(--fm-veer)}
+@keyframes rt-vinkpop{0%{transform:scale(.8)}55%{transform:scale(1.16)}100%{transform:scale(1)}}
+
+.rt-burst{position:fixed;z-index:95;pointer-events:none;width:0;height:0;color:var(--green)}
+.rt-burst .ring{position:absolute;left:-15px;top:-15px;width:30px;height:30px;border-radius:50%;border:2px solid currentColor;animation:rt-burstring .58s cubic-bezier(.2,.8,.2,1) forwards}
+.rt-burst .deel{position:absolute;left:-3px;top:-3px;width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;opacity:0;animation:rt-burstdeel .62s cubic-bezier(.15,.7,.3,1) var(--dl) forwards}
+@keyframes rt-burstring{from{transform:scale(.4);opacity:.95}to{transform:scale(2.4);opacity:0}}
+@keyframes rt-burstdeel{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.15);opacity:0}}
+
+/* ---------- 8. Bladen: de app wijkt, het blad komt uit de diepte ---------- */
+html[data-ruimte="1"] .overlay{background:rgba(6,8,14,.36);backdrop-filter:blur(8px) saturate(.9);-webkit-backdrop-filter:blur(8px) saturate(.9);transition:opacity .34s}
+html[data-ruimte="1"] .blad{
+  background:color-mix(in srgb,var(--bg) 84%,transparent);
+  backdrop-filter:blur(26px) saturate(170%);-webkit-backdrop-filter:blur(26px) saturate(170%);
+  box-shadow:var(--shadow-lg),inset 0 1px 0 var(--fm-glans);
+  transform:translateY(100%) scale(.96);transition:transform .28s cubic-bezier(.32,.72,0,1);
+}
+html[data-ruimte="1"] .blad.open{transform:none;transition:transform .5s var(--fm-veer-zacht)}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*{animation:rt-op .42s var(--fm-ease) backwards}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*:nth-child(2){animation-delay:.04s}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*:nth-child(3){animation-delay:.08s}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*:nth-child(4){animation-delay:.12s}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*:nth-child(5){animation-delay:.16s}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*:nth-child(6){animation-delay:.2s}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*:nth-child(7){animation-delay:.24s}
+html[data-ruimte="1"] .blad.open .blad-inhoud>*:nth-child(n+8){animation-delay:.28s}
+html[data-ruimte="1"] .blad-voet{background:color-mix(in srgb,var(--card) 70%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+html[data-ruimte="1"] .rt-bron{box-shadow:inset 0 0 0 1px var(--fm-gloed),0 0 18px -4px var(--fm-gloed);border-radius:12px;transition:box-shadow .3s}
+
+/* ---------- 9. Toast uit de diepte, fout met trilling ---------- */
+html[data-ruimte="1"] #toast{
+  background:color-mix(in srgb,var(--text) 90%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transform:translate(-50%,18px) scale(.94);filter:blur(4px);
+  transition:opacity .3s,transform .42s var(--fm-veer),filter .3s;
+}
+html[data-ruimte="1"] #toast.zicht{transform:translate(-50%,0) scale(1);filter:none}
+html[data-ruimte="1"] #toast.rt-fout{animation:rt-schud .5s cubic-bezier(.36,.07,.19,.97);box-shadow:0 0 0 1px var(--red),0 10px 32px -8px var(--red)}
+@keyframes rt-schud{
+  10%,90%{transform:translate(calc(-50% - 1px),0)}20%,80%{transform:translate(calc(-50% + 2px),0)}
+  30%,50%,70%{transform:translate(calc(-50% - 4px),0)}40%,60%{transform:translate(calc(-50% + 4px),0)}
+}
+html[data-ruimte="1"] .invoer.rt-fout{animation:rt-schud2 .5s cubic-bezier(.36,.07,.19,.97);box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 40%,transparent)}
+@keyframes rt-schud2{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+
+/* ---------- 10. Pincode als focuslaag ---------- */
+html[data-ruimte="1"] #slot{
+  background:color-mix(in srgb,var(--bg) 58%,transparent);
+  backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);
+}
+html[data-ruimte="1"] #slot .cijfers button:not(.leeg){
+  background:var(--fm-glas);border:1px solid var(--fm-rand);
+  box-shadow:inset 0 1px 0 var(--fm-glans),var(--fm-schaduw);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+html[data-ruimte="1"] #slot .pincode i{transition:background .2s,border-color .2s,box-shadow .3s}
+html[data-ruimte="1"] #slot .pincode i.vol{animation:rt-vinkpop .34s var(--fm-veer);box-shadow:0 0 12px var(--fm-gloed)}
+html[data-ruimte="1"] #slot.rt-fout .pincode{animation:rt-schud2 .5s cubic-bezier(.36,.07,.19,.97)}
+html[data-ruimte="1"] #slot.rt-fout .pincode i{border-color:var(--red);box-shadow:0 0 12px color-mix(in srgb,var(--red) 60%,transparent)}
+html[data-ruimte="1"] #slot.rt-fout #slot-tekst{color:var(--red)}
+
+/* ---------- 11. Schermovergangen ---------- */
+#rt-oud{
+  position:absolute;overflow:hidden;pointer-events:none;z-index:25;
+  padding:4px 14px calc(var(--navh) + 24px);will-change:transform,opacity,filter;
+}
+#rt-oorsprong{
+  position:fixed;z-index:26;pointer-events:none;transform-origin:0 0;border-radius:16px;
+  background:color-mix(in srgb,var(--accent) 10%,transparent);
+  box-shadow:0 0 0 1.5px var(--fm-gloed),0 0 44px var(--fm-gloed);
+}
+
+/* Opkomen van lijsten en kaarten na een navigatie */
+.rt-in{animation:rt-op var(--fm-d-lijst,.5s) var(--fm-ease) backwards}
+@keyframes rt-op{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+/* Onthullen bij scrollen: wat onder de vouw staat komt op zodra het in beeld schuift. */
+html[data-ruimte="1"] .rt-wacht{opacity:0;transform:translateY(22px) scale(.985)}
+html[data-ruimte="1"] .rt-onthul{transition:opacity .5s var(--fm-ease),transform .6s var(--fm-veer-zacht)}
+
+/* Nieuwe regel na hertekenen: lichtpuls */
+.rt-nieuw{animation:rt-puls 1.3s ease-out}
+@keyframes rt-puls{
+  0%{background-color:color-mix(in srgb,var(--accent) 24%,transparent);box-shadow:inset 0 0 0 1px var(--accent),0 0 18px var(--fm-gloed)}
+  100%{background-color:transparent;box-shadow:none}
+}
+
+/* ---------- 12. Data die zich vormt ---------- */
+html[data-ruimte="1"] .ring{transition:--p var(--fm-d-data) var(--fm-ease)}
+html[data-ruimte="1"] .balk>i{transition:width .8s var(--fm-ease)}
+html[data-ruimte="1"] .uitklap{animation:rt-ontvouw .34s var(--fm-ease)}
+@keyframes rt-ontvouw{from{opacity:0;transform:translateY(-6px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:none;clip-path:inset(0)}}
+html[data-ruimte="1"] .taak{transition:background-color .25s}
+
+/* Tabellen als glas: vaste kop, cijfers uitgelijnd, rij licht op bij aanwijzen/focus. */
+html[data-ruimte="1"] #scherm :where(table){border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+html[data-ruimte="1"] #scherm :where(thead th){position:sticky;top:0;z-index:1;background:var(--fm-glas-sterk);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+html[data-ruimte="1"] #scherm :where(tbody tr){transition:background-color .2s}
+html[data-ruimte="1"] #scherm :where(tbody tr:hover,tbody tr:focus-within){background:color-mix(in srgb,var(--accent) 8%,transparent)}
+
+/* ---------- 13. Verder naar (koppelingen tussen schermen) ---------- */
+.verwant{margin:26px 0 6px;padding:0 2px}
+.verwant .klein{margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:calc(11.5px * var(--t))}
+.verwant .chiprij{gap:8px}
+.verwant .keuze{min-height:38px;padding:0 12px;display:inline-flex;align-items:center;gap:6px}
+.verwant .keuze svg{width:15px;height:15px}
+
+/* ---------- 14. Titel passend in de kop ----------
+   Stap 1: de knoppen rechts worden compacter (Werk alleen als icoon).
+   Stap 2: de titel krimpt tot een minimum (via JS, font-size inline).
+   Stap 3: een heel lange titel mag over twee regels. */
+header#top.krap .top-row{gap:3px}
+header#top.krap .werkpil{padding:0 9px}
+header#top.krap .werkpil span{display:none}
+header#top.krap .top-row>.icon-btn{min-width:38px}
+h1#titel.tweeregels{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.1;overflow-wrap:normal}
+h1#titel.tweeregels.breek{overflow-wrap:anywhere}
+
+/* Alleen voor schermlezers */
+.fm-sr{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
