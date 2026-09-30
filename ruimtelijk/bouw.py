@@ -54,6 +54,7 @@ vervang('shles: (typeof vwShLes === "function" ? vwShLes : vwStart)',
         '    ljjaar: (typeof vwLjJaar === "function" ? vwLjJaar : vwStart),\n'
         '    keuze: (typeof vwKeuze === "function" ? vwKeuze : vwStart),\n'
         '    keuzetest: (typeof vwKeuzeTest === "function" ? vwKeuzeTest : vwStart),\n'
+        '    kennismaking: (typeof vwKennismaking === "function" ? vwKennismaking : vwStart),\n'
         '    keuzedilemma: (typeof vwKeuzeDilemma === "function" ? vwKeuzeDilemma : vwStart),\n'
         '    keuzetheorie: (typeof vwKeuzeTheorie === "function" ? vwKeuzeTheorie : vwStart),\n'
         '    ontwerp: (typeof vwOntwerp === "function" ? vwOntwerp : vwStart)')
@@ -171,7 +172,7 @@ ILL_TB = ('<symbol id="ill-toolbox" viewBox="0 0 100 80"><g fill="none" stroke="
 vervang('<symbol id="ill-persoonlijk"', ILL + '\n' + ILL_WL + '\n' + ILL_ANKER + '\n' + ILL_VOORTGANG + '\n' + ILL_HUIS + '\n' + ILL_LJ + '\n' + ILL_KM + '\n' + ILL_TB + '\n' + BEZEM + '\n' + EXTRA_ICONEN + '\n<symbol id="ill-persoonlijk"')
 
 # 5. Stijl: achteraan in het bestaande <style>-blok.
-css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n\n" + lees("nate.css") + "\n"
+css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n\n" + lees("nate.css") + "\n\n" + lees("kennismaking.css") + "\n"
 vervang('</style>\n</head>', css + '</style>\n</head>')
 
 # 6. Scripts: vlak vóór het blok dat start() aanroept.
@@ -218,7 +219,7 @@ for cl in WEGING["pattern_clusters"]:
 assert len(WEGING["pattern_clusters"]) == 7 and len(WEGING["context_prompts"]) == 12, "7 clusters en 12 contextvragen verwacht"
 kennis_js += "\nconst NATE_VRAGENBANK = " + json.dumps(VRAGEN, ensure_ascii=False).replace("</", "<\\/") + ";"
 kennis_js += "\nconst NATE_SCOREWEGING = " + json.dumps(WEGING, ensure_ascii=False).replace("</", "<\\/") + ";"
-blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js"))
+blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js", "kennismaking.js"))
 html = html[:j] + blokken + html[j:]
 
 # 8. Merk: Brain-Mate Nate.
@@ -228,6 +229,10 @@ html = html[:j] + blokken + html[j:]
 #    met dezelfde databasenaam zouden FutureMe en Brain-Mate Nate elkaars gegevens delen.
 APP_NAAM, APP_KORT = "Brain-Mate Nate", "Nate"
 vervang('const DB_NAAM = "futureme", DB_VERSIE', 'const DB_NAAM = "brainmatenate", DB_VERSIE')
+# 8b. Eerste start: de kennismaking met Nate opent vanzelf, tot je begint, "Later" kiest of klaar bent.
+vervang('  V.view = V.tab = inst("startscherm", "welkom");',
+        '  V.view = V.tab = inst("startscherm", "welkom");\n'
+        '  if (typeof knMoetStarten === "function" && knMoetStarten()) V.view = "kennismaking";')
 vervang('<meta name="apple-mobile-web-app-title" content="FutureMe">', f'<meta name="apple-mobile-web-app-title" content="{APP_KORT}">')
 vervang('<meta name="application-name" content="FutureMe">', f'<meta name="application-name" content="{APP_NAAM}">')
 vervang('<title>FutureMe</title>', f'<title>{APP_NAAM}</title>')
