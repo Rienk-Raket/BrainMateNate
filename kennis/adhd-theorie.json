@@ -6,7 +6,8 @@
     "bron": "Kas' onderzoek: 'Overkoepelend onderzoeksdocument' en Categorie 1–8 (map 02_BrainMate Nate/Modules/uitdagingen en oplossingen voor neurodivergenten/01. Research)",
     "uitleg": "Theorie, onderbouwing en handvatten per domein, gekoppeld aan de modules van de app. Nate gebruikt dit voor tips en uitleg ('waarom zeg je dit?'). Bewerk dit bestand, niet de code; bouw.py zet het als NATE_ADHD in de app.",
     "geenDiagnose": "Dit is uitleg en zelfhulp, geen diagnose of behandeling. Blijft het je dagelijks leven flink belasten? Praat met je huisarts of behandelaar.",
-    "nateStem": "Nate's toon: enthousiaste coach met een knipoog (energie van Tony Robbins, nuchtere herkadering van Alan Carr), kort, zonder 'moet', schuld of diagnoses. Varianten: normaal (ook voor Vol gas) en zacht."
+    "nateStem": "Nate's toon: enthousiaste coach met een knipoog (energie van Tony Robbins, nuchtere herkadering van Alan Carr), kort, zonder 'moet', schuld of diagnoses. Varianten: normaal (ook voor Vol gas) en zacht.",
+    "subthemas": "Per domein: de subthema's uit kennis/vragenbank.json (Deel A) waarbij Nate dit domein als tip kiest, volgens de route A → B uit 04_scorelogica-en-routing. A2.1 (sensorisch) en A3.4 (lezen) hebben geen ADHD-domein."
   },
   "bewijsniveaus": {
     "direct": "Rechtstreeks bij ADHD onderzocht (bv. ADHD-gerichte CGT, medicatie).",
@@ -247,7 +248,11 @@
       "nate": {
         "normaal": "Nieuwe afspraak? Meteen in je agenda, meteen een vertrekalarm erbij. Tien seconden werk, en je toekomstige zelf zegt dankjewel.",
         "zacht": "Zet een nieuwe afspraak meteen in je agenda, met een vertrekalarm."
-      }
+      },
+      "subthemas": [
+        "A4.1",
+        "A1.2"
+      ]
     },
     {
       "id": "plannen",
@@ -308,7 +313,12 @@
       "nate": {
         "normaal": "Kies vanavond één hoofdtaak voor morgen en schrijf de eerste handeling erbij. Dan hoef je morgen niet te beslissen, alleen te beginnen.",
         "zacht": "Kies vanavond één ding voor morgen, met de eerste stap erbij."
-      }
+      },
+      "subthemas": [
+        "A1.3",
+        "A1.1",
+        "A3.3"
+      ]
     },
     {
       "id": "taken",
@@ -370,7 +380,11 @@
       "nate": {
         "normaal": "Zit iets vast? Maak er een handeling van vijf minuten van, met een werkwoord erin. Klein genoeg om te beginnen, groot genoeg om te tellen.",
         "zacht": "Maak van één vastgelopen taak een stapje van vijf minuten."
-      }
+      },
+      "subthemas": [
+        "A1.4",
+        "A2.2"
+      ]
     },
     {
       "id": "huishouden",
@@ -430,7 +444,10 @@
       "nate": {
         "normaal": "Eén oppervlak, vijf minuten, bruikbaar in plaats van perfect. Daarna mag je trots stoppen.",
         "zacht": "Kies één plekje en maak het vijf minuten bruikbaar. Perfect hoeft niet."
-      }
+      },
+      "subthemas": [
+        "A4.2"
+      ]
     },
     {
       "id": "routines",
@@ -493,7 +510,11 @@
       "nate": {
         "normaal": "Kies één moment dat toch al elke dag gebeurt en hang er een actie van twee minuten aan. Klein anker, groot effect.",
         "zacht": "Koppel één mini-actie aan iets dat je elke dag al doet."
-      }
+      },
+      "subthemas": [
+        "A4.3",
+        "A3.2"
+      ]
     },
     {
       "id": "gewoontes-aanleren",
@@ -546,7 +567,11 @@
       "nate": {
         "normaal": "Maak deze zin af: 'Nadat ik …, doe ik …'. Twee minuten, elke keer. Zo bouw je het, steen voor steen.",
         "zacht": "'Nadat ik …, doe ik …'. Eén kleine zin is genoeg."
-      }
+      },
+      "subthemas": [
+        "A4.3",
+        "A1.4"
+      ]
     },
     {
       "id": "gewoontes-afleren",
@@ -607,7 +632,11 @@
       "nate": {
         "normaal": "Klein trucje, groot effect: maak het ongewenste tien seconden lastiger. Je brein kiest de makkelijke weg, dus wij bepalen welke dat is.",
         "zacht": "Leg de verleiding net iets verder weg. Dat is alles."
-      }
+      },
+      "subthemas": [
+        "A1.1",
+        "A2.2"
+      ]
     },
     {
       "id": "emoties",
@@ -672,7 +701,13 @@
       "nate": {
         "normaal": "Komt iets hard binnen? Drie woorden: wat gebeurde er, wat doet je lijf, wat wil je doen. Benoemen is al halverwege.",
         "zacht": "Als iets hard binnenkomt: noem de aanleiding, wat je lijf doet en wat je wilt doen."
-      }
+      },
+      "subthemas": [
+        "A2.3",
+        "A2.4",
+        "A4.4",
+        "A3.1"
+      ]
     }
   ],
   "fasering": [

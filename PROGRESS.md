@@ -9,7 +9,7 @@ bouwt verder op `nate-basis` (stap 1 en 2, uit de bundle van de opzet-chat).
 |---|---|---|---|
 | 3a Vragenbank, scoreweging, scorekern | Klaar | `node --test tests/*.test.mjs`: 9 scoringtests + keuzemachine groen; `bouw.py` controleert beide JSON-bestanden | — |
 | 3b Kennismakingsflow en profielrapport | Klaar, wacht op review | `tests/kennismaking.e2e.cjs`: 45 checks (390×844 licht, 360×740 donker + minder beweging, tikvlakken, focus, herladen, nul externe verzoeken, geen consolefouten); schermafbeeldingen bekeken | Reviewsubagent |
-| 4 Tips uit profiel | Nog niet begonnen | — | — |
+| 4 Tips uit profiel | Klaar, wacht op review | `tests/tips.test.mjs` (8 tests) + 5 e2e-checks: omdat-zin, bewijsniveau, één per dagdeel, Nate's stem, Niet meer tonen | Reviewsubagent |
 | 5 Navigatie en Mijn dag | Nog niet begonnen | — | — |
 | 6 Chat met Nate | Nog niet begonnen | — | — |
 | 7 Modules-audit | Nog niet begonnen | — | — |
@@ -21,6 +21,12 @@ bouwt verder op `nate-basis` (stap 1 en 2, uit de bundle van de opzet-chat).
 - `ruimtelijk/src/kennismaking.js/.css`: flow (welkom → naam → 16 kern → 4 voorkeur → verdieping → context → dichtheid → samenvatting), rapport bovenaan Meer → Profiel, antwoorden wijzigen, hervatten na herladen, Nate's bericht bij pauze/later.
 - `tests/scoring.test.mjs`, `tests/kennismaking.e2e.cjs`.
 - Draaien: `python3 ruimtelijk/bouw.py && node --test tests/*.test.mjs && NODE_PATH=/opt/node22/lib/node_modules node tests/kennismaking.e2e.cjs`
+
+## Bestanden van stap 4
+
+- `kennis/adhd-theorie.json`: per domein een veld `subthemas` (Deel A-subthema's uit de vragenbank, via de route A → B uit 04). A2.1 (sensorisch) en A3.4 (lezen) hebben geen ADHD-domein en dus geen tip.
+- `ruimtelijk/src/nate-tips.js`: pure tipkiezer (NATE-TIPS-BEGIN/EINDE) + vervanging van `nateTipVanVandaag()`: kandidaten op behoefte (of kernscore vanaf "soms"), één keuze per dagdeel die rondgaat, omdat-zin met het antwoord en het bewijsniveau; zonder profiel een algemene tip met eerlijke omdat-zin.
+- `tests/tips.test.mjs`.
 
 ## Bronnen
 

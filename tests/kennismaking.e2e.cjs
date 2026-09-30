@@ -138,6 +138,13 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("wijzigen opent die vraag", await p.evaluate(() => V.view === "kennismaking" && knHuidig(knData()) === "q:A1.1.Q1"));
   await p.click('.kn-optie:has(input[value="never"])'); await wacht(400);
   check("na wijziging terug naar profiel", await p.evaluate(() => V.view === "profiel" && inst("nate_km").antwoorden["A1.1.Q1"] === "never"));
+  // Stap 4: de tip van dit dagdeel komt uit het profiel, met omdat-zin en bewijsniveau.
+  const tip = await p.evaluate(() => nateTipVanVandaag());
+  check("tip uit profiel: omdat-zin verwijst naar een antwoord", !!tip && /^Omdat je bij .+ antwoordde\./.test(tip.waarom), tip && tip.waarom);
+  check("tip: bewijsniveau genoemd", !!tip && tip.waarom.includes("Hoe sterk is dit?"));
+  check("tip: één per dagdeel", !!tip && /^tip-\d{4}-\d\d-\d\d-(ochtend|middag|avond)$/.test(tip.id), tip && tip.id);
+  check("tip: Nate's stem (hooguit één uitroepteken, geen 'moet')", !!tip && (tip.tekst.match(/!/g) || []).length <= 1 && !/\bmoet\b/i.test(tip.tekst));
+  check("Niet meer tonen blijft werken", await p.evaluate(async () => { const t = nateTipVanVandaag(); await zetInst("nateVerborgen", ["dom-" + t.domein]); const t2 = nateTipVanVandaag(); await zetInst("nateVerborgen", []); return !t2 || t2.domein !== t.domein; }));
   check("de oude tien profielvragen staan er nog (reserve voor ndAanpak)", await p.evaluate(() => typeof ndAanpak === "function" && !!document.querySelector("#scherm .pf-sectie")));
   await ctx.close();
 

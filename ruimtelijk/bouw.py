@@ -196,6 +196,8 @@ for d in adhd["domeinen"]:
         assert veld in d, f"domein {d.get('id')} mist '{veld}'"
     for i in d["interventies"]:
         assert i["bewijs"] in adhd["bewijsniveaus"], f"onbekend bewijsniveau bij {d['id']}: {i['bewijs']}"
+    # Stap 4: elk domein wijst naar bestaande subthema's uit de vragenbank (voor de tip van de dag).
+    assert isinstance(d.get("subthemas"), list) and d["subthemas"], f"domein {d['id']} mist 'subthemas'"
 NATE_SVG = HIER.parent / "assets" / "nate" / "nate.svg"
 kennis_js += "\nconst NATE_ADHD = " + json.dumps(adhd, ensure_ascii=False).replace("</", "<\\/") + ";"
 kennis_js += "\nconst NATE_SVG_DATA = " + json.dumps("data:image/svg+xml;base64," + base64.b64encode(NATE_SVG.read_bytes()).decode()) + ";"
@@ -217,9 +219,13 @@ assert WEGING["raw_response_mapping"]["not_applicable"] is None and WEGING["raw_
 for cl in WEGING["pattern_clusters"]:
     assert abs(sum(cl["dimension_weights"].values()) - 1) < 1e-9, f"clustergewichten {cl['cluster_id']} tellen niet op tot 1"
 assert len(WEGING["pattern_clusters"]) == 7 and len(WEGING["context_prompts"]) == 12, "7 clusters en 12 contextvragen verwacht"
+SUBTHEMAS = {q["subtheme_id"] for q in VRAGEN["questions"] if q["assessment_part"] == "A"}
+for d in adhd["domeinen"]:
+    for sid in d["subthemas"]:
+        assert sid in SUBTHEMAS, f"domein {d['id']}: onbekend subthema {sid}"
 kennis_js += "\nconst NATE_VRAGENBANK = " + json.dumps(VRAGEN, ensure_ascii=False).replace("</", "<\\/") + ";"
 kennis_js += "\nconst NATE_SCOREWEGING = " + json.dumps(WEGING, ensure_ascii=False).replace("</", "<\\/") + ";"
-blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js", "kennismaking.js"))
+blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js", "kennismaking.js", "nate-tips.js"))
 html = html[:j] + blokken + html[j:]
 
 # 8. Merk: Brain-Mate Nate.
