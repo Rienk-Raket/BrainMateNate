@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.1.0",
+  "status": "research_prototype_not_validated",
+  "global_neurodivergence_score": false,
+  "diagnosis_probabilities_enabled": false,
+  "raw_response_mapping": {
+    "never": 0,
+    "rarely": 1,
+    "sometimes": 2,
+    "often": 3,
+    "very_often": 4,
+    "not_applicable": null,
+    "prefer_not": null
+  },
+  "item_role_weights": {
+    "frequency": 1.0,
+    "impact": 1.25,
+    "context_variation": 1.1,
+    "recovery_cost": 1.1,
+    "compensation_cost": 1.1,
+    "current_resource": 0.0,
+    "observed_effect": 1.0,
+    "preference": 1.0,
+    "feasibility": 1.1,
+    "barrier": 0.0
+  },
+  "required_item_overlay": {
+    "primary_dimension_id": "copy_from_subtheme_id",
+    "primary_dimension_weight": 1.0,
+    "diagnostic_weight": 0.0,
+    "scoring_component": "derive_from_item_purpose",
+    "component_weight_prototype": "lookup_item_role_weights",
+    "secondary_pattern_tags": [],
+    "weighting_status": "prototype_not_empirically_estimated"
+  },
+  "support_need": {
+    "components": {
+      "impact": 0.4,
+      "frequency": 0.3,
+      "context_breadth": 0.2,
+      "recovery_or_compensation_cost": 0.1
+    },
+    "minimum_rule": "impact_and_at_least_one_other_component",
+    "missing_rule": "renormalize_available_weights_only_after_minimum_rule",
+    "bands": [
+      {"min": 0, "max": 24, "label": "weinig_gemelde_behoefte_of_voldoende_steun"},
+      {"min": 25, "max": 49, "label": "lichte_of_contextafhankelijke_behoefte"},
+      {"min": 50, "max": 74, "label": "duidelijke_praktische_ondersteuningsbehoefte"},
+      {"min": 75, "max": 100, "label": "hoge_of_brede_ondersteuningsbehoefte"}
+    ],
+    "clinical_cutoffs": false
+  },
+  "solution_fit": {
+    "components": {"observed_effect": 0.45, "preference": 0.25, "feasibility": 0.3},
+    "barrier_is_separate": true
+  },
+  "context_breadth": {
+    "one_area": 25,
+    "two_areas": 50,
+    "three_areas": 75,
+    "four_or_more_areas": 100,
+    "zero_or_skipped": null
+  },
+  "pattern_clusters": [
+    {"cluster_id":"P1","name":"Aandacht en executief handelen","dimension_weights":{"A1.1":0.18,"A1.2":0.18,"A1.3":0.18,"A1.4":0.18,"A4.1":0.14,"A4.2":0.07,"A4.3":0.07}},
+    {"cluster_id":"P2","name":"Activatie, interesse en losmaken","dimension_weights":{"A2.2":0.40,"A1.4":0.25,"A1.1":0.15,"A4.3":0.10,"A1.3":0.10}},
+    {"cluster_id":"P3","name":"Sociaal, sensorisch en voorspelbaarheid","dimension_weights":{"A2.1":0.24,"A3.1":0.24,"A3.2":0.20,"A3.3":0.18,"A4.4":0.14}},
+    {"cluster_id":"P4","name":"Lezen en schriftelijke verwerking","dimension_weights":{"A3.4":0.70,"A1.2":0.15,"A1.1":0.15}},
+    {"cluster_id":"P5","name":"Emotie, stress en herstel","dimension_weights":{"A2.3":0.38,"A2.4":0.32,"A4.4":0.15,"A3.3":0.15}},
+    {"cluster_id":"P6","name":"Dagelijks functioneren en routines","dimension_weights":{"A4.1":0.25,"A4.2":0.30,"A4.3":0.25,"A1.3":0.10,"A1.4":0.10}},
+    {"cluster_id":"P7","name":"Compensatie, masking en energiekosten","dimension_weights":{"A4.4":0.45,"A3.3":0.25,"A3.1":0.15,"A2.3":0.15}}
+  ],
+  "data_quality": {
+    "answer_coverage": 0.5,
+    "component_coverage": 0.3,
+    "context_coverage": 0.2,
+    "meaning": "information_completeness_only_not_diagnostic_certainty"
+  },
+  "uncertainty_flags": [
+    "dimension_has_fewer_than_two_valid_items",
+    "impact_missing",
+    "selected_item_coverage_below_60_percent",
+    "only_one_life_area",
+    "strong_recent_change",
+    "sleep_or_fatigue_major_influence",
+    "stress_or_burnout_major_influence",
+    "mood_or_anxiety_major_influence",
+    "trauma_or_unsafe_context_possible",
+    "physical_health_or_medication_influence",
+    "substance_influence",
+    "frequency_impact_mismatch",
+    "high_context_variation",
+    "high_compensation_cost"
+  ],
+  "context_prompts": [
+    {"id":"CTX01","construct":"developmental_timing","scored":false,"text":"Wanneer merkte je deze patronen voor het eerst duidelijk op?"},
+    {"id":"CTX02","construct":"life_area_breadth","scored":false,"text":"In welke levensgebieden merk je het patroon?"},
+    {"id":"CTX03","construct":"cross_situational_consistency","scored":false,"text":"Blijft het patroon vergelijkbaar wanneer omgeving, taak of gezelschap verandert?"},
+    {"id":"CTX04","construct":"recent_change","scored":false,"text":"Zijn de patronen in de afgelopen zes maanden duidelijk veranderd?"},
+    {"id":"CTX05","construct":"sleep_and_fatigue","scored":false,"text":"Hoeveel invloed hadden slaaptekort of vermoeidheid op je functioneren?"},
+    {"id":"CTX06","construct":"stress_and_overload","scored":false,"text":"Hoeveel invloed hadden stress, overbelasting of burn-outklachten?"},
+    {"id":"CTX07","construct":"mood_and_anxiety","scored":false,"text":"Hoeveel invloed hadden angst, somberheid of langdurig piekeren?"},
+    {"id":"CTX08","construct":"trauma_and_safety","scored":false,"text":"Speelden ingrijpende ervaringen of een onveilige omgeving mogelijk mee?"},
+    {"id":"CTX09","construct":"physical_health_and_medication","scored":false,"text":"Hadden lichamelijke klachten, pijn, hormonen of medicatie merkbare invloed?"},
+    {"id":"CTX10","construct":"substance_context","scored":false,"text":"Hadden alcohol, cannabis, nicotine, cafeïne of andere middelen merkbare invloed?"},
+    {"id":"CTX11","construct":"accommodation_response","scored":false,"text":"Hoeveel verbeteren passende hulpmiddelen of omgevingsaanpassingen je functioneren?"},
+    {"id":"CTX12","construct":"prior_assessment_and_family_context","scored":false,"text":"Is er eerdere professionele beoordeling of vergelijkbare familiegeschiedenis?"}
+  ],
+  "forbidden_outputs": [
+    "general_neurodivergence_score",
+    "adhd_percentage",
+    "autism_percentage",
+    "dyslexia_percentage",
+    "automatic_diagnosis",
+    "winner_take_all_neurotype"
+  ]
+}
