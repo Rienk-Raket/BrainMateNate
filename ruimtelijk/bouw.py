@@ -230,6 +230,22 @@ for oud, nieuw in (("FutureMe · alles op dit toestel", f"{APP_NAAM} · alles op
                    ('onderwerp: "FutureMe", kleur: "", titel: "Tijd voor een back-up"', 'onderwerp: "Back-up", kleur: "", titel: "Tijd voor een back-up"')):
     html = html.replace(oud, nieuw)
 
+# 9. Geen API-koppelingen (besluit Kas, 30 september 2026).
+#    FutureMe heeft in de Keuzemachine een optionele AI-laag die dilemma's naar de
+#    Claude-API kan sturen. Brain-Mate Nate werkt volledig lokaal: de functie die
+#    verstuurt wordt vervangen door een lege versie, de schakelaar en het
+#    sleutelveld in Instellingen verdwijnen, en de bouw stopt als er toch een
+#    API-adres in de app staat.
+begin = html.index("async function kmAiVerrijk(d, p, lokaal) {")
+eind = html.index("function kmAiAanBlad() {", begin)
+html = html[:begin] + ("async function kmAiVerrijk() { return null; }   // Brain-Mate Nate: geen API-koppelingen\n") + html[eind:]
+vervang('const kmAiKlaar = () => kmAiInst().aan && !!inst("km_sleutel", null);',
+        'const kmAiKlaar = () => false;   // Brain-Mate Nate: geen API-koppelingen')
+vervang('/* Instellingen → Keuzemachine (akkoord B). */\nif (typeof vwInstellingen === "function") {',
+        '/* Instellingen → Keuzemachine: uitgeschakeld in Brain-Mate Nate (geen API-koppelingen). */\nif (false) {')
+for verboden in ("api.anthropic.com", "x-api-key", "anthropic-dangerous-direct-browser-access"):
+    assert verboden not in html, f"API-koppeling gevonden in de app: {verboden}"
+
 UIT.write_text(html, encoding="utf-8")
 print(f"Gebouwd: {UIT} ({len(html.encode('utf-8')) // 1024} KB)")
 

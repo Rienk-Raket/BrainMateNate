@@ -28335,7 +28335,7 @@ if (typeof importJSON === "function") {
    keuze A/B blijft die van de lokale motor, behalve bij 'gelijk'. Veiligheid
    draait altijd eerst lokaal; na 8 s of bij elke afwijking: de lokale uitkomst. */
 const kmAiInst = () => Object.assign({ aan: false, model: "claude-opus-5-5" }, inst("km_ai", {}) || {});
-const kmAiKlaar = () => kmAiInst().aan && !!inst("km_sleutel", null);
+const kmAiKlaar = () => false;   // Brain-Mate Nate: geen API-koppelingen
 const KM_AI_SCHEMA = { type: "object", additionalProperties: false, required: ["valkuil", "handvatten", "tips", "reden", "advies"],
   properties: { valkuil: { type: "string" }, handvatten: { type: "array", items: { type: "string" } }, tips: { type: "array", items: { type: "string" } }, reden: { type: "string" }, advies: { type: "string", enum: ["A", "B", "gelijk"] } } };
 const KM_AI_SYSTEEM = `Je herschrijft de teksten van een uitkomstkaart in de app FutureMe, zodat ze aansluiten bij de woorden van het dilemma van de gebruiker. Nederlands, jij-vorm, vriendelijk en direct, korte zinnen, nooit dwingend.
@@ -28364,27 +28364,7 @@ function kmAiValideer(j, lokaal) {
   return Object.assign({}, lokaal, { bron: "ai", valkuil: j.valkuil.trim(), handvatten: j.handvatten.map(s => s.trim()), tips: lokaal.tips.map((t, i) => ({ tekst: j.tips[i].trim(), theorie: t.theorie })),
     reden: j.reden.trim(), advies, munt: advies === "gelijk" });
 }
-async function kmAiVerrijk(d, p, lokaal) {
-  if (kmVeiligheid(kmDilemmaTekst(d)).status === "geblokkeerd" || lokaal.veiligheid === "geblokkeerd") return null;   // nooit versturen
-  const ai = kmAiInst(), sleutel = inst("km_sleutel", null);
-  if (!ai.aan || !sleutel) return null;
-  const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), 8000);
-  try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", signal: ctrl.signal,
-      headers: { "content-type": "application/json", "x-api-key": sleutel, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-      body: JSON.stringify({ model: ai.model || "claude-opus-5-5", max_tokens: 16000, output_config: { effort: "low", format: { type: "json_schema", schema: KM_AI_SCHEMA } },
-        system: KM_AI_SYSTEEM, messages: [{ role: "user", content: `<dilemma>\n${JSON.stringify(kmAiPayload(d, p, lokaal))}\n</dilemma>` }] }) });
-    if (!r.ok) return { fout: true };
-    const j = await r.json();
-    if (!j || j.stop_reason === "refusal" || j.stop_reason === "max_tokens") return { fout: true };
-    const blok = (j.content || []).find(b => b && b.type === "text");   // kies op type: het eerste blok kan 'thinking' zijn
-    if (!blok) return { fout: true };
-    let data; try { data = JSON.parse(blok.text); } catch (e) { return { fout: true }; }
-    const u = kmAiValideer(data, lokaal);
-    return u ? { uitkomst: u } : { fout: true };
-  } catch (e) { return { fout: true }; }   // geen foutdetails tonen of loggen: daar kan nooit een sleutel in staan
-  finally { clearTimeout(t); }
-}
+async function kmAiVerrijk() { return null; }   // Brain-Mate Nate: geen API-koppelingen
 function kmAiAanBlad() {
   const voorbeeld = { optieA: { titel: "…", notitie: "…" }, optieB: { titel: "…", notitie: "…" }, context: { inzet: "klein", omkeerbaar: "ja", deadline: null, zichtbaar: false },
     checks: { trek: 0, prive: "A", terug: "gelijk", beideGoed: null, munt: null }, routes: { primair: "B", secundair: "A", soort: "normaal", scores: { A: 60, B: 81, "…": "…" } } };
@@ -28394,8 +28374,8 @@ function kmAiAanBlad() {
     `<button class="knop breed primair" id="km-ai-ok">Aanzetten</button>`);
   $("#km-ai-ok").onclick = async () => { await zetInst("km_ai", Object.assign({}, kmAiInst(), { aan: true })); bladSluit(); teken(); toast("AI-laag staat aan"); };
 }
-/* Instellingen → Keuzemachine (akkoord B). */
-if (typeof vwInstellingen === "function") {
+/* Instellingen → Keuzemachine: uitgeschakeld in Brain-Mate Nate (geen API-koppelingen). */
+if (false) {
   const _vi = vwInstellingen;
   vwInstellingen = function () {
     const h = _vi.apply(this, arguments), ai = kmAiInst(), heeft = !!inst("km_sleutel", null);
