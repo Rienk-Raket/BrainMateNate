@@ -55,6 +55,8 @@ vervang('shles: (typeof vwShLes === "function" ? vwShLes : vwStart)',
         '    keuze: (typeof vwKeuze === "function" ? vwKeuze : vwStart),\n'
         '    keuzetest: (typeof vwKeuzeTest === "function" ? vwKeuzeTest : vwStart),\n'
         '    kennismaking: (typeof vwKennismaking === "function" ? vwKennismaking : vwStart),\n'
+        '    planning: (typeof vwPlanning === "function" ? vwPlanning : vwStart),\n'
+        '    ruimtes: (typeof vwRuimtes === "function" ? vwRuimtes : vwStart),\n'
         '    keuzedilemma: (typeof vwKeuzeDilemma === "function" ? vwKeuzeDilemma : vwStart),\n'
         '    keuzetheorie: (typeof vwKeuzeTheorie === "function" ? vwKeuzeTheorie : vwStart),\n'
         '    ontwerp: (typeof vwOntwerp === "function" ? vwOntwerp : vwStart)')
@@ -172,7 +174,7 @@ ILL_TB = ('<symbol id="ill-toolbox" viewBox="0 0 100 80"><g fill="none" stroke="
 vervang('<symbol id="ill-persoonlijk"', ILL + '\n' + ILL_WL + '\n' + ILL_ANKER + '\n' + ILL_VOORTGANG + '\n' + ILL_HUIS + '\n' + ILL_LJ + '\n' + ILL_KM + '\n' + ILL_TB + '\n' + BEZEM + '\n' + EXTRA_ICONEN + '\n<symbol id="ill-persoonlijk"')
 
 # 5. Stijl: achteraan in het bestaande <style>-blok.
-css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n\n" + lees("nate.css") + "\n\n" + lees("kennismaking.css") + "\n"
+css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n\n" + lees("nate.css") + "\n\n" + lees("kennismaking.css") + "\n\n" + lees("mijn-dag.css") + "\n\n" + lees("navigatie.css") + "\n"
 vervang('</style>\n</head>', css + '</style>\n</head>')
 
 # 6. Scripts: vlak vóór het blok dat start() aanroept.
@@ -225,7 +227,7 @@ for d in adhd["domeinen"]:
         assert sid in SUBTHEMAS, f"domein {d['id']}: onbekend subthema {sid}"
 kennis_js += "\nconst NATE_VRAGENBANK = " + json.dumps(VRAGEN, ensure_ascii=False).replace("</", "<\\/") + ";"
 kennis_js += "\nconst NATE_SCOREWEGING = " + json.dumps(WEGING, ensure_ascii=False).replace("</", "<\\/") + ";"
-blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js", "kennismaking.js", "nate-tips.js"))
+blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js", "kennismaking.js", "nate-tips.js", "mijn-dag.js", "navigatie.js"))
 html = html[:j] + blokken + html[j:]
 
 # 8. Merk: Brain-Mate Nate.
@@ -267,6 +269,25 @@ for oud, nieuw in (("FutureMe · alles op dit toestel", f"{APP_NAAM} · alles op
 #    verstuurt wordt vervangen door een lege versie, de schakelaar en het
 #    sleutelveld in Instellingen verdwijnen, en de bouw stopt als er toch een
 #    API-adres in de app staat.
+# 10. Reistijd en buffer bij een afspraak (stap 5, Mijn dag): daaruit rekent de app de
+#     vertrektijd, die als klokje op de Dagring staat. Alleen het afspraakblad en de
+#     velden die bij een herhaling meegaan; de rest van de app blijft gelijk.
+vervang('''    <div class="veld"><label for="a-voor">Wat is er afgesproken / voorbereiding</label>''',
+        '''    <div class="veld md-twee"><div><label for="a-reis">Reistijd (min)</label>
+      <input class="invoer" id="a-reis" type="number" inputmode="numeric" min="0" max="600" value="${a.reistijd || ""}" placeholder="0"></div>
+      <div><label for="a-buffer">Buffer vóór vertrek (min)</label>
+      <input class="invoer" id="a-buffer" type="number" inputmode="numeric" min="0" max="120" value="${a.buffer != null ? a.buffer : ""}" placeholder="10"></div></div>
+    <p class="klein">Met een reistijd zet Nate een klokje op je vertrektijd.</p>
+    <div class="veld"><label for="a-voor">Wat is er afgesproken / voorbereiding</label>''')
+vervang('''    a.plek = $("#a-plek").value.trim();
+    a.personen = $("#a-personen")''',
+        '''    a.plek = $("#a-plek").value.trim();
+    a.reistijd = Math.max(0, +$("#a-reis").value || 0);
+    a.buffer = $("#a-buffer").value === "" ? null : Math.max(0, +$("#a-buffer").value || 0);
+    a.personen = $("#a-personen")''')
+vervang('''  afspraken: ["titel", "soort", "tijd", "eindTijd", "plek", "personen", "werk", "voorbereiding"]''',
+        '''  afspraken: ["titel", "soort", "tijd", "eindTijd", "plek", "personen", "werk", "voorbereiding", "reistijd", "buffer"]''')
+
 begin = html.index("async function kmAiVerrijk(d, p, lokaal) {")
 eind = html.index("function kmAiAanBlad() {", begin)
 html = html[:begin] + ("async function kmAiVerrijk() { return null; }   // Brain-Mate Nate: geen API-koppelingen\n") + html[eind:]

@@ -11,7 +11,7 @@ const html = lees("../index.html");
 const knip = (a, b) => { const i = html.indexOf(a), j = html.indexOf(b); assert.ok(i > 0 && j > i, a + " niet gevonden"); return html.slice(i, j); };
 const ctx = vm.createContext({});
 vm.runInContext(knip("/* NATE-SCORE-BEGIN */", "/* NATE-SCORE-EINDE */") + knip("/* NATE-TIPS-BEGIN */", "/* NATE-TIPS-EINDE */")
-  + ";globalThis.T = { ntDagdeel, ntKandidaten, ntKies, ntWaarom, nsProfiel, nsRoute, nsVolgende };", ctx);
+  + ";globalThis.T = { ntDagdeel, ntKandidaten, ntKies, ntWaarom, ntSterksteAntwoord, nsProfiel, nsRoute, nsVolgende };", ctx);
 const T = ctx.T;
 const bank = JSON.parse(lees("../kennis/vragenbank.json"));
 const cfg = JSON.parse(lees("../kennis/scoreweging.json"));
@@ -71,7 +71,7 @@ test("zonder profiel: algemene tip op toerbeurt, met eerlijke omdat-zin", () => 
   const k = T.ntKies([], adhd.domeinen, [], 3, "middag");
   assert.equal(k.algemeen, true);
   assert.equal(k.domein.id, adhd.domeinen[(3 * 3 + 1) % adhd.domeinen.length].id);
-  const w = T.ntWaarom(k, bank, {}, BEWIJS);
+  const w = T.ntWaarom(k, bank, {}, BEWIJS, cfg);
   assert.ok(w.startsWith("Omdat we nog niet hebben kennisgemaakt"));
 });
 
@@ -79,7 +79,7 @@ test("omdat-zin verwijst naar het antwoord en noemt het bewijsniveau", () => {
   const { antwoorden, profiel } = profielMet("A2.3");
   const k = T.ntKies(T.ntKandidaten(profiel, antwoorden, adhd.domeinen, [], cfg), adhd.domeinen, [], 0, "ochtend");
   assert.equal(k.domein.id, "emoties");
-  const w = T.ntWaarom(k, bank, antwoorden, BEWIJS);
+  const w = T.ntWaarom(k, bank, antwoorden, BEWIJS, cfg);
   assert.ok(w.includes('bij emotieregulatie en frustratietolerantie "zeer vaak" antwoordde'), w);
   assert.ok(w.includes("Hoe sterk is dit?"), w);
   assert.ok(/direct bij ADHD|niet specifiek bij ADHD|nog een experiment/.test(w));
@@ -90,4 +90,22 @@ test("elk domein wijst naar bestaande subthema's; sensorisch en lezen hebben er 
   for (const d of adhd.domeinen) for (const s of d.subthemas) assert.ok(ids.has(s), d.id + ": " + s);
   const gedekt = new Set(adhd.domeinen.flatMap(d => d.subthemas));
   assert.ok(!gedekt.has("A2.1") && !gedekt.has("A3.4"));
+});
+
+test("omdat-zin citeert nooit een laag antwoord (review: 'nooit' bij een geopend domein)", () => {
+  const a = {}; for (const q of bank.questions) if (q.question_id.endsWith(".Q1") && q.assessment_part === "A") a[q.question_id] = "never";
+  a["A4.1.Q2"] = "very_often"; a["A4.1.Q3"] = "often";
+  const p = T.nsProfiel(bank, a, { "A4.1": true }, {}, cfg, {});
+  const k = T.ntKies(T.ntKandidaten(p, a, adhd.domeinen, [], cfg), adhd.domeinen, [], 0, "ochtend");
+  const w = T.ntWaarom(k, bank, a, BEWIJS, cfg);
+  assert.doesNotMatch(w, /"nooit"|"zelden"|"niet van toepassing"|"liever niet/);
+  assert.ok(w.includes('"zeer vaak" antwoordde'), w);
+  // Alleen gemarkeerd, zonder hoog antwoord: eerlijk "aangaf dat het speelt".
+  assert.equal(T.ntSterksteAntwoord(bank, "A3.4", { "A3.4.Q1": "never", "A3.4.Q2": "rarely" }, cfg), null);
+});
+
+test("tip gaat over de dagen rond, ook bij drie kandidaten", () => {
+  const k = adhd.domeinen.slice(0, 3).map(d => ({ domein: d, dim: "A1.1", score: 50 }));
+  const ochtenden = [0, 1, 2, 3, 4].map(dag => T.ntKies(k, adhd.domeinen, [], dag, "ochtend").domein.id);
+  assert.ok(new Set(ochtenden).size > 1, ochtenden.join(","));
 });

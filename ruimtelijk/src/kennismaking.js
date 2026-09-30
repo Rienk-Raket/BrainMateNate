@@ -63,7 +63,7 @@ const KN_DICHTHEID = [["rustig", "Rustig", "Weinig tegelijk, één voorstel."], 
 const KN_VLAG_TEKST = {
   dimension_has_fewer_than_two_valid_items: "Bij sommige onderwerpen heb je minder dan twee vragen beantwoord.",
   impact_missing: "Bij sommige onderwerpen weet ik nog niet hoeveel last je ervan hebt.",
-  selected_item_coverage_below_60_percent: "Je hebt minder dan 60% van de gekozen vragen beantwoord.",
+  selected_item_coverage_below_60_percent: "Je hebt minder dan zes van de tien gekozen vragen beantwoord.",
   only_one_life_area: "Je noemde maar één levensgebied.",
   strong_recent_change: "Er is de laatste tijd veel veranderd; dat kan je antwoorden kleuren.",
   sleep_or_fatigue_major_influence: "Slaap of vermoeidheid heeft grote invloed.",
@@ -125,7 +125,7 @@ function knDeel(stap) {
 }
 function knHuidig(d) {
   const lijst = knStappen(d);
-  if (V.knStap && lijst.includes(V.knStap)) return V.knStap;
+  if (V.knStap && (lijst.includes(V.knStap) || (V.knStap.startsWith("q:") && knVraag(V.knStap.slice(2))))) return V.knStap;
   if (!d.stap) return "welkom";   // nog nooit begonnen
   if (lijst.includes(d.stap)) return d.stap;
   // Stap bestaat niet meer (route veranderd): de eerste open vraag.
@@ -134,7 +134,8 @@ function knHuidig(d) {
 }
 async function knNaar(stap) {
   V.knStap = stap; V.knFocus = true;
-  await knZet({ stap, gestart: knData().gestart || new Date().toISOString(), pauze: false });
+  const d = knData(), klaar = d.klaar || (stap === "samenvatting" && nsKernKlaar(NATE_VRAGENBANK, d.antwoorden));
+  await knZet({ stap, gestart: d.gestart || new Date().toISOString(), pauze: false, klaar });
   teken(); $("#scherm").scrollTop = 0;
 }
 async function knVolgende(huidig) {
@@ -301,7 +302,7 @@ function knMicrostapHTML(d, dim) {
   if (!dim) return "";
   const casus = NATE_VRAGENBANK.cases.find(c => c.subtheme_id === dim.id), q1 = knVraag(dim.id + ".Q1");
   const modules = (q1.app_module_ids || []).slice(0, 3).map(m => NATE_VRAGENBANK.modules[m]).filter(Boolean);
-  const antwoord = knLabel(dim.id + ".Q1", d.antwoorden[dim.id + ".Q1"]).toLowerCase();
+  const antwoord = ntSterksteAntwoord(NATE_VRAGENBANK, dim.id, d.antwoorden, NATE_SCOREWEGING);
   return `<h3>Het kan helpen dit te testen</h3><p>${esc(casus ? casus.recommended_first_microstep : "")}</p>
     ${modules.length ? `<p class="klein">Past bij: ${esc(modules.join(", "))}.</p>` : ""}
     <details><summary>Waarom zeg je dit?</summary><p>Omdat je bij ${esc(q1.subtheme_name.toLowerCase())} ${antwoord ? `"${esc(antwoord)}" antwoordde` : "aangaf dat het speelt"} en het je in het dagelijks leven raakt. Bewijs: ${esc(q1.evidence_level)}; de microstap zelf is een persoonlijk experiment.</p></details>`;

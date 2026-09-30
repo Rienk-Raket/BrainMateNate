@@ -123,6 +123,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("geen percentages of diagnosewoorden", !/%|ADHD|autisme|dyslexie/i.test(tekst));
   check("disclaimer zichtbaar", tekst.includes("Dit profiel is geen diagnose"));
   check("uitsteltest is over te slaan", await p.locator('[data-view="keuzetest"]').count() === 1);
+  check("samenvatting bereikt = kennismaking klaar (herstart opent hem niet opnieuw)", await p.evaluate(() => inst("nate_km").klaar === true && !knMoetStarten()));
 
   /* ---------- 7. Profielrapport en wijzigen ---------- */
   await p.click('[data-kn="naar-profiel"]'); await wacht(400);
@@ -137,6 +138,9 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.locator('[data-kn="wijzig"]').first().click(); await wacht(300);
   check("wijzigen opent die vraag", await p.evaluate(() => V.view === "kennismaking" && knHuidig(knData()) === "q:A1.1.Q1"));
   await p.click('.kn-optie:has(input[value="never"])'); await wacht(400);
+  // Wijzigen van een vraag die niet (meer) in de route staat, toont toch die vraag.
+  const buiten = await p.evaluate(async () => { const d = knData(); const id = Object.keys(d.antwoorden).find(x => x.startsWith("B") && !knRoute(d).includes(x)) || "B4.4.Q1"; d.antwoorden[id] = d.antwoorden[id] || "often"; await knZet({ antwoorden: d.antwoorden }); V.knStap = "q:" + id; V.knTerugProfiel = true; ga("kennismaking"); await new Promise(r => setTimeout(r, 200)); const ok = knHuidig(knData()) === "q:" + id && !!document.querySelector(".kn-vraag legend"); V.knStap = null; V.knTerugProfiel = false; ga("profiel"); return ok; });
+  check("wijzigen werkt ook buiten de route", buiten);
   check("na wijziging terug naar profiel", await p.evaluate(() => V.view === "profiel" && inst("nate_km").antwoorden["A1.1.Q1"] === "never"));
   // Stap 4: de tip van dit dagdeel komt uit het profiel, met omdat-zin en bewijsniveau.
   const tip = await p.evaluate(() => nateTipVanVandaag());
@@ -144,7 +148,9 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("tip: bewijsniveau genoemd", !!tip && tip.waarom.includes("Hoe sterk is dit?"));
   check("tip: één per dagdeel", !!tip && /^tip-\d{4}-\d\d-\d\d-(ochtend|middag|avond)$/.test(tip.id), tip && tip.id);
   check("tip: Nate's stem (hooguit één uitroepteken, geen 'moet')", !!tip && (tip.tekst.match(/!/g) || []).length <= 1 && !/\bmoet\b/i.test(tip.tekst));
-  check("Niet meer tonen blijft werken", await p.evaluate(async () => { const t = nateTipVanVandaag(); await zetInst("nateVerborgen", ["dom-" + t.domein]); const t2 = nateTipVanVandaag(); await zetInst("nateVerborgen", []); return !t2 || t2.domein !== t.domein; }));
+  // Via het paneel, zoals een gebruiker het doet: daarna dit dagdeel geen tweede tip.
+  const nm = await p.evaluate(async () => { nateOpen(); await new Promise(r => setTimeout(r, 200)); const k = document.querySelector('#nate-paneel [data-nate="niet-meer"]'); if (!k) return "geen knop"; const dom = k.dataset.id; k.click(); await new Promise(r => setTimeout(r, 300)); const t2 = nateTipVanVandaag(); const verb = inst("nateVerborgen"); nateSluit(); await zetInst("nateVerborgen", []); return t2 === null && verb.includes(dom) ? "ok" : JSON.stringify({ t2, verb }); });
+  check("Niet meer tonen: domein weg en geen tweede tip dit dagdeel", nm === "ok", nm);
   check("de oude tien profielvragen staan er nog (reserve voor ndAanpak)", await p.evaluate(() => typeof ndAanpak === "function" && !!document.querySelector("#scherm .pf-sectie")));
   await ctx.close();
 

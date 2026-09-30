@@ -8,9 +8,9 @@ bouwt verder op `nate-basis` (stap 1 en 2, uit de bundle van de opzet-chat).
 | Stap | Status | Getest | Open |
 |---|---|---|---|
 | 3a Vragenbank, scoreweging, scorekern | Klaar | `node --test tests/*.test.mjs`: 9 scoringtests + keuzemachine groen; `bouw.py` controleert beide JSON-bestanden | — |
-| 3b Kennismakingsflow en profielrapport | Klaar, wacht op review | `tests/kennismaking.e2e.cjs`: 45 checks (390×844 licht, 360×740 donker + minder beweging, tikvlakken, focus, herladen, nul externe verzoeken, geen consolefouten); schermafbeeldingen bekeken | Reviewsubagent |
-| 4 Tips uit profiel | Klaar, wacht op review | `tests/tips.test.mjs` (8 tests) + 5 e2e-checks: omdat-zin, bewijsniveau, één per dagdeel, Nate's stem, Niet meer tonen | Reviewsubagent |
-| 5 Navigatie en Mijn dag | Nog niet begonnen | — | — |
+| 3b Kennismakingsflow en profielrapport | Klaar, review verwerkt | `tests/kennismaking.e2e.cjs`: 45 checks (390×844 licht, 360×740 donker + minder beweging, tikvlakken, focus, herladen, nul externe verzoeken, geen consolefouten); schermafbeeldingen bekeken | — |
+| 4 Tips uit profiel | Klaar, review verwerkt | `tests/tips.test.mjs` (8 tests) + 5 e2e-checks: omdat-zin, bewijsniveau, één per dagdeel, Nate's stem, Niet meer tonen | — |
+| 5 Navigatie en Mijn dag | Klaar, wacht op review | `tests/mijn-dag.e2e.cjs`: 47 checks (ring met klokje/buffer/bolletjes/wijzer, tijdlijn, Nu-kaart, pop-up met één actie, focus terug, dagstart, widgets, reistijd, onderbalk, Meer in de kop, Terug + scroll, Planning, Ruimtes, alle schermen tekenen, gedachte naar mindmap; 390 licht + 360 donker/minder beweging) | Reviewsubagent |
 | 6 Chat met Nate | Nog niet begonnen | — | — |
 | 7 Modules-audit | Nog niet begonnen | — | — |
 
@@ -27,6 +27,22 @@ bouwt verder op `nate-basis` (stap 1 en 2, uit de bundle van de opzet-chat).
 - `kennis/adhd-theorie.json`: per domein een veld `subthemas` (Deel A-subthema's uit de vragenbank, via de route A → B uit 04). A2.1 (sensorisch) en A3.4 (lezen) hebben geen ADHD-domein en dus geen tip.
 - `ruimtelijk/src/nate-tips.js`: pure tipkiezer (NATE-TIPS-BEGIN/EINDE) + vervanging van `nateTipVanVandaag()`: kandidaten op behoefte (of kernscore vanaf "soms"), één keuze per dagdeel die rondgaat, omdat-zin met het antwoord en het bewijsniveau; zonder profiel een algemene tip met eerlijke omdat-zin.
 - `tests/tips.test.mjs`.
+
+## Bestanden van stap 5
+
+- `ruimtelijk/src/mijn-dag.js/.css`: Mijn dag (Dagring + tijdlijn + één Nu-kaart + dagstart; oude blokken als widgets die je zelf aanzet), vertrekklokje en buffer op de ring, pop-up met één primaire actie, focus terug na elk onderblad.
+- `ruimtelijk/src/navigatie.js/.css`: onderbalk (Mijn dag · Planning · + · Mindmap · Ruimtes), Meer in de kop (Voortgang, Profiel, Instellingen, Gegevens, Help + "Ook"), Planning, Ruimtes, scrollpositie bij Terug en per tab, "Gedachte naar de mindmap".
+- `bouw.py` stap 10: reistijd en buffer in het afspraakblad.
+- `docs/routeoverzicht.md`, `tests/mijn-dag.e2e.cjs`.
+
+## Review stap 3 en 4 (verwerkt)
+
+1. Samenvatting bereikt = klaar (anders opende de kennismaking na de uitsteltest bij elke start opnieuw).
+2. Omdat-zin citeert het sterkste antwoord (kern of impact, vanaf "soms"); anders "aangaf dat het speelt".
+3. "Niet meer tonen": ook geen andere tip in hetzelfde dagdeel.
+4. Wijzigen werkt ook voor een vraag die niet meer in de route staat.
+Kleiner: tip gaat over de dagen rond (ook bij 3/6 kandidaten); geen procentteken in een vlagtekst.
+Open (letterlijk gelaten): de vijf compensatievragen hebben `scoring_role: resource` in de vragenbank en tellen dus niet als kosten (twijfel 1).
 
 ## Bronnen
 

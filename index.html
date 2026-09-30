@@ -4356,6 +4356,91 @@ body.nate-open #nate, body.nate-weg #nate { opacity: 0; pointer-events: none; }
 /* Rustfiguur van Nate weg zolang de kennismaking op het scherm staat. */
 body.kn-actief #nate { opacity: 0; pointer-events: none; }
 
+
+/* === SECTIE 87: MIJN DAG === */
+
+/* Klokje op de vertrektijd en de buffer ervoor (niet alleen kleur: eigen vorm en streepjes). */
+.fm-dr-klok circle { fill: var(--card); stroke: var(--accent); stroke-width: 2; }
+.fm-dr-klok line { stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
+.fm-dr-klok { cursor: pointer; }
+.fm-dr-klok:focus-visible { outline: none; }
+.fm-dr-klok:focus-visible circle { stroke-width: 3.5; }
+.fm-dr-buffer { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 3 4; opacity: .7; }
+.fm-dr-legenda i.klok { border: 2px solid var(--accent); background: var(--card); border-radius: 50%; }
+.fm-dr-legenda i.buffer { background: none; border-top: 3px dashed var(--accent); border-radius: 0; height: 0; }
+
+/* Tijdlijn: tekstversie van de ring. */
+.md-tijdlijn { list-style: none; margin: 0; padding: 0; }
+.md-item button { display: grid; grid-template-columns: 48px 14px 1fr; align-items: center; gap: 8px; width: 100%; min-height: max(var(--tap), 44px); padding: 6px 0; background: none; border: 0; border-top: 1px solid var(--line); text-align: left; color: var(--text); cursor: pointer; }
+.md-item:first-child button { border-top: 0; }
+.md-item button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: 8px; }
+.md-item time { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--muted); font-size: calc(14px * var(--t)); }
+.md-bol { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--card); }
+.md-item.taak.af .md-bol { background: var(--accent); }
+.md-item.afspraak .md-bol { border-radius: 3px; background: var(--accent); }
+.md-item.vertrek .md-bol { border-style: dashed; }
+.md-item.spoor .md-bol { border-color: transparent; }
+.md-item span { display: flex; flex-direction: column; }
+.md-item span b { font-weight: 650; font-size: calc(15px * var(--t)); }
+.md-item span small { color: var(--muted); font-size: calc(13px * var(--t)); }
+.md-item.voorbij span b { color: var(--muted); }
+.md-item.af span b { text-decoration: line-through; }
+.md-leeg { margin: 0; }
+
+/* Nu-kaart. */
+.md-nu h2 { margin: 4px 0 2px; font-size: calc(20px * var(--t)); line-height: 1.3; }
+.md-nu h2 time { color: var(--accent); font-variant-numeric: tabular-nums; }
+.md-nu-acties { display: flex; gap: 8px; margin-top: 10px; }
+.md-nu-acties .knop { flex: 1; }
+.md-daarna { margin: 12px 0 0; color: var(--muted); font-size: calc(14px * var(--t)); line-height: 1.45; }
+.md-daarna .labeltekst { display: inline; }
+.md-rest { white-space: nowrap; }
+.md-nu-leeg p { margin: 6px 0 0; }
+.md-hart { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+
+.md-popsub { margin: 0; color: var(--muted); }
+.md-widgetknop { display: inline-flex; align-items: center; gap: 8px; min-height: max(var(--tap), 44px); margin: 14px auto 6px; padding: 0 14px; background: none; border: 1px solid var(--line2); border-radius: var(--radius-sm); color: var(--muted); font-weight: 650; cursor: pointer; }
+.md-widgetknop svg { width: 18px; height: 18px; }
+.md-widgetknop:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.md-schakels .toggle { min-width: max(var(--tap), 44px); min-height: max(var(--tap), 44px); }
+.md-twee { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Een algemene lijstregel gaf elk item een eigen vlak; in de tijdlijn is dat de knop. */
+.md-tijdlijn .md-item { background: none; padding: 0; margin: 0; border: 0; box-shadow: none; }
+.fm-dr-legenda i.klok { width: 10px; height: 10px; }
+.fm-dr-legenda i.buffer { width: 16px; }
+
+
+/* === SECTIE 88: NAVIGATIE === */
+
+/* Planhulpen boven de week (tikvlak 44 px). */
+.nv-chips { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 4px; scrollbar-width: none; }
+.nv-chips::-webkit-scrollbar { display: none; }
+.nv-chip { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: max(var(--tap), 44px); padding: 0 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--text); font-weight: 650; font-size: calc(14px * var(--t)); cursor: pointer; }
+.nv-chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Ruimtes: kamers als kaarten. */
+.nv-kamers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.nv-kamer { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-height: 96px; padding: 14px; text-align: left; position: relative; cursor: pointer; border: 0; color: var(--text); }
+.nv-kamer:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.nv-kamer-ico { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--accent-soft); color: var(--accent); }
+.nv-kamer-ico svg { width: 20px; height: 20px; }
+.nv-kamer-tekst { display: flex; flex-direction: column; gap: 2px; }
+.nv-kamer-tekst b { font-size: calc(15px * var(--t)); }
+.nv-kamer-tekst small { color: var(--muted); font-size: calc(12.5px * var(--t)); line-height: 1.3; }
+.nv-telling { position: absolute; top: 12px; right: 12px; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--accent); color: var(--accent-text); font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+
+/* Meer: rijen met uitleg. */
+.nv-rij { min-height: max(var(--tap), 44px); }
+.nv-rij .nm { display: flex; flex-direction: column; gap: 1px; }
+.nv-rij .nm small { color: var(--muted); font-size: calc(12.5px * var(--t)); }
+
+/* Gedachte naar de mindmap. */
+.nv-gedachte { margin-bottom: 14px; }
+.nv-gedachte-rij { display: flex; gap: 8px; margin-top: 6px; }
+.nv-gedachte-rij .invoer { flex: 1; min-height: max(var(--tap), 44px); }
+.nv-gedachte-rij .knop { flex: none; min-width: max(var(--tap), 44px); padding: 0 14px; }
+.nv-planning .keuze, .nv-planning .nd-tipknop { min-width: max(var(--tap), 44px); min-height: max(var(--tap), 44px); }
+
 </style>
 </head>
 <body>
@@ -5638,6 +5723,8 @@ function teken() {
     keuze: (typeof vwKeuze === "function" ? vwKeuze : vwStart),
     keuzetest: (typeof vwKeuzeTest === "function" ? vwKeuzeTest : vwStart),
     kennismaking: (typeof vwKennismaking === "function" ? vwKennismaking : vwStart),
+    planning: (typeof vwPlanning === "function" ? vwPlanning : vwStart),
+    ruimtes: (typeof vwRuimtes === "function" ? vwRuimtes : vwStart),
     keuzedilemma: (typeof vwKeuzeDilemma === "function" ? vwKeuzeDilemma : vwStart),
     keuzetheorie: (typeof vwKeuzeTheorie === "function" ? vwKeuzeTheorie : vwStart),
     ontwerp: (typeof vwOntwerp === "function" ? vwOntwerp : vwStart)
@@ -6964,6 +7051,11 @@ function openAfspraakBlad(id, voorinvulling) {
       </div></div>
     <div class="veld"><label for="a-plek">Locatie</label>
       <input class="invoer" id="a-plek" type="text" value="${esc(a.plek || "")}" placeholder="Kantoor, Teams, telefonisch…"></div>
+    <div class="veld md-twee"><div><label for="a-reis">Reistijd (min)</label>
+      <input class="invoer" id="a-reis" type="number" inputmode="numeric" min="0" max="600" value="${a.reistijd || ""}" placeholder="0"></div>
+      <div><label for="a-buffer">Buffer vóór vertrek (min)</label>
+      <input class="invoer" id="a-buffer" type="number" inputmode="numeric" min="0" max="120" value="${a.buffer != null ? a.buffer : ""}" placeholder="10"></div></div>
+    <p class="klein">Met een reistijd zet Nate een klokje op je vertrektijd.</p>
     <div class="veld"><label for="a-voor">Wat is er afgesproken / voorbereiding</label>
       <textarea class="invoer" id="a-voor" placeholder="In je eigen woorden">${esc(a.voorbereiding || "")}</textarea></div>
     ${bestaat ? `<div class="hr"></div>
@@ -7023,6 +7115,8 @@ function openAfspraakBlad(id, voorinvulling) {
     if (a.tijd && !a.datum) a.datum = vandaagISO();
     a.deadline = $("#a-deadline").value || "";
     a.plek = $("#a-plek").value.trim();
+    a.reistijd = Math.max(0, +$("#a-reis").value || 0);
+    a.buffer = $("#a-buffer").value === "" ? null : Math.max(0, +$("#a-buffer").value || 0);
     a.personen = $("#a-personen").value.split(",").map(x => x.trim()).filter(Boolean);
     a.voorbereiding = $("#a-voor").value.trim();
     const aw2 = $$("[data-awerk]").find(x => x.getAttribute("aria-pressed") === "true");
@@ -15540,7 +15634,7 @@ function herhaalFout(datum, h) {
 /* ---------- Na opslaan in het taak- of afspraakblad ---------- */
 const REEKS_VELDEN = {
   taken: ["titel", "tijd", "duur", "prioriteit", "projectId", "werk", "labels", "personen", "energie", "notitie", "waarom", "klaarAls", "subtaken"],
-  afspraken: ["titel", "soort", "tijd", "eindTijd", "plek", "personen", "werk", "voorbereiding"]
+  afspraken: ["titel", "soort", "tijd", "eindTijd", "plek", "personen", "werk", "voorbereiding", "reistijd", "buffer"]
 };
 const reeksSchema = h => h && h.soort ? JSON.stringify([h.soort, Math.max(1, +h.elke || 1), (h.dagen || []).slice().sort(), h.dagVanMaand || 0]) : "";
 const reeksVeldGelijk = (w, a, b, k) => k === "subtaken"
@@ -31050,7 +31144,7 @@ const KN_DICHTHEID = [["rustig", "Rustig", "Weinig tegelijk, één voorstel."], 
 const KN_VLAG_TEKST = {
   dimension_has_fewer_than_two_valid_items: "Bij sommige onderwerpen heb je minder dan twee vragen beantwoord.",
   impact_missing: "Bij sommige onderwerpen weet ik nog niet hoeveel last je ervan hebt.",
-  selected_item_coverage_below_60_percent: "Je hebt minder dan 60% van de gekozen vragen beantwoord.",
+  selected_item_coverage_below_60_percent: "Je hebt minder dan zes van de tien gekozen vragen beantwoord.",
   only_one_life_area: "Je noemde maar één levensgebied.",
   strong_recent_change: "Er is de laatste tijd veel veranderd; dat kan je antwoorden kleuren.",
   sleep_or_fatigue_major_influence: "Slaap of vermoeidheid heeft grote invloed.",
@@ -31112,7 +31206,7 @@ function knDeel(stap) {
 }
 function knHuidig(d) {
   const lijst = knStappen(d);
-  if (V.knStap && lijst.includes(V.knStap)) return V.knStap;
+  if (V.knStap && (lijst.includes(V.knStap) || (V.knStap.startsWith("q:") && knVraag(V.knStap.slice(2))))) return V.knStap;
   if (!d.stap) return "welkom";   // nog nooit begonnen
   if (lijst.includes(d.stap)) return d.stap;
   // Stap bestaat niet meer (route veranderd): de eerste open vraag.
@@ -31121,7 +31215,8 @@ function knHuidig(d) {
 }
 async function knNaar(stap) {
   V.knStap = stap; V.knFocus = true;
-  await knZet({ stap, gestart: knData().gestart || new Date().toISOString(), pauze: false });
+  const d = knData(), klaar = d.klaar || (stap === "samenvatting" && nsKernKlaar(NATE_VRAGENBANK, d.antwoorden));
+  await knZet({ stap, gestart: d.gestart || new Date().toISOString(), pauze: false, klaar });
   teken(); $("#scherm").scrollTop = 0;
 }
 async function knVolgende(huidig) {
@@ -31288,7 +31383,7 @@ function knMicrostapHTML(d, dim) {
   if (!dim) return "";
   const casus = NATE_VRAGENBANK.cases.find(c => c.subtheme_id === dim.id), q1 = knVraag(dim.id + ".Q1");
   const modules = (q1.app_module_ids || []).slice(0, 3).map(m => NATE_VRAGENBANK.modules[m]).filter(Boolean);
-  const antwoord = knLabel(dim.id + ".Q1", d.antwoorden[dim.id + ".Q1"]).toLowerCase();
+  const antwoord = ntSterksteAntwoord(NATE_VRAGENBANK, dim.id, d.antwoorden, NATE_SCOREWEGING);
   return `<h3>Het kan helpen dit te testen</h3><p>${esc(casus ? casus.recommended_first_microstep : "")}</p>
     ${modules.length ? `<p class="klein">Past bij: ${esc(modules.join(", "))}.</p>` : ""}
     <details><summary>Waarom zeg je dit?</summary><p>Omdat je bij ${esc(q1.subtheme_name.toLowerCase())} ${antwoord ? `"${esc(antwoord)}" antwoordde` : "aangaf dat het speelt"} en het je in het dagelijks leven raakt. Bewijs: ${esc(q1.evidence_level)}; de microstap zelf is een persoonlijk experiment.</p></details>`;
@@ -31442,18 +31537,29 @@ function ntKandidaten(profiel, antwoorden, domeinen, verborgen, cfg) {
 // keer per dag hetzelfde hoort. Zonder kandidaten: een algemene tip op toerbeurt.
 function ntKies(kandidaten, domeinen, verborgen, dagIndex, dagdeel) {
   const n = dagIndex * 3 + NT_DAGDELEN.indexOf(dagdeel);
-  if (kandidaten.length) return Object.assign({ algemeen: false }, kandidaten[n % kandidaten.length]);
+  // + dagIndex: elke dag schuift de reeks één plek op, ook bij drie of zes kandidaten.
+  if (kandidaten.length) return Object.assign({ algemeen: false }, kandidaten[(n + dagIndex) % kandidaten.length]);
   const weg = new Set(verborgen || []);
   const alle = domeinen.filter(dom => !weg.has("dom-" + dom.id));
   return alle.length ? { domein: alle[n % alle.length], dim: null, score: null, algemeen: true } : null;
 }
+// Het antwoord dat de behoefte droeg: de hoogste score van kernvraag en impactvraag,
+// maar alleen vanaf "soms". Anders (bv. alleen "Speelt wel") geen citaat.
+function ntSterksteAntwoord(bank, dim, antwoorden, cfg) {
+  let beste = null;
+  for (const id of [dim + ".Q1", dim + ".Q2"]) {
+    const s = nsScore(antwoorden[id], cfg), q = bank.questions.find(x => x.question_id === id);
+    if (q && s !== null && s >= 2 && (!beste || s > beste.s)) beste = { s, label: (q.response_options.find(o => o.value === antwoorden[id]) || {}).label };
+  }
+  return beste ? beste.label.toLowerCase() : null;
+}
 // De omdat-zin verwijst naar het antwoord; daarna het bewijsniveau van de eerste interventie.
-function ntWaarom(keuze, bank, antwoorden, bewijsNaam) {
+function ntWaarom(keuze, bank, antwoorden, bewijsNaam, cfg) {
   const dom = keuze.domein, q = keuze.dim ? bank.questions.find(x => x.question_id === keuze.dim + ".Q1") : null;
-  const label = q ? (q.response_options.find(o => o.value === antwoorden[q.question_id]) || {}).label : null;
-  const omdat = q
-    ? `Omdat je bij ${q.subtheme_name.toLowerCase()} "${(label || "").toLowerCase()}" antwoordde.`
-    : "Omdat we nog niet hebben kennisgemaakt, kies ik een algemene tip.";
+  const label = q ? ntSterksteAntwoord(bank, keuze.dim, antwoorden, cfg) : null;
+  const omdat = !q ? "Omdat we nog niet hebben kennisgemaakt, kies ik een algemene tip."
+    : label ? `Omdat je bij ${q.subtheme_name.toLowerCase()} "${label}" antwoordde.`
+    : `Omdat je bij ${q.subtheme_name.toLowerCase()} aangaf dat het speelt.`;
   const bewijs = (dom.interventies[0] || {}).bewijs;
   return `${omdat} ${dom.waaromKort} (Uit het onderzoek over ${dom.naam.toLowerCase()}.)` + (bewijs ? ` Hoe sterk is dit? ${bewijsNaam[bewijs]}.` : "");
 }
@@ -31473,9 +31579,394 @@ nateTipVanVandaag = function () {
   const dom = keuze.domein;
   return {
     id, bron: "nate", titel: nateZeg(NATE_TEKST.tipTitel), tekst: dom.nate ? nateZeg(dom.nate) : dom.minimaleInterventie,
-    waarom: ntWaarom(keuze, NATE_VRAGENBANK, d.antwoorden, NATE_TEKST.bewijsNaam), domein: dom.id
+    waarom: ntWaarom(keuze, NATE_VRAGENBANK, d.antwoorden, NATE_TEKST.bewijsNaam, NATE_SCOREWEGING), domein: dom.id
   };
 };
+
+// "Niet meer tonen": het domein gaat weg, en in dit dagdeel komt er geen andere tip voor
+// in de plaats (hooguit één nieuw bericht per dagdeel). Eén schrijfactie, dus geen race
+// met de handler in nate.js; die slaan we hier over.
+document.addEventListener("click", async e => {
+  const el = e.target.closest && e.target.closest('#nate-paneel [data-nate="niet-meer"]'); if (!el) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const dagdeel = ntDagdeel(new Date().getHours());
+  await zetInst("nateVerborgen", nateInst("nateVerborgen", []).concat(el.dataset.id, `tip-${vandaagISO()}-${dagdeel}`));
+  nateTeken(); nateStipBijwerken(); toast(NATE_TEKST.nietMeerToast);
+}, true);
+
+</script>
+<script>
+"use strict";
+// === SECTIE 87: MIJN DAG — DAGRING, TIJDLIJN EN NU-KAART ===
+/* ==========================================================================
+   Stap 5, besluit 2. Mijn dag (view "vandaag") toont bovenaan de Dagring en
+   de tijdlijn (de tekstversie van de ring), daaronder hooguit één Nu-kaart
+   (1–2–rest) en de dagstart zolang die nog niet gedaan is. Alle andere blokken
+   van het oude Vandaag zijn widgets die je zelf aanzet (instelling mdWidgets).
+
+   Op de ring: bolletjes voor taken (open of klaar), bogen voor afspraken, een
+   wijzer op nu, en nieuw: een klokje op de VERTREKTIJD van een afspraak met
+   reistijd, met de buffer als streepjesboog ervoor. Een tik op iets geeft een
+   pop-up met één primaire actie.
+
+   De Dagring zelf staat in ruimte-data.js (fmDagringHTML); hier wikkelen we
+   hem om. Reistijd en buffer komen uit het afspraakblad (bouw.py, stap 10).
+   ========================================================================== */
+
+const MD_TEKST = {
+  kop: "Mijn dag",
+  nu: "Nu", daarna: "Daarna", rest: n => `en nog ${n}`,
+  leeg: { zacht: "Niets open. Rust is ook een plan.", normaal: "Niets open. Rust is ook een plan, en een goed plan!", vol: "Niets open. Rust is ook een plan, en een goed plan!" },
+  dagstart: "Dagstart · vijf minuten",
+  tijdlijn: "Tijdlijn",
+  tijdlijnLeeg: "Nog niets met een tijd vandaag.",
+  vertrek: "Vertrekken",
+  widgets: "Widgets kiezen",
+  widgetsUitleg: "Alleen wat je aanzet, staat op Mijn dag."
+};
+// De oude blokken van Vandaag, nu als widgets. Standaard staat er geen enkele aan.
+const MD_WIDGETS = [
+  ["achterstallig", "Achterstallig"], ["afspraken", "Afspraken van vandaag"], ["taken", "Taken van vandaag"],
+  ["gewoontes", "Gewoontes"], ["past", "Wat past er nu?"], ["afgerond", "Vandaag afgerond"],
+  ["sessie", "Aan de slag met je taken (sessie)"], ["voorstellen", "Voorstellen"], ["afsluiting", "Dag afsluiten"]
+];
+const mdWidgets = () => inst("mdWidgets", []) || [];
+const mdBufferStd = () => +inst("mdBuffer", 10) || 10;   // minuten buffer vóór vertrek
+const mdHHMM = min => pad(Math.floor(min / 60)) + ":" + pad(min % 60);
+
+/* ---------- 87.1 Vertrektijd ----------
+   Terugrekenen vanaf de begintijd: min reistijd, min buffer (categorie 1 uit het
+   onderzoek: het brein handelt op de vertrektijd, niet op de afspraaktijd). */
+function mdVertrek(a) {
+  const s = fmMin(a.tijd), reis = +a.reistijd || 0;
+  if (s == null || !reis) return null;
+  const buffer = a.buffer != null && a.buffer !== "" ? Math.max(0, +a.buffer) : mdBufferStd();
+  return { start: s, reistijd: reis, buffer, vertrek: Math.max(0, s - reis - buffer) };
+}
+function mdAfsprakenVandaag() {
+  const v = vandaagISO();
+  return S.afspraken.filter(a => a.datum === v && fmMin(a.tijd) != null && (typeof werkOk !== "function" || werkOk(a)));
+}
+
+/* ---------- 87.2 De ring omwikkelen: klokjes en buffers ---------- */
+{
+  const _ring = fmDagringHTML;
+  fmDagringHTML = function () {
+    let h = _ring.apply(this, arguments);
+    const { cx, cy, r } = FM_RING;
+    let extra = "", n = 0;
+    for (const a of mdAfsprakenVandaag()) {
+      const vt = mdVertrek(a); if (!vt) continue;
+      const [x, y] = fmPunt(vt.vertrek, r);
+      // Buffer als streepjesboog van vertrek tot begin; het klokje op het vertrekmoment.
+      extra += `<path d="${fmBoog(vt.vertrek, vt.start, r)}" class="fm-dr-buffer"/>` +
+        `<g class="fm-dr-klok" style="--i:${n++}" data-md="pop" data-soort="vertrek" data-id="${esc(a.id)}" tabindex="0" role="button" aria-label="Vertrekken om ${mdHHMM(vt.vertrek)} voor ${esc(a.titel)}">
+          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7"/>
+          <line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x.toFixed(1)}" y2="${(y - 4).toFixed(1)}"/><line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + 3).toFixed(1)}" y2="${y.toFixed(1)}"/>
+          <title>${mdHHMM(vt.vertrek)} vertrekken: ${esc(a.titel)}</title></g>`;
+    }
+    if (extra) {
+      const anker = `<text x="${cx}" y="${cy - 2}" class="fm-dr-tijd"`;
+      h = h.replace(anker, extra + anker);
+      h = h.replace('<li><i class="licht"></i>Daglicht</li>', '<li><i class="klok"></i>Vertrek</li><li><i class="buffer"></i>Buffer</li><li><i class="licht"></i>Daglicht</li>');
+    }
+    return h;
+  };
+}
+
+/* ---------- 87.3 Tijdlijn: de tekstversie van de ring ---------- */
+function mdItems() {
+  const v = vandaagISO(), { open, af } = fmVandaagTaken(), items = [];
+  for (const a of mdAfsprakenVandaag()) {
+    items.push({ min: fmMin(a.tijd), soort: "afspraak", label: a.titel, sub: a.plek || "", id: a.id });
+    const vt = mdVertrek(a);
+    if (vt) items.push({ min: vt.vertrek, soort: "vertrek", label: `${MD_TEKST.vertrek}: ${a.titel}`, sub: `${vt.reistijd} min reistijd + ${vt.buffer} min buffer`, id: a.id });
+  }
+  for (const t of open.concat(af)) if (t.datum === v && fmMin(t.tijd) != null) items.push({ min: fmMin(t.tijd), soort: "taak", label: t.titel, sub: t.af ? "klaar" : "open", af: !!t.af, id: t.id });
+  const sporen = FM_SPOREN.flatMap(f => { try { return f() || []; } catch (e) { return []; } }).filter(x => x && x.min != null);
+  for (const x of sporen) items.push({ min: x.min, soort: "spoor", label: x.label, sub: "", view: x.view, param: x.param, act: x.act, kleur: x.kleur });
+  return items.sort((a, b) => a.min - b.min);
+}
+function mdTijdlijnHTML() {
+  const items = mdItems(), nuMin = new Date().getHours() * 60 + new Date().getMinutes();
+  if (!items.length) return `<p class="klein md-leeg">${MD_TEKST.tijdlijnLeeg}</p>`;
+  return `<ol class="md-tijdlijn" aria-label="${MD_TEKST.tijdlijn}">${items.map((it, i) => `<li class="md-item ${it.soort}${it.af ? " af" : ""}${it.min < nuMin ? " voorbij" : ""}">
+      <button type="button" data-md="pop" data-soort="${it.soort}" data-id="${esc(it.id || "")}" data-i="${i}">
+        <time>${mdHHMM(it.min)}</time><i class="md-bol" aria-hidden="true"${it.kleur ? ` style="background:${it.kleur}"` : ""}></i>
+        <span><b>${esc(it.label)}</b>${it.sub ? `<small>${esc(it.sub)}</small>` : ""}</span></button></li>`).join("")}</ol>`;
+}
+
+/* ---------- 87.4 Nu-kaart: 1–2–rest ----------
+   Eén ding nu, twee daarna, en de rest als getal. Eerst taken met een tijd die
+   nog komt, dan taken zonder tijd op prioriteit, dan wat al voorbij is. */
+function mdNu() {
+  const { open } = fmVandaagTaken(), nuMin = new Date().getHours() * 60 + new Date().getMinutes();
+  const metTijd = open.filter(t => fmMin(t.tijd) != null).sort((a, b) => fmMin(a.tijd) - fmMin(b.tijd));
+  const komend = metTijd.filter(t => fmMin(t.tijd) >= nuMin - 15), voorbij = metTijd.filter(t => !komend.includes(t));
+  const zonder = open.filter(t => fmMin(t.tijd) == null).sort(sorteerTaken);
+  const lijst = komend.concat(zonder, voorbij);
+  return { een: lijst[0] || null, twee: lijst.slice(1, 3), rest: Math.max(0, lijst.length - 3) };
+}
+function mdNuHTML() {
+  const { een, twee, rest } = mdNu();
+  if (!een) return `<div class="card card-pad md-nu md-nu-leeg"><span class="labeltekst">${MD_TEKST.nu}</span><p>${esc(nateZeg(MD_TEKST.leeg))}</p></div>`;
+  return `<div class="card card-pad md-nu"><span class="labeltekst">${MD_TEKST.nu}</span>
+    <h2>${een.tijd ? `<time>${esc(een.tijd)}</time> ` : ""}${esc(een.titel)}</h2>
+    ${een.duur ? `<p class="klein">± ${een.duur} min</p>` : ""}
+    <div class="md-nu-acties"><button class="knop primair" data-act="vink" data-id="${esc(een.id)}">${ico("check")} Klaar</button>
+      <button class="knop rand" data-act="open-taak" data-id="${esc(een.id)}">Openen</button></div>
+    ${twee.length ? `<p class="md-daarna"><span class="labeltekst">${MD_TEKST.daarna}</span> ${twee.map(t => esc(t.titel)).join(" · ")}${rest ? ` <span class="md-rest">${MD_TEKST.rest(rest)}</span>` : ""}</p>` : ""}
+  </div>`;
+}
+
+/* ---------- 87.5 Widgets: de oude blokken, alleen als je ze aanzet ---------- */
+function mdWidgetHTML(id) {
+  const v = vandaagISO(), zichtbaar = openTaken();
+  switch (id) {
+    case "achterstallig": { const laat = zichtbaar.filter(t => t.datum && t.datum < v).sort(sorteerTaken); return laat.length ? sectie("Achterstallig", laat.length, `<button class="actie" data-act="alles-vandaag">Alles naar vandaag</button>`) + takenLijst(laat) : ""; }
+    case "afspraken": { const a = mdAfsprakenVandaag().sort((x, y) => (x.tijd || "") < (y.tijd || "") ? -1 : 1); return a.length ? sectie("Afspraken", a.length, `<button class="actie" data-act="nieuwe-afspraak">Nieuw</button>`) + `<div class="card">${a.map(afspraakRij).join("")}</div>` : ""; }
+    case "taken": { const nu = zichtbaar.filter(t => t.datum === v).sort(sorteerTaken); return sectie("Taken vandaag", nu.length, `<button class="actie" data-act="ga" data-view="kalender">Kalender</button>`) + (nu.length ? takenLijst(nu, { sleep: true }) : `<div class="card">${leeg("", "Niets gepland vandaag", "Leg iets vast via + Vastleggen.")}</div>`); }
+    case "gewoontes": { const gew = gewoontesVoor(v); if (!gew.length) return ""; const afG = gew.filter(g => gewoonteAf(g.id, v)).length; return sectie("Gewoontes", `${afG}/${gew.length}`, `<button class="actie" data-act="ga" data-view="gewoontes">Alles</button>`) + `<div class="card">${gew.map(g => gewoonteRij(g, v, true)).join("")}</div>`; }
+    case "past": {
+      let h = sectie("Wat past er nu?", null, "") + `<div class="chiprij scroll" style="margin-bottom:6px">${[5, 15, 30, 60, 120].map(m => `<button class="keuze" data-act="planmin" data-min="${m}" aria-pressed="${V.planMin === m}">${ico("bliksem")} ${m} min</button>`).join("")}</div>`;
+      if (V.planMin) { const past = zichtbaar.filter(t => !geblokkeerd(t) && t.duur && t.duur <= V.planMin).sort(sorteerTaken).slice(0, 8); h += past.length ? takenLijst(past) : `<div class="card"><div class="leeg"><p>Geen taken van ${V.planMin} minuten of korter.</p></div></div>`; }
+      return h;
+    }
+    case "afgerond": { const af = S.taken.filter(t => t.af && (t.afOp || "").slice(0, 10) === v && werkOk(t)); return af.length ? sectie("Vandaag afgerond", af.length, `<button class="actie" data-act="ga" data-view="logboek">Logboek</button>`) + takenLijst(af.slice(0, 8), { notitie: false }) : ""; }
+    case "sessie": { const open = fmVandaagTaken().open; if (!open.length) return ""; const min = open.reduce((a, t) => a + (+t.duur || 10), 0); return `<button class="card vw-sessie" data-act="ses-taken"><span class="vs-ico" aria-hidden="true">${ico("ster")}</span><span class="vs-tekst"><b>Aan de slag met je taken</b><small>${open.length} ${open.length === 1 ? "taak" : "taken"} · ± ${min} min · één kaartje tegelijk</small></span>${ico("pijlr", "width:16px;height:16px;color:var(--faint)")}</button>`; }
+    case "voorstellen": return typeof vsHTML === "function" ? vsHTML("vandaag") : "";
+    case "afsluiting": return typeof dcAfsluitingHTML === "function" ? dcAfsluitingHTML() : "";
+  }
+  return "";
+}
+function mdWidgetsKiezen() {
+  const aan = mdWidgets();
+  bladOpen(MD_TEKST.widgets, `<p class="klein">${MD_TEKST.widgetsUitleg}</p><ul class="schakels md-schakels">${MD_WIDGETS.map(([id, naam]) => `<li class="schakel"><span class="tekst"><b>${naam}</b></span><button class="toggle" data-md-widget="${id}" aria-pressed="${aan.includes(id)}" aria-label="${naam}"></button></li>`).join("")}</ul>`);
+  $("#bladinhoud").addEventListener("click", async e => {
+    const b = e.target.closest("[data-md-widget]"); if (!b) return;
+    const id = b.dataset.mdWidget, lijst = mdWidgets();
+    const nieuw = lijst.includes(id) ? lijst.filter(x => x !== id) : lijst.concat(id);
+    b.setAttribute("aria-pressed", String(nieuw.includes(id)));
+    await zetInst("mdWidgets", nieuw); teken();
+  });
+}
+
+/* ---------- 87.6 Het scherm ---------- */
+function mdHTML() {
+  const d = dcVandaag();
+  let h = backupBanner() + fmDagringHTML();
+  h += `${sectie(MD_TEKST.tijdlijn)}<div class="card card-pad md-tijdlijnkaart">${mdTijdlijnHTML()}</div>`;
+  // Klasse vw-hart: verweven.js voegt anders zijn eigen blok (check-in, sessie …) toe.
+  h += `<div class="vw-hart md-hart">${mdNuHTML()}`;
+  if (!(d && d.checkinTs) || V.dcWijzig) h += dcCheckinHTML(false).replace("Ochtend-check-in", MD_TEKST.dagstart);
+  h += `</div>`;
+  for (const id of mdWidgets()) h += mdWidgetHTML(id);
+  h += `<button class="md-widgetknop" data-md="widgets">${ico("instel")} ${MD_TEKST.widgets}</button>`;
+  return h;
+}
+vwVandaag = mdHTML;
+Object.defineProperty(KOPPEN, "vandaag", { get: () => [MD_TEKST.kop, () => langDatumLabel(vandaagISO())], configurable: true, enumerable: true });
+
+/* ---------- 87.7 Pop-up met één primaire actie ---------- */
+function mdPop(soort, id, i) {
+  const items = mdItems();
+  let titel = "", sub = "", knop = "", doe = null;
+  if (soort === "taak") {
+    const t = vind("taken", id); if (!t) return;
+    titel = t.titel; sub = [t.tijd, t.duur ? `± ${t.duur} min` : "", t.af ? "klaar" : ""].filter(Boolean).join(" · ");
+    if (t.af) { knop = "Openen"; doe = () => openTaakBlad(t.id); }
+    else { knop = "Klaar"; doe = async () => { await vinkTaak(t.id); teken(); }; }
+  } else if (soort === "afspraak" || soort === "vertrek") {
+    const a = vind("afspraken", id); if (!a) return;
+    const vt = mdVertrek(a);
+    titel = soort === "vertrek" ? `${MD_TEKST.vertrek} om ${mdHHMM(vt.vertrek)}` : a.titel;
+    sub = soort === "vertrek" ? `${a.titel} begint om ${a.tijd}. ${vt.reistijd} min reistijd + ${vt.buffer} min buffer.` : [a.tijd, a.plek, vt ? `vertrek ${mdHHMM(vt.vertrek)}` : ""].filter(Boolean).join(" · ");
+    knop = "Afspraak openen"; doe = () => ga("afspraak", a.id);
+  } else {
+    const it = items[i]; if (!it) return;
+    titel = it.label; sub = mdHHMM(it.min); knop = "Openen";
+    doe = () => { if (it.act) { const b = document.createElement("button"); b.dataset.act = it.act; document.body.appendChild(b); b.click(); b.remove(); } else ga(it.view || "logboek", it.param || null); };
+  }
+  bladOpen(titel, `<p class="md-popsub">${esc(sub)}</p>`, `<button class="knop breed primair" id="md-pop-doe">${esc(knop)}</button>`);
+  $("#md-pop-doe").onclick = async () => { bladSluit(); await doe(); };
+}
+// Tik op de ring of de tijdlijn: eerst wij (capture), zodat de oude handlers
+// (taakblad, ga naar afspraak) niet ook nog afgaan.
+document.addEventListener("click", e => {
+  if (V.view !== "vandaag") return;
+  const el = e.target.closest && e.target.closest("[data-md]");
+  if (el) {
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (el.dataset.md === "widgets") return mdWidgetsKiezen();
+    return mdPop(el.dataset.soort, el.dataset.id, +el.dataset.i);
+  }
+  const ring = e.target.closest && e.target.closest(".fm-dagring [data-fm-taak], .fm-dagring .fm-dr-boog, .fm-dagring .fm-dr-spoor");
+  if (!ring) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (ring.dataset.fmTaak) return mdPop("taak", ring.dataset.fmTaak);
+  if (ring.classList.contains("fm-dr-boog")) return mdPop("afspraak", ring.dataset.param);
+  const items = mdItems(), i = items.findIndex(x => x.soort === "spoor" && x.label === (ring.getAttribute("aria-label") || ""));
+  if (i >= 0) mdPop("spoor", "", i);
+}, true);
+document.addEventListener("keydown", e => {
+  if ((e.key !== "Enter" && e.key !== " ") || !e.target.closest) return;
+  const el = e.target.closest(".fm-dr-klok[data-md]"); if (!el) return;
+  e.preventDefault(); mdPop("vertrek", el.dataset.id);
+});
+
+/* ---------- 87.8 Een dialoog zet de focus terug na sluiten ----------
+   Het onderblad (bladOpen/bladSluit) deed dat nog niet; dit geldt nu overal. */
+{
+  let opener = null;
+  const _open = bladOpen, _sluit = bladSluit;
+  bladOpen = function () { if (!$("#blad").classList.contains("open")) opener = document.activeElement; return _open.apply(this, arguments); };
+  bladSluit = function () {
+    const r = _sluit.apply(this, arguments);
+    if (opener && document.contains(opener) && opener !== document.body) { try { opener.focus({ preventScroll: true }); } catch (e) {} }
+    opener = null;
+    return r;
+  };
+}
+
+</script>
+<script>
+"use strict";
+// === SECTIE 88: NAVIGATIE — ONDERBALK, MEER IN DE KOP, PLANNING EN RUIMTES ===
+/* ==========================================================================
+   Stap 5, besluit 1. Onderin vijf vaste plekken: Mijn dag · Planning ·
+   + Vastleggen · Mindmap · Ruimtes. "Meer" (Voortgang, Profiel, Instellingen,
+   Gegevens, Help) zit in de kop, naast Zoeken en de knop voor Nate's berichten.
+
+   Alles wat eerder een tab was (Komend, Afspraken, Meer) blijft bereikbaar:
+   Komend is de kern van Planning, Afspraken staat in Planning en in Ruimtes,
+   Meer zit in de kop. Het routeoverzicht staat in docs/routeoverzicht.md.
+
+   Terug werkt zoals altijd (V.stapel); nieuw is dat de scrollpositie
+   terugkomt: per tab, en bij Terug naar een vorig scherm.
+
+   Ook hier: "Gedachte naar de mindmap" bovenaan + Vastleggen (besluit 3).
+   ========================================================================== */
+
+/* ---------- 88.1 De onderbalk ---------- */
+const NV_TABS = [
+  ["vandaag", "Mijn dag", "vandaag"], ["planning", "Planning", "komend"], ["start", null, "plus"],
+  ["mindmap", "Mindmap", "mindmap"], ["ruimtes", "Ruimtes", "map"]
+];
+// TABS is een vaste lijst in de basis; we vullen hem opnieuw (welkom blijft een tab zonder knop).
+TABS.length = 0; TABS.push("welkom", "vandaag", "planning", "start", "mindmap", "ruimtes");
+VASTLEG_VIEWS.push("planning");
+{
+  const nav = $("#tabs");
+  if (nav) nav.innerHTML = NV_TABS.map(([tab, naam, ico]) => naam
+    ? `<button data-tab="${tab}"><svg><use href="#i-${ico}"/></svg><span>${naam}</span></button>`
+    : `<button class="tab-plus" data-tab="${tab}" aria-label="Vastleggen"><svg><use href="#i-plus"/></svg></button>`).join("");
+}
+// Meer in de kop: de instellingenknop wordt de Meer-knop (Instellingen staat in Meer).
+{
+  const k = $("#instelknop");
+  if (k) { k.setAttribute("aria-label", "Meer"); k.innerHTML = `<svg><use href="#i-meer"/></svg>`; k.onclick = () => ga("meer"); }
+}
+
+/* ---------- 88.2 Planning: de week, met de planhulpen erboven ---------- */
+const NV_PLANNING = [["kalender", "Kalender", "komend"], ["overzicht", "Overzicht", "grafiek"], ["afspraken", "Afspraken", "groep"], ["projecten", "Projecten", "map"], ["checklists", "Checklists", "lijst"], ["filters", "Slimme lijsten", "bliksem"]];
+function vwPlanning() {
+  // In .nv-planning krijgen de bestaande dagknoppen van Komend een tikvlak van 44 px.
+  return `<div class="nv-planning"><nav class="nv-chips" aria-label="Planhulpen">${NV_PLANNING.map(([v, n, i]) => `<button class="nv-chip" data-act="ga" data-view="${v}">${ico(i, "width:16px;height:16px")}${n}</button>`).join("")}</nav>${vwKomend()}</div>`;
+}
+Object.defineProperty(KOPPEN, "planning", { get: () => ["Planning", () => "week " + weekNummer(vandaagISO())], configurable: true, enumerable: true });
+
+/* ---------- 88.3 Ruimtes: elke module als een kamer ---------- */
+const NV_RUIMTES = [
+  { view: "persoonlijk", naam: "Persoonlijk", ico: "check", uitleg: "Taken, afspraken en alles er tussenin" },
+  { view: "werk", naam: "Werk", ico: "koffer", uitleg: "Meetings, plannen, reflectie", telling: () => typeof werkTelling === "function" ? werkTelling() : "" },
+  { view: "gezondheid", naam: "Gezondheid", ico: "hart", uitleg: "Eten, sport, water en gewicht", telling: () => typeof vsTelling === "function" ? vsTelling() : "" },
+  { view: "financieel", naam: "Financieel", ico: "portemonnee", uitleg: "Dagbudget, uitgaven en incasso's", telling: () => typeof geldTelling === "function" ? geldTelling() : "" },
+  { view: "huishouden", naam: "Huishouden", ico: "bezem", uitleg: "Eén klus tegelijk" },
+  { view: "sidehustles", naam: "Side Hustle", ico: "raket", uitleg: "Ideeën, sprints en modellen", telling: () => typeof shTelling === "function" ? shTelling() : "" },
+  { view: "hobbyskills", naam: "HobbySkills", ico: "hobby", uitleg: "Hobby's en skills bijhouden" },
+  { view: "anker", naam: "Anker", ico: "anker", uitleg: "Even landen" },
+  { view: "gewoontes", naam: "Gewoontes", ico: "vuur", uitleg: "Streaks en weekoverzicht" },
+  { view: "dagboek", naam: "Dagboek", ico: "boek", uitleg: "Stemming, energie, gedachten" },
+  { view: "lijstjes", naam: "Lijstjes", ico: "lijst", uitleg: "Films, series, boeken en meer" },
+  { view: "wishlist", naam: "Wishlist", ico: "ster", uitleg: "Wat je wilt kopen, met koopcheck" },
+  { view: "keuze", naam: "Keuzemachine", ico: "keuze", uitleg: "Kiezen zonder uitstel" },
+  { view: "personen", naam: "Personen", ico: "persoon", uitleg: "Wie hoort bij wat" },
+  { view: "roken", naam: "Rookvrij", ico: "blad", uitleg: "Wat stoppen je oplevert" },
+  { view: "tijd", naam: "Tijdsregistratie", ico: "tijd", uitleg: "Focustimer en uren" }
+];
+function vwRuimtes() {
+  return `<div class="nv-kamers">${NV_RUIMTES.map(r => { const t = r.telling ? r.telling() : ""; return `<button class="card nv-kamer" data-act="ga" data-view="${r.view}">
+    <span class="nv-kamer-ico" aria-hidden="true">${ico(r.ico)}</span><span class="nv-kamer-tekst"><b>${esc(r.naam)}</b><small>${esc(r.uitleg)}</small></span>${t ? `<span class="nv-telling">${esc(String(t))}</span>` : ""}</button>`; }).join("")}</div>`;
+}
+Object.defineProperty(KOPPEN, "ruimtes", { get: () => ["Ruimtes", () => "Elke module een eigen plek"], configurable: true, enumerable: true });
+
+/* ---------- 88.4 Meer: in de kop, kort en compleet ----------
+   Bovenaan wat besluit 1 noemt; daaronder "Ook" met alles wat niet in een tab,
+   Planning of Ruimtes zit, zodat elk scherm bereikbaar blijft. */
+const NV_MEER = [
+  ["Meer", [["vg", "Voortgang", "doel", "Al je vooruitgang op één plek"], ["profiel", "Profiel", "persoon", "Wie je bent en wat bij je past"], ["instellingen", "Instellingen", "instel", "Maak de app van jou"], ["backup", "Gegevens", "download", "Back-up, exporteren en herstellen"], ["help", "Help", "vraag", "Installeren en gebruik"]]],
+  ["Ook", [["welkom", "Dagoverzicht", "vandaag", "Je dag in een paar zinnen"], ["overzicht", "Overzicht", "grafiek", "Week, maand en vooruitblik"], ["logboek", "Logboek", "logboek", "Alles wat je deed"], ["stats", "Terugblik", "grafiek", "Deze week in cijfers"], ["inbox", "Inbox", "inbox", "Nog niet ingedeeld"], ["meldingen", "Nate’s berichten", "inbox", "Alle berichten en herinneringen"], ["kennismaking", "Kennismaken met Nate", "vraag", "Vragen, profiel en tips"], ["focus", "Focustimer", "doel", "Eén ding tegelijk"], ["ontwerp", "Ontwerp", "instel", "Beweging, kleur en lettertype"]]]
+];
+vwMeer = function () {
+  return NV_MEER.map(([kop, rijen]) => sectie(kop) + `<div class="card">${rijen.map(([v, n, i, u]) => `<button class="rijknop nv-rij" ${v === "vg" ? 'data-act="vg-open"' : `data-act="ga" data-view="${v}"`}>
+    ${ico(i, "width:20px;height:20px;color:var(--accent)")}<span class="nm"><b>${esc(n)}</b><small>${esc(u)}</small></span>${ico("pijlr", "width:16px;height:16px;color:var(--line2)")}</button>`).join("")}</div>`).join("");
+};
+
+/* ---------- 88.5 Scrollpositie: per tab, en bij Terug ---------- */
+{
+  const _ga = ga, _terug = terug;
+  V.nvScroll = {};
+  ga = function (view, param, terugStap) {
+    const s = $("#scherm"), top = s ? s.scrollTop : 0, vorige = V.view, diepte = V.stapel.length;
+    const r = _ga.apply(this, arguments);
+    // Basis pusht {view, param}; de scrollpositie van het verlaten scherm komt erbij.
+    if (!terugStap && V.stapel.length > diepte) V.stapel[V.stapel.length - 1].scroll = top;
+    if (TABS.includes(vorige) && vorige !== V.view) V.nvScroll[vorige] = top;
+    if (TABS.includes(V.view) && V.view !== vorige && V.nvScroll[V.view] && s) s.scrollTop = V.nvScroll[V.view];
+    return r;
+  };
+  terug = function () {
+    const bovenste = V.stapel[V.stapel.length - 1], top = bovenste ? bovenste.scroll : null;
+    const r = _terug.apply(this, arguments);
+    if (top != null && $("#scherm")) $("#scherm").scrollTop = top;
+    return r;
+  };
+}
+
+/* ---------- 88.6 Gedachte naar de mindmap (besluit 3) ----------
+   Eén regel bovenaan + Vastleggen. Landt in de tak "Losse gedachten" van je
+   huidige mindmap; is er nog geen mindmap, dan maakt Nate er een. */
+const NV_TAK = "Losse gedachten";
+async function nvGedachte(tekst) {
+  let mm = mmHuidige();
+  if (!mm) mm = await mmNieuw("Mijn mindmap");
+  const root = mm.nodes.find(n => n.id === mm.rootId);
+  let tak = mm.nodes.find(n => n.parentId === root.id && n.tekst === NV_TAK);
+  if (!tak) { tak = mmNode({ parentId: root.id, tekst: NV_TAK, x: -190, y: 200, kleur: MM_KLEUREN[5] }); mm.nodes.push(tak); }
+  const n = mm.nodes.filter(x => x.parentId === tak.id).length;
+  mm.nodes.push(mmNode({ parentId: tak.id, tekst, x: tak.x - 60, y: tak.y + 70 + n * 52, kleur: tak.kleur }));
+  mm.updatedAt = Date.now();
+  await bewaar("mm_mindmaps", mm);
+  if (typeof logGebeurtenis === "function") await logGebeurtenis("notitie", "Gedachte naar de mindmap: " + tekst, mm.id);
+  return mm;
+}
+function nvGedachteHTML() {
+  return `<form class="nv-gedachte" autocomplete="off"><label class="labeltekst" for="nv-gedachte">Gedachte naar de mindmap</label>
+    <div class="nv-gedachte-rij"><input class="invoer" id="nv-gedachte" maxlength="140" placeholder="Eén regel is genoeg" enterkeyhint="send">
+    <button class="knop primair" type="submit" aria-label="Naar de mindmap">${ico("mindmap")}</button></div></form>`;
+}
+{
+  const _s = vwStart;
+  vwStart = function () { return ((V.nwPad || []).length ? "" : nvGedachteHTML()) + _s.apply(this, arguments); };
+}
+document.addEventListener("submit", async e => {
+  const f = e.target.closest && e.target.closest(".nv-gedachte"); if (!f) return;
+  e.preventDefault();
+  const veld = f.querySelector("#nv-gedachte"), tekst = veld.value.trim(); if (!tekst) return;
+  const mm = await nvGedachte(tekst);
+  veld.value = ""; tril(6);
+  toast(`Staat in je mindmap, onder ${NV_TAK}`, "Bekijken", () => ga("mindmap", mm.id));
+});
 
 </script>
 <script>

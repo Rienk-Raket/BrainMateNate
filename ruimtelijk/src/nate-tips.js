@@ -40,18 +40,29 @@ function ntKandidaten(profiel, antwoorden, domeinen, verborgen, cfg) {
 // keer per dag hetzelfde hoort. Zonder kandidaten: een algemene tip op toerbeurt.
 function ntKies(kandidaten, domeinen, verborgen, dagIndex, dagdeel) {
   const n = dagIndex * 3 + NT_DAGDELEN.indexOf(dagdeel);
-  if (kandidaten.length) return Object.assign({ algemeen: false }, kandidaten[n % kandidaten.length]);
+  // + dagIndex: elke dag schuift de reeks één plek op, ook bij drie of zes kandidaten.
+  if (kandidaten.length) return Object.assign({ algemeen: false }, kandidaten[(n + dagIndex) % kandidaten.length]);
   const weg = new Set(verborgen || []);
   const alle = domeinen.filter(dom => !weg.has("dom-" + dom.id));
   return alle.length ? { domein: alle[n % alle.length], dim: null, score: null, algemeen: true } : null;
 }
+// Het antwoord dat de behoefte droeg: de hoogste score van kernvraag en impactvraag,
+// maar alleen vanaf "soms". Anders (bv. alleen "Speelt wel") geen citaat.
+function ntSterksteAntwoord(bank, dim, antwoorden, cfg) {
+  let beste = null;
+  for (const id of [dim + ".Q1", dim + ".Q2"]) {
+    const s = nsScore(antwoorden[id], cfg), q = bank.questions.find(x => x.question_id === id);
+    if (q && s !== null && s >= 2 && (!beste || s > beste.s)) beste = { s, label: (q.response_options.find(o => o.value === antwoorden[id]) || {}).label };
+  }
+  return beste ? beste.label.toLowerCase() : null;
+}
 // De omdat-zin verwijst naar het antwoord; daarna het bewijsniveau van de eerste interventie.
-function ntWaarom(keuze, bank, antwoorden, bewijsNaam) {
+function ntWaarom(keuze, bank, antwoorden, bewijsNaam, cfg) {
   const dom = keuze.domein, q = keuze.dim ? bank.questions.find(x => x.question_id === keuze.dim + ".Q1") : null;
-  const label = q ? (q.response_options.find(o => o.value === antwoorden[q.question_id]) || {}).label : null;
-  const omdat = q
-    ? `Omdat je bij ${q.subtheme_name.toLowerCase()} "${(label || "").toLowerCase()}" antwoordde.`
-    : "Omdat we nog niet hebben kennisgemaakt, kies ik een algemene tip.";
+  const label = q ? ntSterksteAntwoord(bank, keuze.dim, antwoorden, cfg) : null;
+  const omdat = !q ? "Omdat we nog niet hebben kennisgemaakt, kies ik een algemene tip."
+    : label ? `Omdat je bij ${q.subtheme_name.toLowerCase()} "${label}" antwoordde.`
+    : `Omdat je bij ${q.subtheme_name.toLowerCase()} aangaf dat het speelt.`;
   const bewijs = (dom.interventies[0] || {}).bewijs;
   return `${omdat} ${dom.waaromKort} (Uit het onderzoek over ${dom.naam.toLowerCase()}.)` + (bewijs ? ` Hoe sterk is dit? ${bewijsNaam[bewijs]}.` : "");
 }
@@ -71,6 +82,17 @@ nateTipVanVandaag = function () {
   const dom = keuze.domein;
   return {
     id, bron: "nate", titel: nateZeg(NATE_TEKST.tipTitel), tekst: dom.nate ? nateZeg(dom.nate) : dom.minimaleInterventie,
-    waarom: ntWaarom(keuze, NATE_VRAGENBANK, d.antwoorden, NATE_TEKST.bewijsNaam), domein: dom.id
+    waarom: ntWaarom(keuze, NATE_VRAGENBANK, d.antwoorden, NATE_TEKST.bewijsNaam, NATE_SCOREWEGING), domein: dom.id
   };
 };
+
+// "Niet meer tonen": het domein gaat weg, en in dit dagdeel komt er geen andere tip voor
+// in de plaats (hooguit één nieuw bericht per dagdeel). Eén schrijfactie, dus geen race
+// met de handler in nate.js; die slaan we hier over.
+document.addEventListener("click", async e => {
+  const el = e.target.closest && e.target.closest('#nate-paneel [data-nate="niet-meer"]'); if (!el) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const dagdeel = ntDagdeel(new Date().getHours());
+  await zetInst("nateVerborgen", nateInst("nateVerborgen", []).concat(el.dataset.id, `tip-${vandaagISO()}-${dagdeel}`));
+  nateTeken(); nateStipBijwerken(); toast(NATE_TEKST.nietMeerToast);
+}, true);
