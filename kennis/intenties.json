@@ -1,0 +1,59 @@
+{
+  "versie": "1.0",
+  "uitleg": "Lokale intentieherkenning voor de chat met Nate (stap 6). Geen AI, geen netwerk: Nate zoekt trefwoorden en synoniemen, ook met een tikfout. Pas dit bestand aan om Nate nieuwe woorden te leren; bouw.py zet het als NATE_INTENTIES in de app. Regels: 1 opschonen, 2 soort vraag, 3 bestemming, 4 beslissen, 5 bij twijfel twee keuzes, 6 niet begrepen: eerlijk zeggen en drie knoppen.",
+  "stopwoorden": ["de", "het", "een", "ik", "je", "jij", "mijn", "m'n", "me", "mij", "wil", "wilt", "graag", "even", "eens", "nu", "dan", "toch", "maar", "is", "ben", "zijn", "er", "die", "dat", "dit", "van", "in", "op", "te", "om", "met", "voor", "naar", "aan", "bij", "kan", "kun", "kunnen", "moet", "zou", "hoe", "waar", "wat", "welke", "hallo", "hoi", "hey", "he", "nate", "alsjeblieft", "aub", "please", "iets", "ergens", "staat", "staan", "vind", "vinden", "open", "openen", "laat", "zien", "ga", "gaan", "toon"],
+  "soorten": {
+    "waar": ["waar", "hoe kom ik", "ga naar", "open", "naar", "toon", "laat zien", "vind"],
+    "doen": ["zet", "noteer", "schrijf", "maak", "voeg", "onthoud", "plan", "leg vast", "gedachte", "idee"],
+    "hulp": ["help", "lukt niet", "kan niet", "geen zin", "vast", "overprikkeld", "te veel", "teveel", "moe", "stress", "paniek", "druk"],
+    "vraag": ["wat", "waarom", "hoe werkt", "wie", "wanneer"]
+  },
+  "gedachteWoorden": ["onthoud", "gedachte", "idee", "noteer", "schrijf op", "zet in mijn mindmap", "in de mindmap", "naar de mindmap"],
+  "nood": {
+    "woorden": ["zelfmoord", "suicide", "suïcide", "dood willen", "niet meer leven", "mezelf pijn", "zelfbeschadiging", "snijden", "113", "einde maken", "er niet meer zijn", "verslaafd", "verslaving", "overdosis"],
+    "antwoord": "Dit klinkt zwaar, en je hoeft het niet alleen te dragen. Bel of chat met 113 (0800-0113, gratis), of bij acuut gevaar 112; je huisarts denkt ook met je mee."
+  },
+  "bestemmingen": [
+    { "id": "mindmap", "naam": "Mindmap", "view": "mindmap", "trefwoorden": ["mindmap", "mindmaps", "breinkaart"], "synoniemen": ["ideeen", "gedachten", "brainstorm", "kaart", "denken"] },
+    { "id": "vastleggen", "naam": "Vastleggen", "view": "start", "trefwoorden": ["vastleggen", "nieuw", "toevoegen", "plus"], "synoniemen": ["noteren", "invoeren", "aanmaken"] },
+    { "id": "mijndag", "naam": "Mijn dag", "view": "vandaag", "trefwoorden": ["vandaag", "dag", "dagring", "tijdlijn"], "synoniemen": ["mijn dag", "nu", "planning vandaag", "check-in", "checkin", "dagstart"] },
+    { "id": "planning", "naam": "Planning", "view": "planning", "trefwoorden": ["planning", "week", "komend", "komende"], "synoniemen": ["deze week", "volgende week", "morgen", "plannen"] },
+    { "id": "ruimtes", "naam": "Ruimtes", "view": "ruimtes", "trefwoorden": ["ruimtes", "ruimte", "modules", "kamers"], "synoniemen": ["alle onderdelen", "overzicht modules"] },
+    { "id": "meer", "naam": "Meer", "view": "meer", "trefwoorden": ["meer", "menu"], "synoniemen": ["alles", "overige"] },
+    { "id": "zoeken", "naam": "Zoeken", "view": "zoeken", "trefwoorden": ["zoeken", "zoek", "zoekfunctie"], "synoniemen": ["terugvinden", "kwijt", "vinden"] },
+    { "id": "instellingen", "naam": "Instellingen", "view": "instellingen", "trefwoorden": ["instellingen", "instelling", "settings"], "synoniemen": ["aanpassen", "donkere modus", "lettergrootte", "beweging"] },
+    { "id": "profiel", "naam": "Profiel", "view": "profiel", "trefwoorden": ["profiel", "patronen", "rapport"], "synoniemen": ["wie ben ik", "mijn antwoorden", "jongleur", "vonk", "vuurtoren", "vertaler", "golf", "tuinier", "batterij"] },
+    { "id": "kennismaking", "naam": "Kennismaken", "view": "kennismaking", "trefwoorden": ["kennismaken", "kennismaking", "vragenlijst"], "synoniemen": ["vragen", "test", "intake"] },
+    { "id": "dagboek", "naam": "Dagboek", "view": "dagboek", "trefwoorden": ["dagboek", "journal"], "synoniemen": ["stemming", "gevoel", "schrijven", "dagboekje"] },
+    { "id": "gewoontes", "naam": "Gewoontes", "view": "gewoontes", "trefwoorden": ["gewoontes", "gewoonte", "habits", "streak"], "synoniemen": ["routine", "routines", "elke dag"] },
+    { "id": "huishouden", "naam": "Huishouden", "view": "huishouden", "trefwoorden": ["huishouden", "schoonmaken", "poetsen"], "synoniemen": ["opruimen", "afwas", "was", "stofzuigen", "keuken", "badkamer"] },
+    { "id": "financieel", "naam": "Financieel", "view": "financieel", "trefwoorden": ["financieel", "geld", "budget", "uitgaven"], "synoniemen": ["betalen", "rekening", "sparen", "incasso", "euro", "kosten"] },
+    { "id": "gezondheid", "naam": "Gezondheid", "view": "gezondheid", "trefwoorden": ["gezondheid", "sport", "eten", "water"], "synoniemen": ["gewicht", "sporten", "drinken", "calorieen", "bewegen"] },
+    { "id": "anker", "naam": "Anker", "view": "anker", "trefwoorden": ["anker", "ademen", "ademhaling"], "synoniemen": ["rust", "kalmeren", "landen", "ontspannen", "overprikkeld", "paniek"] },
+    { "id": "afspraken", "naam": "Afspraken", "view": "afspraken", "trefwoorden": ["afspraken", "afspraak"], "synoniemen": ["tandarts", "huisarts", "meeting", "gesprek", "vertrek"] },
+    { "id": "kalender", "naam": "Kalender", "view": "kalender", "trefwoorden": ["kalender", "agenda"], "synoniemen": ["maand", "datum"] },
+    { "id": "projecten", "naam": "Projecten", "view": "projecten", "trefwoorden": ["projecten", "project"], "synoniemen": ["klus", "klussen"] },
+    { "id": "checklists", "naam": "Checklists", "view": "checklists", "trefwoorden": ["checklists", "checklist", "lijst"], "synoniemen": ["boodschappen", "boodschappenlijst", "inpaklijst"] },
+    { "id": "werk", "naam": "Werk", "view": "werk", "trefwoorden": ["werk", "werktaken"], "synoniemen": ["kantoor", "baan", "collega"] },
+    { "id": "sidehustles", "naam": "Side Hustle", "view": "sidehustles", "trefwoorden": ["sidehustle", "side", "hustle", "ondernemen"], "synoniemen": ["bedrijf", "business", "bijverdienen"] },
+    { "id": "hobbyskills", "naam": "HobbySkills", "view": "hobbyskills", "trefwoorden": ["hobby", "hobbys", "skills", "hobbyskills"], "synoniemen": ["leren", "oefenen", "gitaar", "taal"] },
+    { "id": "lijstjes", "naam": "Lijstjes", "view": "lijstjes", "trefwoorden": ["lijstjes", "films", "series", "boeken"], "synoniemen": ["kijken", "lezen", "watchlist"] },
+    { "id": "wishlist", "naam": "Wishlist", "view": "wishlist", "trefwoorden": ["wishlist", "wensen", "wens"], "synoniemen": ["kopen", "verlanglijst", "cadeau"] },
+    { "id": "keuze", "naam": "Keuzemachine", "view": "keuze", "trefwoorden": ["keuzemachine", "keuze", "kiezen", "dilemma"], "synoniemen": ["beslissen", "twijfel", "twijfelen"] },
+    { "id": "uitsteltest", "naam": "Uitsteltest", "view": "keuzetest", "trefwoorden": ["uitsteltest", "uitstellen", "uitstel"], "synoniemen": ["procrastineren", "later doen"] },
+    { "id": "voortgang", "naam": "Voortgang", "act": "vg-open", "trefwoorden": ["voortgang", "doelen", "doel"], "synoniemen": ["vooruitgang", "groei", "resultaten"] },
+    { "id": "logboek", "naam": "Logboek", "view": "logboek", "trefwoorden": ["logboek", "log"], "synoniemen": ["gedaan", "geschiedenis"] },
+    { "id": "terugblik", "naam": "Terugblik", "view": "stats", "trefwoorden": ["terugblik", "statistieken", "cijfers"], "synoniemen": ["hoe ging het", "week terug"] },
+    { "id": "backup", "naam": "Gegevens", "view": "backup", "trefwoorden": ["backup", "back-up", "gegevens", "exporteren"], "synoniemen": ["opslaan", "bewaren", "herstellen", "importeren"] },
+    { "id": "help", "naam": "Help", "view": "help", "trefwoorden": ["help", "uitleg", "handleiding"], "synoniemen": ["installeren", "beginscherm", "hoe werkt"] },
+    { "id": "berichten", "naam": "Nate's berichten", "view": "meldingen", "trefwoorden": ["berichten", "meldingen", "inbox"], "synoniemen": ["herinneringen", "notificaties"] },
+    { "id": "focus", "naam": "Focustimer", "view": "focus", "trefwoorden": ["focus", "focustimer", "timer"], "synoniemen": ["concentreren", "pomodoro", "blok"] },
+    { "id": "roken", "naam": "Rookvrij", "view": "roken", "trefwoorden": ["roken", "rookvrij", "sigaret"], "synoniemen": ["stoppen met roken", "vapen"] },
+    { "id": "personen", "naam": "Personen", "view": "personen", "trefwoorden": ["personen", "mensen", "contacten"], "synoniemen": ["vrienden", "familie"] },
+    { "id": "tijd", "naam": "Tijdsregistratie", "view": "tijd", "trefwoorden": ["tijdsregistratie", "uren", "tijd"], "synoniemen": ["gewerkt", "bijhouden"] }
+  ],
+  "nietBegrepen": {
+    "antwoord": "Dat snap ik nog niet, eerlijk gezegd. Kies er één, of zeg het in andere woorden.",
+    "knoppen": ["mindmap", "zoeken", "vastleggen"]
+  }
+}

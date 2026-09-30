@@ -144,6 +144,25 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.click('#tabs [data-tab="mindmap"]'); await wacht(500);
   check("Mindmap-tab opent de mindmap", await p.evaluate(() => V.view === "mindmap"));
 
+  /* ---------- Chat met Nate (sectie 89) ---------- */
+  await p.evaluate(() => ga("vandaag")); await wacht(300);
+  await p.click("#nate"); await wacht(400);
+  check("chatveld in Nate's paneel", await p.locator("#nc-veld").count() === 1);
+  await p.fill("#nc-veld", "waar staat mijn dagboel"); await p.press("#nc-veld", "Enter"); await wacht(300);
+  check("chat: antwoord met knop naar Dagboek (tikfout)", await p.evaluate(() => !!document.querySelector('#nate-paneel .nc-nate [data-view="dagboek"]')));
+  check("chat: focus terug in het veld", await p.evaluate(() => document.activeElement && document.activeElement.id === "nc-veld"));
+  await p.fill("#nc-veld", "blablabla"); await p.press("#nc-veld", "Enter"); await wacht(300);
+  check("chat: niet begrepen → drie knoppen", await p.evaluate(() => { const l = [...document.querySelectorAll("#nate-paneel .nc-nate")].pop(); return l.querySelectorAll("button").length === 3 && l.textContent.includes("snap ik nog niet"); }));
+  await p.fill("#nc-veld", "onthoud: tandpasta kopen"); await p.press("#nc-veld", "Enter"); await wacht(300);
+  check("chat: gedachte vraagt eerst bevestiging (niets stil opgeslagen)", await p.evaluate(() => !mmHuidige().nodes.some(n => n.tekst === "tandpasta kopen")));
+  await p.click('#nate-paneel [data-nate="chat-gedachte"]'); await wacht(400);
+  check("chat: na Ja staat de gedachte in Losse gedachten", await p.evaluate(() => { const mm = mmHuidige(), tak = mm.nodes.find(n => n.tekst === "Losse gedachten"); return mm.nodes.some(n => n.parentId === tak.id && n.tekst === "tandpasta kopen"); }));
+  await p.screenshot({ path: path.join(UIT, "nc-01-chat-390.png") });
+  check("chat: tikvlakken ≥ 44 px", (await tikvlakken(p, "#nate-paneel .nc")).length === 0, JSON.stringify(await tikvlakken(p, "#nate-paneel .nc")));
+  await p.fill("#nc-veld", "dagboek"); await p.press("#nc-veld", "Enter"); await wacht(300);
+  await p.locator('#nate-paneel .nc-nate [data-view="dagboek"]').last().click(); await wacht(400);
+  check("chat: knop brengt je naar het scherm en sluit het paneel", await p.evaluate(() => V.view === "dagboek" && !document.querySelector("#nate-paneel").classList.contains("open")));
+
   await ctx.close();
   /* ---------- 360 × 740 donker, minder beweging ---------- */
   {

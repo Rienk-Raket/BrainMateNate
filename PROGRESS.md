@@ -11,7 +11,7 @@ bouwt verder op `nate-basis` (stap 1 en 2, uit de bundle van de opzet-chat).
 | 3b Kennismakingsflow en profielrapport | Klaar, review verwerkt | `tests/kennismaking.e2e.cjs`: 45 checks (390×844 licht, 360×740 donker + minder beweging, tikvlakken, focus, herladen, nul externe verzoeken, geen consolefouten); schermafbeeldingen bekeken | — |
 | 4 Tips uit profiel | Klaar, review verwerkt | `tests/tips.test.mjs` (8 tests) + 5 e2e-checks: omdat-zin, bewijsniveau, één per dagdeel, Nate's stem, Niet meer tonen | — |
 | 5 Navigatie en Mijn dag | Klaar, wacht op review | `tests/mijn-dag.e2e.cjs`: 47 checks (ring met klokje/buffer/bolletjes/wijzer, tijdlijn, Nu-kaart, pop-up met één actie, focus terug, dagstart, widgets, reistijd, onderbalk, Meer in de kop, Terug + scroll, Planning, Ruimtes, alle schermen tekenen, gedachte naar mindmap; 390 licht + 360 donker/minder beweging) | Reviewsubagent |
-| 6 Chat met Nate | Nog niet begonnen | — | — |
+| 6 Chat met Nate | Klaar, wacht op review | `tests/intenties.test.mjs`: 39 tests, 30 voorbeeldzinnen waarvan 10 met tikfouten, alle zes regels, nood, gedachte; 8 e2e-checks in `mijn-dag.e2e.cjs` (paneel, tikfout, niet begrepen = 3 knoppen, gedachte pas na Ja, knop sluit paneel) | Reviewsubagent |
 | 7 Modules-audit | Nog niet begonnen | — | — |
 
 ## Bestanden van stap 3
@@ -34,6 +34,11 @@ bouwt verder op `nate-basis` (stap 1 en 2, uit de bundle van de opzet-chat).
 - `ruimtelijk/src/navigatie.js/.css`: onderbalk (Mijn dag · Planning · + · Mindmap · Ruimtes), Meer in de kop (Voortgang, Profiel, Instellingen, Gegevens, Help + "Ook"), Planning, Ruimtes, scrollpositie bij Terug en per tab, "Gedachte naar de mindmap".
 - `bouw.py` stap 10: reistijd en buffer in het afspraakblad.
 - `docs/routeoverzicht.md`, `tests/mijn-dag.e2e.cjs`.
+
+## Bestanden van stap 6
+
+- `kennis/intenties.json`: bestemmingen (view of act), trefwoorden, synoniemen, stopwoorden, soorten vragen, gedachtewoorden, nood (113/112/huisarts), niet begrepen (drie knoppen). `bouw.py` controleert de vorm.
+- `ruimtelijk/src/nate-chat.js/.css`: pure kern (NATE-CHAT-BEGIN/EINDE) met de zes regels; tikfouten via Damerau-afstand (vanaf 5 letters één fout, vanaf 8 twee); chat onderaan Nate's paneel, gesprek alleen in deze sessie (niets bewaard); gedachte naar de mindmap pas na "Ja".
 
 ## Review stap 3 en 4 (verwerkt)
 

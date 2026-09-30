@@ -45,7 +45,7 @@ const NATE_TEKST = {
   waarom: "Waarom zeg je dit?",
   gelezen: "Gelezen",
   nietMeer: "Niet meer tonen",
-  chatStraks: "Binnenkort kun je hier ook tegen me praten. Vraag dan gewoon: \u201cwaar staat mijn dagboek?\u201d",
+  chatStraks: "",
   tipTitel: { zacht: "Een klein idee", normaal: "Klein idee voor vandaag", vol: "Vandaag proberen we dit" },
   nietMeerToast: "Helder, die tip laat ik voortaan liggen. Terugzetten kan in Instellingen.",
   bewijsNaam: { direct: "direct bij ADHD onderzocht", indirect: "onderzocht, maar niet specifiek bij ADHD", praktisch: "nog een experiment: probeer of het bij jou werkt" }
