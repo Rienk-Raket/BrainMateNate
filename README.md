@@ -48,6 +48,8 @@ python3 ruimtelijk/bouw.py
 | `kennis/adhd-theorie.json` | ADHD-kennisbasis uit het onderzoek (Categorie 1–8): theorie, bewijsniveau, handvatten en advies per module. Wordt `NATE_ADHD` |
 | `assets/nate/nate.svg` | **Nate's uiterlijk.** Vervang dit bestand door je eigen tekening met dezelfde naam; geen bouwstap nodig |
 | `ruimtelijk/src/nate.js`, `nate.css` | Nate: ruststand, paneel, berichten, tip van de dag, instellingen |
+| `CLAUDE.md` | Vaste werkafspraken voor Claude Code (bouwen, testen, regels, stopmomenten) |
+| `docs/prompts/bouwprompt-brainmatenate.md` | De bouwprompt voor stap 3–7 (Claude Code, Opus 5.5) |
 | `docs/` | Specificaties en onderzoek uit FutureMe |
 | `tests/` | `node tests/keuzemachine.test.mjs` (rekenkern Keuzemachine) |
 
