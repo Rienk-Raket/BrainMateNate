@@ -21,22 +21,51 @@
 
 /* ---------- 84.1 Instellingen en teksten ---------- */
 const NATE_BEELD = "assets/nate/nate.svg";
+/* Nate's stem: een enthousiaste coach met een knipoog (de energie van Tony Robbins,
+   de nuchtere herkadering van Alan Carr). Kort, geen "moet", geen schuld, geen diagnoses.
+   Drie standen: zacht, normaal en vol ("Vol gas"). Teksten per stand; ontbreekt er een,
+   dan valt Nate terug op "normaal". Pas de toon hier aan, niet verderop in de code. */
 const NATE_TEKST = {
   naam: "Nate",
   knopLabel: "Nate, je gids. Tik om te openen",
-  begroet: n => n ? `Hoi ${n}` : "Hoi",
-  onder: "Ik help je met je dag, op jouw manier.",
+  begroet: {
+    zacht: n => n ? `Hoi ${n}` : "Hoi",
+    normaal: n => n ? `Hé ${n}!` : "Hé, daar ben je!",
+    vol: n => n ? `Hé ${n}, lekker bezig!` : "Hé, lekker bezig!"
+  },
+  onder: {
+    zacht: "Ik ben er als je me nodig hebt.",
+    normaal: "Jij bent de held, ik hou de kaart vast.",
+    vol: "Jij bent de held, ik hou de kaart vast. Waar gaan we heen?"
+  },
   snel: "Snel naar",
   berichten: "Berichten van Nate",
-  geenBerichten: "Geen nieuwe berichten. Rustig zo.",
+  geenBerichten: { zacht: "Geen nieuwe berichten.", normaal: "Niks nieuws. Lekker rustig, geniet ervan." },
   alle: n => `Alle berichten bekijken (${n})`,
   waarom: "Waarom zeg je dit?",
   gelezen: "Gelezen",
   nietMeer: "Niet meer tonen",
-  chatStraks: "Straks kun je hier ook met me praten en me vragen waar iets staat.",
-  tipTitel: "Klein idee voor vandaag",
+  chatStraks: "Binnenkort kun je hier ook tegen me praten. Vraag dan gewoon: \u201cwaar staat mijn dagboek?\u201d",
+  tipTitel: { zacht: "Een klein idee", normaal: "Klein idee voor vandaag", vol: "Vandaag proberen we dit" },
+  nietMeerToast: "Helder, die tip laat ik voortaan liggen. Terugzetten kan in Instellingen.",
   bewijsNaam: { direct: "direct bij ADHD onderzocht", indirect: "onderzocht, maar niet specifiek bij ADHD", praktisch: "nog een experiment: probeer of het bij jou werkt" }
 };
+const NATE_STANDEN = [["zacht", "Zacht"], ["normaal", "Normaal"], ["vol", "Vol gas"]];
+/* Welke stand geldt nu? Je eigen keuze, behalve als het scherm op Rustig staat of je
+   in de check-in weinig energie gaf: dan praat Nate vanzelf zacht. */
+function nateStand() {
+  const keuze = (typeof inst === "function" ? inst("nateEnergie", "normaal") : "normaal") || "normaal";
+  const rustig = typeof ndDichtheid === "function" && ndDichtheid() === "rustig";
+  const moe = typeof dcEnergie === "function" && dcEnergie() != null && dcEnergie() <= 2;
+  return rustig || moe ? "zacht" : keuze;
+}
+/* Tekst uit een object met standen (of een gewone string). */
+function nateZeg(t, ...args) {
+  if (t == null) return "";
+  if (typeof t === "string" || typeof t === "function") return typeof t === "function" ? t(...args) : t;
+  const v = t[nateStand()] != null ? t[nateStand()] : t.normaal;
+  return typeof v === "function" ? v(...args) : v;
+}
 /* Snel naar: de mindmap staat bewust vooraan en is de grootste knop,
    zodat je een gedachte meteen kwijt kunt. */
 const NATE_SNEL = [
@@ -59,7 +88,7 @@ function nateTipVanVandaag() {
   if (nateInst("nateVerborgen", []).includes(id) || nateInst("nateVerborgen", []).includes("dom-" + dom.id)) return null;
   const bewijs = (dom.interventies[0] || {}).bewijs;
   return {
-    id, bron: "nate", titel: NATE_TEKST.tipTitel, tekst: dom.minimaleInterventie,
+    id, bron: "nate", titel: nateZeg(NATE_TEKST.tipTitel), tekst: dom.nate ? nateZeg(dom.nate) : dom.minimaleInterventie,
     waarom: `${dom.waaromKort || dom.theorie.split(". ")[0] + "."} (Uit het onderzoek over ${dom.naam.toLowerCase()}.)` +
       (bewijs ? ` Hoe sterk is dit? ${NATE_TEKST.bewijsNaam[bewijs]}.` : ""),
     domein: dom.id
@@ -148,12 +177,12 @@ function nateTeken() {
   const totaal = (typeof S === "object" && Array.isArray(S.meldingen) ? S.meldingen.length : 0);
   vel.innerHTML = `
     <div class="nate-kop">${nateBeeldHTML()}
-      <div><h2 id="nate-titel">${esc(NATE_TEKST.begroet(nateNaam()))}</h2><p>${esc(NATE_TEKST.onder)}</p></div>
+      <div><h2 id="nate-titel">${esc(nateZeg(NATE_TEKST.begroet, nateNaam()))}</h2><p>${esc(nateZeg(NATE_TEKST.onder))}</p></div>
       <button class="nate-sluit" data-nate="sluit" aria-label="Sluiten">×</button></div>
     <h3 class="nate-sectie">${NATE_TEKST.snel}</h3>
     <div class="nate-snel">${NATE_SNEL.map(s => `<button type="button" data-nate="ga" data-view="${s.view}"${s.groot ? ' class="groot"' : ""}>${esc(s.label)}</button>`).join("")}</div>
     <h3 class="nate-sectie">${NATE_TEKST.berichten}</h3>
-    ${toon.length ? `<ul class="nate-berichten">${toon.map(nateBerichtHTML).join("")}</ul>` : `<p class="nate-leeg">${NATE_TEKST.geenBerichten}</p>`}
+    ${toon.length ? `<ul class="nate-berichten">${toon.map(nateBerichtHTML).join("")}</ul>` : `<p class="nate-leeg">${esc(nateZeg(NATE_TEKST.geenBerichten))}</p>`}
     ${totaal ? `<button type="button" class="nate-meer" data-nate="ga" data-view="meldingen">${esc(NATE_TEKST.alle(totaal))}</button>` : ""}
     <p class="nate-voet">${NATE_TEKST.chatStraks}</p>`;
 }
@@ -181,7 +210,7 @@ async function nateKlik(e) {
   else if (soort === "niet-meer") {
     await zetInst("nateVerborgen", nateInst("nateVerborgen", []).concat(el.dataset.id));
     nateTeken(); nateStipBijwerken();
-    toast("Oké, dit soort tip laat ik voortaan weg. Terugzetten kan in Instellingen.");
+    toast(NATE_TEKST.nietMeerToast);
   }
 }
 
@@ -213,6 +242,9 @@ if (typeof vwInstellingen === "function") {
   vwInstellingen = function () {
     const aan = nateInst("nateTips", true), weg = nateInst("nateVerborgen", []).length;
     return `${typeof sectie === "function" ? sectie("Nate") : "<h2>Nate</h2>"}
+      <div class="veld"><span class="labeltekst">Nate\u2019s energie</span>
+        <div class="segment" role="group" aria-label="Nate\u2019s energie">${NATE_STANDEN.map(([k, n]) => `<button data-nate-inst="energie" data-w="${k}" aria-pressed="${nateInst("nateEnergie", "normaal") === k}">${n}</button>`).join("")}</div>
+        <p class="klein">Bij een rustig scherm of weinig energie in je check-in praat Nate vanzelf zacht.</p></div>
       <ul class="schakels"><li class="schakel"><span class="tekst"><b>Klein idee voor vandaag</b><small>Eén tip per dag uit het ADHD-onderzoek, met uitleg waarom.</small></span>
         <button class="toggle" data-nate-inst="tips" aria-pressed="${aan}" aria-label="Tip van Nate per dag"></button></li></ul>
       ${weg ? `<button class="knop breed rand" data-nate-inst="terug">Weggelegde tips terugzetten (${weg})</button>` : ""}` + _inst.apply(this, arguments);
@@ -222,6 +254,7 @@ document.addEventListener("click", async e => {
   const el = e.target.closest && e.target.closest("[data-nate-inst]");
   if (!el) return;
   if (el.dataset.nateInst === "tips") await zetInst("nateTips", !nateInst("nateTips", true));
+  else if (el.dataset.nateInst === "energie") await zetInst("nateEnergie", el.dataset.w);
   else if (el.dataset.nateInst === "terug") { await zetInst("nateVerborgen", []); toast("Alle tips zijn weer aan."); }
   teken(); nateStipBijwerken();
 });

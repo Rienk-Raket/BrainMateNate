@@ -5,7 +5,8 @@
     "datum": "2026-09-30",
     "bron": "Kas' onderzoek: 'Overkoepelend onderzoeksdocument' en Categorie 1–8 (map 02_BrainMate Nate/Modules/uitdagingen en oplossingen voor neurodivergenten/01. Research)",
     "uitleg": "Theorie, onderbouwing en handvatten per domein, gekoppeld aan de modules van de app. Nate gebruikt dit voor tips en uitleg ('waarom zeg je dit?'). Bewerk dit bestand, niet de code; bouw.py zet het als NATE_ADHD in de app.",
-    "geenDiagnose": "Dit is uitleg en zelfhulp, geen diagnose of behandeling. Blijft het je dagelijks leven flink belasten? Praat met je huisarts of behandelaar."
+    "geenDiagnose": "Dit is uitleg en zelfhulp, geen diagnose of behandeling. Blijft het je dagelijks leven flink belasten? Praat met je huisarts of behandelaar.",
+    "nateStem": "Nate's toon: enthousiaste coach met een knipoog (energie van Tony Robbins, nuchtere herkadering van Alan Carr), kort, zonder 'moet', schuld of diagnoses. Varianten: normaal (ook voor Vol gas) en zacht."
   },
   "bewijsniveaus": {
     "direct": "Rechtstreeks bij ADHD onderzocht (bv. ADHD-gerichte CGT, medicatie).",
@@ -242,7 +243,11 @@
         "Na een gemiste afspraak biedt Nate een herstelzin en één systeemaanpassing, geen rode waarschuwing."
       ],
       "opschalen": "Herhaald missen met ernstige gevolgen ondanks een goed systeem.",
-      "waaromKort": "Een afspraak nakomen vraagt dat je later op precies het goede moment terugdenkt én in actie komt. Een systeem buiten je hoofd neemt dat onthouden over."
+      "waaromKort": "Een afspraak nakomen vraagt dat je later op precies het goede moment terugdenkt én in actie komt. Een systeem buiten je hoofd neemt dat onthouden over.",
+      "nate": {
+        "normaal": "Nieuwe afspraak? Meteen in je agenda, meteen een vertrekalarm erbij. Tien seconden werk, en je toekomstige zelf zegt dankjewel.",
+        "zacht": "Zet een nieuwe afspraak meteen in je agenda, met een vertrekalarm."
+      }
     },
     {
       "id": "plannen",
@@ -299,7 +304,11 @@
         "Buffers zijn zichtbare blokken op de dagring, geen lege ruimte."
       ],
       "opschalen": "Grote schade op werk, zorg of relaties door chronisch te laat of uitloop.",
-      "waaromKort": "Bijna iedereen schat te krap hoe lang iets duurt, en tijd voelen is lastiger als 'nu' veel harder trekt dan 'straks'. Eén keuze voor morgen, klaar voor gebruik, scheelt dan veel."
+      "waaromKort": "Bijna iedereen schat te krap hoe lang iets duurt, en tijd voelen is lastiger als 'nu' veel harder trekt dan 'straks'. Eén keuze voor morgen, klaar voor gebruik, scheelt dan veel.",
+      "nate": {
+        "normaal": "Kies vanavond één hoofdtaak voor morgen en schrijf de eerste handeling erbij. Dan hoef je morgen niet te beslissen, alleen te beginnen.",
+        "zacht": "Kies vanavond één ding voor morgen, met de eerste stap erbij."
+      }
     },
     {
       "id": "taken",
@@ -357,7 +366,11 @@
         "Body doubling (meewerker) staat erbij als experiment, met de vraag achteraf of het hielp."
       ],
       "opschalen": "Niet kunnen starten door ernstige somberheid, angst, uitputting of brede uitval.",
-      "waaromKort": "Een grote taak is vaak een verzamelnaam, geen handeling. Dan moet je hoofd alles tegelijk beslissen, en dat maakt beginnen zwaar."
+      "waaromKort": "Een grote taak is vaak een verzamelnaam, geen handeling. Dan moet je hoofd alles tegelijk beslissen, en dat maakt beginnen zwaar.",
+      "nate": {
+        "normaal": "Zit iets vast? Maak er een handeling van vijf minuten van, met een werkwoord erin. Klein genoeg om te beginnen, groot genoeg om te tellen.",
+        "zacht": "Maak van één vastgelopen taak een stapje van vijf minuten."
+      }
     },
     {
       "id": "huishouden",
@@ -413,7 +426,11 @@
         "Gemiste klussen stapelen niet op; Nate stelt één herstelronde voor."
       ],
       "opschalen": "Onveilige of vervuilde woonsituatie, of verzamelproblematiek.",
-      "waaromKort": "Huishouden is nooit echt af en geeft weinig directe beloning. Klein en 'goed genoeg' houdt het vol."
+      "waaromKort": "Huishouden is nooit echt af en geeft weinig directe beloning. Klein en 'goed genoeg' houdt het vol.",
+      "nate": {
+        "normaal": "Eén oppervlak, vijf minuten, bruikbaar in plaats van perfect. Daarna mag je trots stoppen.",
+        "zacht": "Kies één plekje en maak het vijf minuten bruikbaar. Perfect hoeft niet."
+      }
     },
     {
       "id": "routines",
@@ -472,7 +489,11 @@
         "Na een gemiste dag toont Nate de herstartregel en alleen de minimumversie."
       ],
       "opschalen": "Uitval door slaap-, stemmings- of middelenproblemen.",
-      "waaromKort": "Een vast anker met vrijheid in de uitvoering geeft houvast zonder dat het benauwt."
+      "waaromKort": "Een vast anker met vrijheid in de uitvoering geeft houvast zonder dat het benauwt.",
+      "nate": {
+        "normaal": "Kies één moment dat toch al elke dag gebeurt en hang er een actie van twee minuten aan. Klein anker, groot effect.",
+        "zacht": "Koppel één mini-actie aan iets dat je elke dag al doet."
+      }
     },
     {
       "id": "gewoontes-aanleren",
@@ -521,7 +542,11 @@
         "Na enkele weken vraagt Nate: 'Gaat het al vanzelf?' in plaats van een teller van dagen."
       ],
       "opschalen": "Medische of psychische gevolgen van het niet uitvoeren (bv. medicatie).",
-      "waaromKort": "Gewoontes ontstaan door herhaling bij een vaste aanleiding, en dat duurt meestal maanden, niet 21 dagen. Klein en makkelijk houdt de herhaling vol."
+      "waaromKort": "Gewoontes ontstaan door herhaling bij een vaste aanleiding, en dat duurt meestal maanden, niet 21 dagen. Klein en makkelijk houdt de herhaling vol.",
+      "nate": {
+        "normaal": "Maak deze zin af: 'Nadat ik …, doe ik …'. Twee minuten, elke keer. Zo bouw je het, steen voor steen.",
+        "zacht": "'Nadat ik …, doe ik …'. Eén kleine zin is genoeg."
+      }
     },
     {
       "id": "gewoontes-afleren",
@@ -578,7 +603,11 @@
         "Bij signalen van controleverlies, gokken, middelen of grote financiële schade verwijst Nate naar professionele hulp."
       ],
       "opschalen": "Controleverlies, verslaving, gokken, eetproblemen, zelfbeschadiging of ernstige financiële schade: zelfhulp is dan onvoldoende.",
-      "waaromKort": "Wilskracht op het moment zelf is wisselend. Een kleine drempel vooraf en een alternatief binnen handbereik doen het werk voor je."
+      "waaromKort": "Wilskracht op het moment zelf is wisselend. Een kleine drempel vooraf en een alternatief binnen handbereik doen het werk voor je.",
+      "nate": {
+        "normaal": "Klein trucje, groot effect: maak het ongewenste tien seconden lastiger. Je brein kiest de makkelijke weg, dus wij bepalen welke dat is.",
+        "zacht": "Leg de verleiding net iets verder weg. Dat is alles."
+      }
     },
     {
       "id": "emoties",
@@ -639,7 +668,11 @@
         "Bij zelfbeschadiging, suïcidale gedachten of ernstige ontregeling verwijst Nate direct naar hulp (huisarts, 113)."
       ],
       "opschalen": "Suïcidale gedachten, agressie, zelfbeschadiging of ernstige ontregeling: direct hulp.",
-      "waaromKort": "In een sterke emotie werkt nadenken slecht. Eerst benoemen wat je lichaam doet, helpt om daarna rustiger te kiezen."
+      "waaromKort": "In een sterke emotie werkt nadenken slecht. Eerst benoemen wat je lichaam doet, helpt om daarna rustiger te kiezen.",
+      "nate": {
+        "normaal": "Komt iets hard binnen? Drie woorden: wat gebeurde er, wat doet je lijf, wat wil je doen. Benoemen is al halverwege.",
+        "zacht": "Als iets hard binnenkomt: noem de aanleiding, wat je lijf doet en wat je wilt doen."
+      }
     }
   ],
   "fasering": [
