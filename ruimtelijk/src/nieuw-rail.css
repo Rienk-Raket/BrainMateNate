@@ -1,0 +1,25 @@
+/* 61. Nieuw als uitschuifbare rail */
+.nw-rail{--nw-p:0;--nw-strook:92px;position:relative;display:flex;flex-direction:column;gap:13px;margin:14px 0 4px;
+  touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.nw-slot{position:relative;z-index:1;
+  transform:translateX(calc((1 - var(--nw-p)) * (var(--nw-strook) - 100%)));
+  transition:transform .55s cubic-bezier(.22,1,.36,1) calc(var(--i) * 26ms);will-change:transform}
+.nw-rail.sleept .nw-slot{transition:none}
+.nw-rail.piep .nw-slot{transition-duration:.5s}
+.nw-slot>.knop3d{width:100%}
+/* Hoogte volgt het ingeklapte overzicht ernaast (--nw-kh, gezet in nwoHoogte). */
+.nw-rail{--nw-kh:92px}
+.nw-slot>.knop3d.breed{min-height:0;height:var(--nw-kh);transition:height .3s cubic-bezier(.22,1,.36,1)}
+.nw-slot .knop3d.breed .ill3d{height:min(66px,calc(var(--nw-kh) - 14px));width:min(82px,calc((var(--nw-kh) - 14px) * 1.24))}
+.nw-rail.nw-laag .nw-slot .knop3d.breed{padding-top:6px;padding-bottom:6px}
+.nw-rail.nw-laag .nw-slot .knop3d .nm3d{font-size:calc(15px * var(--t));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nw-rail.nw-laag .nw-slot .knop3d .ds3d{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nw-slot .knop3d .tekst3d{opacity:calc(.15 + var(--nw-p) * .85);transition:opacity .4s}
+.nw-rail.sleept .nw-slot .knop3d .tekst3d{transition:none}
+/* Telling: ingeklapt boven de illustratie, uitgeklapt op de gewone plek. */
+.nw-slot .knop3d.breed .bal3d{transition:right .45s cubic-bezier(.22,1,.36,1),top .45s cubic-bezier(.22,1,.36,1),transform .45s}
+.nw-rail:not(.open) .nw-slot .knop3d.breed .bal3d{right:6px;top:8px;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .nw-slot{transition-duration:.01s;transition-delay:0s}
+}

@@ -1,0 +1,22 @@
+/* 63. Retro: 8-bit letters voor kop, voetteksten en bijschriften + een datum die opvalt */
+@font-face{font-family:"FM Pixel";src:url(data:font/woff2;base64,__PIXELFONT__) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+:root{--pixel:"FM Pixel",ui-monospace,"SFMono-Regular",Menlo,monospace}
+
+/* De datum onder de titel: groter en dikker, ook zonder retroletters */
+#ondertitel.is-datum{font-size:calc(17px * var(--t));font-weight:750;color:var(--text);letter-spacing:-.01em;margin-top:4px}
+#ondertitel.is-datum .dag{color:var(--accent)}
+
+/* 8-bit letters */
+html[data-retro="1"] h1#titel{font-family:var(--pixel);font-weight:400;font-size:calc(20px * var(--t));letter-spacing:0;line-height:1.4;
+  text-shadow:2px 2px 0 color-mix(in srgb,var(--accent) 30%,transparent)}
+html[data-retro="1"] h1#titel.tweeregels{line-height:1.35}
+html[data-retro="1"] #ondertitel{font-family:var(--pixel);font-size:calc(9.5px * var(--t));line-height:1.8;letter-spacing:.02em}
+html[data-retro="1"] #ondertitel.is-datum{font-size:calc(13px * var(--t));font-weight:400;line-height:1.7;margin-top:6px;letter-spacing:0;
+  text-shadow:2px 2px 0 color-mix(in srgb,var(--accent) 38%,transparent)}
+html[data-retro="1"] nav#tabs button span{font-family:var(--pixel);font-size:calc(6.5px * var(--t));letter-spacing:-.02em;line-height:1.5;margin-top:2px}
+html[data-retro="1"] .sectie h2,
+html[data-retro="1"] .labeltekst,
+html[data-retro="1"] .veld>label{font-family:var(--pixel);font-weight:400;font-size:calc(9px * var(--t));letter-spacing:.03em;line-height:1.6}
+html[data-retro="1"] .sectie .telling{font-family:var(--pixel);font-size:calc(8.5px * var(--t))}
+html[data-retro="1"] .wl-label,
+html[data-retro="1"] .mx-som{font-family:var(--pixel);font-weight:400;font-size:calc(9px * var(--t));line-height:1.6}

@@ -1,0 +1,190 @@
+/* ==========================================================================
+   51. HobbySkills — hobby's en skills bijhouden
+   ========================================================================== */
+.hs-hero{display:flex;align-items:center;gap:14px;padding:14px}
+.hs-hero .ring{width:64px;height:64px;font-size:calc(13px * var(--t))}
+.hs-hero .ring>span{width:50px;height:50px}
+.hs-hero .tekst{flex:1;min-width:0}
+.hs-hero .tekst b{font-size:calc(16px * var(--t));display:block}
+.hs-hero .tekst .klein{margin-top:2px}
+.hs-streak{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 9px;border-radius:999px;background:var(--amber-soft);color:var(--amber);font-weight:700;font-size:calc(12.5px * var(--t))}
+.hs-streak.leeg{background:var(--card2);color:var(--muted)}
+
+.hs-vandaag{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 2px}
+.hs-vandaag .keuze{min-height:38px;padding:0 12px 0 8px;display:inline-flex;align-items:center;gap:6px}
+.hs-vandaag .keuze .em{font-size:17px;line-height:1}
+.hs-vandaag .keuze.af{background:var(--green-soft);color:var(--green);border-color:transparent}
+
+.hs-filters{display:flex;gap:8px;align-items:center;margin:14px 0 4px}
+.hs-filters .segment{flex:1}
+.hs-statusrij .keuze{white-space:nowrap}
+
+.hs-lijst{display:flex;flex-direction:column;gap:10px;margin:8px 0}
+.hs-kaart{
+  --hk:var(--accent);
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+  padding:12px 12px 12px 14px;margin:0;text-align:left;cursor:pointer;position:relative;overflow:hidden;
+}
+.hs-kaart::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--hk)}
+.hs-emoji{
+  width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;line-height:1;background:color-mix(in srgb,var(--hk) 16%,transparent);flex:0 0 auto;
+}
+.hs-kaart .mid{min-width:0}
+.hs-kaart .mid b{display:block;font-size:calc(15.5px * var(--t));line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-badges{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 6px;align-items:center}
+.hs-badge{font-size:calc(10.5px * var(--t));font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:7px;background:var(--card2);color:var(--muted)}
+.hs-badge.hobby{background:var(--purple-soft);color:var(--purple)}
+.hs-badge.skill{background:var(--accent-soft);color:var(--accent)}
+.hs-badge.wil{background:var(--amber-soft);color:var(--amber)}
+.hs-badge.pauze{background:var(--card2);color:var(--faint)}
+.hs-badge.klaar{background:var(--green-soft);color:var(--green)}
+.hs-niveau{display:inline-flex;gap:3px;align-items:center}
+.hs-niveau i{width:7px;height:7px;border-radius:50%;background:var(--line2)}
+.hs-niveau i.aan{background:var(--hk)}
+.hs-balk{height:6px;border-radius:4px;background:var(--line);overflow:hidden}
+.hs-balk>i{display:block;height:100%;border-radius:4px;background:var(--hk);transition:width .3s}
+.hs-balk.over>i{background:var(--green)}
+.hs-kaart .sub{font-size:calc(12.5px * var(--t));color:var(--muted);margin-top:5px}
+.hs-plus{
+  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--hk) 14%,transparent);color:var(--hk);flex:0 0 auto;
+}
+.hs-plus svg{width:18px;height:18px}
+.hs-kaart.klaar{opacity:.72}
+.hs-kaart.klaar .hs-emoji{filter:grayscale(.4)}
+
+/* Detail */
+.hs-kop{
+  --hk:var(--accent);
+  background:linear-gradient(160deg,color-mix(in srgb,var(--hk) 86%,#fff) 0%,var(--hk) 58%,color-mix(in srgb,var(--hk) 84%,#000) 100%);
+  color:#fff;border-radius:20px;padding:16px;margin:10px 0 4px;position:relative;overflow:hidden;
+  box-shadow:0 12px 28px -12px var(--hk),inset 0 1px 0 rgba(255,255,255,.35);
+}
+.hs-kop .em{position:absolute;right:-6px;top:-10px;font-size:92px;line-height:1;opacity:.22;pointer-events:none;filter:blur(.5px)}
+.hs-kop .rij{display:flex;align-items:center;gap:12px;position:relative}
+.hs-kop .groot{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:30px;line-height:1;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.hs-kop .ttl{font-size:calc(19px * var(--t));font-weight:800;letter-spacing:-.01em;line-height:1.2}
+.hs-kop .sub{font-size:calc(12.5px * var(--t));color:#fff;opacity:.88;margin-top:2px}
+.hs-kop .waarom{margin:12px 0 0;font-size:calc(14px * var(--t));line-height:1.45;position:relative;opacity:.95;white-space:pre-wrap}
+.hs-kop .cijfers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px;position:relative}
+.hs-kop .cf{background:rgba(255,255,255,.18);border-radius:12px;padding:8px 4px;text-align:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.hs-kop .cf b{display:block;font-size:calc(19px * var(--t));font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.hs-kop .cf span{font-size:calc(11px * var(--t));opacity:.85}
+
+.hs-status .segment button[aria-pressed="true"]{color:var(--hk)}
+.hs-dagen{display:flex;gap:6px;margin-top:8px}
+.hs-dagen button{
+  flex:1;min-height:38px;border-radius:10px;background:var(--card2);color:var(--muted);
+  font-size:calc(12.5px * var(--t));font-weight:700;border:1.5px solid transparent;
+}
+.hs-dagen button[aria-pressed="true"]{background:color-mix(in srgb,var(--hk) 16%,transparent);color:var(--hk);border-color:var(--hk)}
+.hs-dagen button.vandaag{text-decoration:underline;text-underline-offset:3px}
+.hs-niveaus{display:flex;gap:6px;margin-top:8px}
+.hs-niveaus button{
+  flex:1;min-height:44px;border-radius:11px;background:var(--card2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font-size:calc(10.5px * var(--t));font-weight:700;color:var(--muted);border:1.5px solid transparent;
+}
+.hs-niveaus button i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.hs-niveaus button.aan{color:var(--hk)}
+.hs-niveaus button.aan i{background:var(--hk)}
+.hs-niveaus button[aria-pressed="true"]{border-color:var(--hk);background:color-mix(in srgb,var(--hk) 14%,transparent)}
+.hs-week{display:flex;align-items:center;gap:12px}
+.hs-week .tekst{flex:1;min-width:0}
+.hs-week .tekst b{display:block;font-size:calc(15px * var(--t))}
+.hs-week .hs-balk{margin-top:6px;height:8px}
+
+.hs-grafiek{width:100%;height:auto;display:block;margin-top:6px}
+.hs-grafiek rect{fill:var(--hk)}
+.hs-grafiek rect.leeg{fill:var(--line);opacity:.7}
+.hs-grafiek rect.nu{fill:var(--hk);opacity:1}
+.hs-grafiek text{fill:var(--muted);font-size:9px}
+.hs-grafiek line.doel{stroke:var(--amber);stroke-width:1.2;stroke-dasharray:3 3}
+
+.hs-mijlpaal{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 4px;border-bottom:1px solid var(--line)}
+.hs-mijlpaal:last-child{border-bottom:0}
+.hs-check{
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;position:relative;
+}
+.hs-check::before{content:"";position:absolute;width:24px;height:24px;border-radius:7px;border:2px solid var(--line2);box-sizing:border-box;transition:background .2s,border-color .2s,transform .3s var(--rt-veer,ease)}
+.hs-check svg{width:13px;height:13px;opacity:0;position:relative;z-index:1;color:#fff;transform:scale(.5);transition:all .2s;stroke-dasharray:22;stroke-dashoffset:22}
+.hs-check[aria-pressed="true"]::before{background:var(--hk);border-color:var(--hk)}
+.hs-check[aria-pressed="true"] svg{opacity:1;transform:scale(1);stroke-dashoffset:0;transition:opacity .1s,transform .3s var(--rt-veer,ease),stroke-dashoffset .4s cubic-bezier(.4,0,.2,1) .05s}
+.hs-mijlpaal .tekst{flex:1;min-width:0;font-size:calc(15px * var(--t));line-height:1.35}
+.hs-mijlpaal.af .tekst{text-decoration:line-through;color:var(--faint)}
+.hs-mijlpaal .tekst small{display:block;color:var(--faint);font-size:calc(12px * var(--t))}
+.hs-mijlpaal .icon-btn{min-width:36px;min-height:36px;color:var(--faint)}
+.hs-mijlpaal .icon-btn svg{width:17px;height:17px}
+.hs-nieuwveld{display:flex;align-items:center;gap:8px;padding:6px 10px 8px}
+.hs-nieuwveld input{flex:1;min-width:0}
+.hs-nieuwveld .knop{min-height:40px;padding:0 13px}
+
+.hs-sessie{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.hs-sessie:last-child{border-bottom:0}
+.hs-sessie .dt{flex:0 0 70px;font-size:calc(12px * var(--t));color:var(--muted);line-height:1.3;padding-top:2px}
+.hs-sessie .dt b{display:block;color:var(--text);font-size:calc(13px * var(--t))}
+.hs-sessie .inh{flex:1;min-width:0;font-size:calc(14px * var(--t))}
+.hs-sessie .inh b{font-size:calc(15px * var(--t))}
+.hs-sessie .inh .not{color:var(--muted);font-size:calc(13px * var(--t));margin-top:2px;white-space:pre-wrap}
+.hs-sterren{color:var(--amber);font-size:calc(12px * var(--t));letter-spacing:1px;margin-left:6px}
+.hs-sessie .icon-btn{min-width:36px;min-height:36px;color:var(--faint);margin:-4px -6px -4px 0}
+.hs-sessie .icon-btn svg{width:16px;height:16px}
+
+.hs-bron{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:calc(14.5px * var(--t))}
+.hs-bron:last-child{border-bottom:0}
+.hs-bron a{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:none}
+.hs-bron span.t{flex:1;min-width:0}
+.hs-bron .icon-btn{min-width:36px;min-height:36px;color:var(--faint)}
+.hs-bron .icon-btn svg{width:16px;height:16px}
+
+/* Blad: kiezers */
+.hs-emojis{display:flex;flex-wrap:wrap;gap:6px}
+.hs-emojis button{width:42px;height:42px;border-radius:12px;background:var(--card2);font-size:22px;line-height:1;border:2px solid transparent}
+.hs-emojis button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.hs-kleuren{display:flex;flex-wrap:wrap;gap:8px}
+.hs-kleuren button{width:32px;height:32px;border-radius:50%;border:3px solid transparent;box-shadow:0 0 0 1px var(--line2) inset}
+.hs-kleuren button[aria-pressed="true"]{border-color:var(--card);box-shadow:0 0 0 2px var(--text)}
+.hs-minuten{display:flex;gap:6px;margin-bottom:8px}
+.hs-minuten button{flex:1;min-height:40px;border-radius:10px;background:var(--card2);font-weight:700;font-size:calc(14px * var(--t));border:1.5px solid transparent}
+.hs-minuten button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.hs-beoordeling{display:flex;gap:4px}
+.hs-beoordeling button{flex:1;max-width:56px;height:44px;font-size:28px;line-height:1;color:var(--line2);border-radius:10px}
+.hs-beoordeling button.aan{color:var(--amber)}
+
+/* Widget op het dagoverzicht */
+.hs-widget{padding:12px 14px;margin:12px 0}
+.hs-widget .kop{display:flex;align-items:center;gap:8px}
+.hs-widget .kop b{flex:1;font-size:calc(15px * var(--t))}
+.hs-widget .kop .naar{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-weight:700;font-size:calc(13px * var(--t));min-height:32px}
+.hs-widget .hs-vandaag{margin-top:8px}
+.hs-widget .hs-balk{margin-top:8px}
+
+/* Startscherm-illustratie en menu */
+.hs-startstrip{--kk:#0ea5a4}
+
+/* Checklist met sjablonen */
+.hs-clkop{display:flex;align-items:center;gap:10px;padding:12px 14px 6px}
+.hs-clkop .hs-balk{flex:1;height:7px}
+.hs-clkop .klein{flex:0 0 auto;white-space:nowrap}
+.hs-cgroep{
+  display:flex;align-items:center;gap:8px;width:100%;min-height:42px;padding:6px 14px;text-align:left;
+  font-size:calc(12.5px * var(--t));font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);
+  border-top:1px solid var(--line);
+}
+.hs-cgroep span:first-child{flex:1;color:var(--hk)}
+.hs-cgroep .klein{font-weight:700;letter-spacing:0;text-transform:none}
+.hs-checklist .hs-mijlpaal{padding-left:10px}
+.hs-cats{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.hs-cats button{
+  display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 10px;border-radius:12px;text-align:left;
+  background:var(--card2);border:1.5px solid transparent;font-size:calc(13.5px * var(--t));font-weight:650;line-height:1.25;
+}
+.hs-cats button .em{font-size:19px;line-height:1;flex:0 0 auto}
+.hs-cats button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.hs-cats.klein-cats button{min-height:40px;font-size:calc(12.5px * var(--t))}
+
+/* Hobby, skill of side hustle kiezen in het importblad van de mindmap */
+.mmb-bronnen{margin:6px 0 0}
+.mmb-bronnen .chiprij{margin-top:6px}
+.mmb-bronnen .keuze{white-space:nowrap}
+.mmb-bronnen .keuze .klein{font-size:calc(11px * var(--t));margin-left:2px}

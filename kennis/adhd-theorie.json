@@ -1,0 +1,809 @@
+{
+  "meta": {
+    "titel": "ADHD in het dagelijks leven — kennisbasis voor Brain-Mate Nate",
+    "versie": "1.0",
+    "datum": "2026-09-30",
+    "bron": "Kas' onderzoek: 'Overkoepelend onderzoeksdocument' en Categorie 1–8 (map 02_BrainMate Nate/Modules/uitdagingen en oplossingen voor neurodivergenten/01. Research)",
+    "uitleg": "Theorie, onderbouwing en handvatten per domein, gekoppeld aan de modules van de app. Nate gebruikt dit voor tips en uitleg ('waarom zeg je dit?'). Bewerk dit bestand, niet de code; bouw.py zet het als NATE_ADHD in de app.",
+    "geenDiagnose": "Dit is uitleg en zelfhulp, geen diagnose of behandeling. Blijft het je dagelijks leven flink belasten? Praat met je huisarts of behandelaar.",
+    "nateStem": "Nate's toon: enthousiaste coach met een knipoog (energie van Tony Robbins, nuchtere herkadering van Alan Carr), kort, zonder 'moet', schuld of diagnoses. Varianten: normaal (ook voor Vol gas) en zacht.",
+    "subthemas": "Per domein: de subthema's uit kennis/vragenbank.json (Deel A) waarbij Nate dit domein als tip kiest, volgens de route A → B uit 04_scorelogica-en-routing. A2.1 (sensorisch) en A3.4 (lezen) hebben geen ADHD-domein."
+  },
+  "bewijsniveaus": {
+    "direct": "Rechtstreeks bij ADHD onderzocht (bv. ADHD-gerichte CGT, medicatie).",
+    "indirect": "Onderdeel van richtlijnen of onderzocht bij andere groepen (bv. agenda's, timers, als-dan-plannen, taakanalyse).",
+    "praktisch": "Logisch en bruikbaar, maar het eigen effect bij ADHD is nog onzeker (bv. habit stacking, body doubling, microtaken). Nate brengt dit als experiment."
+  },
+  "hoofdprincipe": "Maak uitvoering minder afhankelijk van precies op het juiste moment herinneren, motiveren, beslissen en reguleren.",
+  "keten": [
+    "Een eis, kans of afspraak opmerken",
+    "Besluiten wat ermee moet gebeuren",
+    "De informatie betrouwbaar extern opslaan",
+    "Een moment en context kiezen",
+    "De taak concreet maken",
+    "Op het juiste moment starten",
+    "Aandacht en inspanning vasthouden",
+    "Stoppen, wisselen of afronden",
+    "Evalueren en het systeem bijstellen"
+  ],
+  "terugkoppeling": "Een gemiste afspraak geeft schaamte, schaamte geeft vermijding, vermijding laat taken opstapelen, dat geeft stress, stress kost aandacht. Andersom start een klein extern systeem een positieve lus: zichtbaar, kleiner, eerder succes, meer vertrouwen.",
+  "omgevingsvraag": "Welke informatie, cue, grens of volgende stap ontbreekt in de omgeving op het moment dat het gedrag moet gebeuren?",
+  "lagen": [
+    {
+      "id": "L1",
+      "naam": "Klinische basis",
+      "kern": "Een app vervangt geen diagnostiek of behandeling. Psycho-educatie voorkomt dat beperkingen als luiheid worden gezien.",
+      "modules": [
+        "profiel"
+      ]
+    },
+    {
+      "id": "L2",
+      "naam": "Extern geheugen",
+      "kern": "Eén agenda, één opvangplek voor taken, vaste plekken voor spullen. Sneller dan onthouden en simpel genoeg onder stress.",
+      "modules": [
+        "vastleggen",
+        "planning",
+        "afspraken",
+        "mindmap"
+      ]
+    },
+    {
+      "id": "L3",
+      "naam": "Actieontwerp",
+      "kern": "Vertaal categorieën naar gedrag met een werkwoord. Minimum-, standaard- en plusversie; het minimum is een ontworpen vangnet, geen mislukking.",
+      "modules": [
+        "taken",
+        "projecten",
+        "checklists",
+        "huishouden"
+      ]
+    },
+    {
+      "id": "L4",
+      "naam": "Tijd en overgangen",
+      "kern": "Maak tijd zichtbaar. Plan ook voorbereiding, reistijd, afronding en herstel. Buffers zijn echte tijd.",
+      "modules": [
+        "mijnDag",
+        "planning",
+        "focus",
+        "afspraken"
+      ]
+    },
+    {
+      "id": "L5",
+      "naam": "Omgeving en frictie",
+      "kern": "Maak gewenst gedrag makkelijker en ongewenst gedrag moeilijker. Hooguit één of twee actieve cues per plek.",
+      "modules": [
+        "gewoontes",
+        "huishouden",
+        "wishlist"
+      ]
+    },
+    {
+      "id": "L6",
+      "naam": "Feedback en beloning",
+      "kern": "Maak voortgang per stap zichtbaar, werk in korte blokken, gebruik nabije en gezonde beloningen.",
+      "modules": [
+        "voortgang",
+        "mijnDag",
+        "hobbyskills"
+      ]
+    },
+    {
+      "id": "L7",
+      "naam": "Emotioneel herstel",
+      "kern": "Plan herstel voordat het nodig is: stoppen, schade beperken, repareren, één oorzaak, één aanpassing, hervatten.",
+      "modules": [
+        "dagboek",
+        "anker",
+        "checkin"
+      ]
+    }
+  ],
+  "profielen": [
+    {
+      "id": "zicht",
+      "naam": "Verlies van zicht",
+      "uiting": "Afspraken, spullen en plannen verdwijnen uit beeld",
+      "knelpunt": "Werkgeheugen, prospectief geheugen, te weinig externe cues",
+      "eersteStap": "Eén betrouwbaar opvangsysteem plus zichtbare, tijdige herinneringen",
+      "clusters": [
+        "P1",
+        "P6"
+      ]
+    },
+    {
+      "id": "tijd",
+      "naam": "Tijd- en overgangsprobleem",
+      "uiting": "Te laat beginnen, uitloop, moeite met vertrekken of stoppen",
+      "knelpunt": "Tijd volgen, plannen, wisselen",
+      "eersteStap": "Terugplannen vanaf de afspraak, vertrekalarm, buffers en afsluitritueel",
+      "clusters": [
+        "P1",
+        "P6"
+      ]
+    },
+    {
+      "id": "start",
+      "naam": "Startblokkade",
+      "uiting": "Wel willen, niet beginnen",
+      "knelpunt": "Vaagheid, taakaversie, hoge startkosten, emotie",
+      "eersteStap": "Eerstvolgende fysieke stap van twee tot vijf minuten",
+      "clusters": [
+        "P1",
+        "P2"
+      ]
+    },
+    {
+      "id": "volhouden",
+      "naam": "Volhoudprobleem",
+      "uiting": "Sterke start, daarna afleiding of uitval",
+      "knelpunt": "Aandacht reguleren, uitgestelde beloning, overbelasting",
+      "eersteStap": "Korte werkblokken, feedback, afleiding afschermen, pauzes",
+      "clusters": [
+        "P1",
+        "P2"
+      ]
+    },
+    {
+      "id": "afronden",
+      "naam": "Afrondingsprobleem",
+      "uiting": "Veel bijna-afgeronde taken en losse eindjes",
+      "knelpunt": "Geen stopcriterium, nieuwe prikkels",
+      "eersteStap": "Vooraf bepalen wanneer iets 'klaar' is, eindcheck en sluitcyclus",
+      "clusters": [
+        "P2",
+        "P6"
+      ]
+    },
+    {
+      "id": "routine",
+      "naam": "Routineweerstand",
+      "uiting": "Structuur helpt maar voelt benauwend of saai",
+      "knelpunt": "Autonomie, verveling, alles-of-niets",
+      "eersteStap": "Vaste ankers met vrijheid in de uitvoering",
+      "clusters": [
+        "P2",
+        "P6"
+      ]
+    },
+    {
+      "id": "impuls",
+      "naam": "Impuls- en gewoonteprofiel",
+      "uiting": "Scrollen, kopen, snacken of gamen neemt automatisch over",
+      "knelpunt": "Directe beloning, cues, korte responspauze",
+      "eersteStap": "Triggers in kaart, frictie toevoegen, een vervanger met dezelfde functie",
+      "clusters": [
+        "P2"
+      ]
+    },
+    {
+      "id": "emotie",
+      "naam": "Emotionele blokkade",
+      "uiting": "Kritiek, schaamte of frustratie leidt tot uitstel of escalatie",
+      "knelpunt": "Emotieregulatie, negatieve verwachting, zelfkritiek",
+      "eersteStap": "Eerst reguleren, daarna pas het probleem oplossen",
+      "clusters": [
+        "P5",
+        "P7"
+      ]
+    }
+  ],
+  "domeinen": [
+    {
+      "id": "afspraken",
+      "naam": "Afspraken vastleggen en nakomen",
+      "categorie": 1,
+      "modules": [
+        "afspraken",
+        "planning",
+        "mijnDag"
+      ],
+      "theorie": "Een afspraak nakomen is een samengestelde prospectief-geheugentaak: onthouden dat later iets moet gebeuren, het op het juiste moment terughalen en dan meerdere handelingen uitvoeren. 'Gebrek aan objectpermanentie' is een onnauwkeurige term; het gaat om beschikbaarheid van informatie, werkgeheugen, prospectief geheugen, tijd volgen en uitvoering.",
+      "interventies": [
+        {
+          "naam": "Nul-uitstel en één systeem",
+          "uitleg": "Zet een afspraak meteen en maar één keer in één primaire agenda.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Volledige gegevens",
+          "uitleg": "Niet alleen tijd en titel, ook plaats, reistijd, voorbereiding, spullen en contact.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Meertrapsherinnering",
+          "uitleg": "Verschillende soorten herinneringen: 7 dagen (voorbereiding), 24 uur (spullen klaar), 2–3 uur (dag ordenen), 30–60 min voor vertrek (afronden), vertrekmoment (nu gaan). Meerdere sms-herinneringen verhoogden opkomst bij zorgafspraken (Robotham 2016; Guy 2012), niet ADHD-specifiek.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Terugplannen",
+          "uitleg": "Reken terug vanaf de aankomsttijd naar stop- en vertrektijd. Het brein handelt niet op '14.00 afspraak' als de actie om 12.52 moet beginnen.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Als-dan-plan",
+          "uitleg": "'Als situatie X, dan doe ik Y' verbetert prospectief geheugen met een middelgroot effect in algemene groepen.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Herstel na missen",
+          "uitleg": "Snel en zakelijk contact, excuses zonder lange zelfveroordeling, opnieuw plannen, kijken welke schakel faalde.",
+          "bewijs": "praktisch"
+        }
+      ],
+      "valkuilen": [
+        "Alarmmoeheid: te veel meldingen worden ruis. Maak onderscheid tussen informeren, voorbereiden, stoppen en vertrekken."
+      ],
+      "minimaleInterventie": "Zet iedere nieuwe afspraak meteen in één agenda en voeg direct een vertrekalarm toe.",
+      "appAdvies": [
+        "Afspraak-invoer vraagt standaard reistijd en voorbereiding; de app rekent zelf de stop- en vertrektijd uit.",
+        "Herinneringen krijgen een soort (voorbereiden, stoppen, vertrekken) met vaste betekenis en tekst in actievorm ('NU jas aan').",
+        "Op de dagring staat de vertrektijd als klokje, niet alleen de afspraaktijd.",
+        "Na een gemiste afspraak biedt Nate een herstelzin en één systeemaanpassing, geen rode waarschuwing."
+      ],
+      "opschalen": "Herhaald missen met ernstige gevolgen ondanks een goed systeem.",
+      "waaromKort": "Een afspraak nakomen vraagt dat je later op precies het goede moment terugdenkt én in actie komt. Een systeem buiten je hoofd neemt dat onthouden over.",
+      "nate": {
+        "normaal": "Nieuwe afspraak? Meteen in je agenda, meteen een vertrekalarm erbij. Tien seconden werk, en je toekomstige zelf zegt dankjewel.",
+        "zacht": "Zet een nieuwe afspraak meteen in je agenda, met een vertrekalarm."
+      },
+      "subthemas": [
+        "A4.1",
+        "A1.2"
+      ]
+    },
+    {
+      "id": "plannen",
+      "naam": "Plannen en tijdsbeheer",
+      "categorie": 2,
+      "modules": [
+        "planning",
+        "mijnDag",
+        "focus",
+        "tijdregistratie"
+      ],
+      "theorie": "'Tijdsblindheid' is een ervaringsbeschrijving, geen diagnose. Het omvat duur onderschatten, toekomstige gevolgen minder laten meewegen, tijd niet volgen, overgangen uitstellen en een plan niet activeren. Iedereen onderschat duur (planningsfout); bij ADHD komt daar moeite met 'nu' versus 'niet nu' bij.",
+      "interventies": [
+        {
+          "naam": "ADHD-gerichte CGT",
+          "uitleg": "Programma's voor tijdmanagement, plannen, prioriteren, afleiding en uitstel. Meta-analyse van 17 RCT's: beter dan wachtlijst en gebruikelijke zorg.",
+          "bewijs": "direct"
+        },
+        {
+          "naam": "1–2–rest",
+          "uitleg": "Eén kernuitkomst, twee onderhoudstaken, de rest is bonus. Een beschermingsregel tegen overplanning, geen wetenschappelijk optimum.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Dagstart van vijf minuten",
+          "uitleg": "Agenda eerst (niet mail), afspraken en reistijd checken, één kernuitkomst, eerste actie als werkwoord, blok plus buffer, één als-dan-regel voor het grootste obstakel.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Historische duur",
+          "uitleg": "Meet twee weken hoe lang terugkerende taken echt duren en plan daarna op de mediaan. Een eerste schatting is een experiment: 'geschat 30, werkelijk 52, volgende keer 55–65'.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Time-blocking en timeboxing",
+          "uitleg": "Tijd reserveren en tijd begrenzen. Nuttig, maar los minder goed onderzocht dan complete CGT-programma's.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Tijd ruimtelijk maken",
+          "uitleg": "Een zichtbare klok, balk of ring maakt het verstrijken van tijd waarneembaar.",
+          "bewijs": "indirect"
+        }
+      ],
+      "valkuilen": [
+        "Een plan dat alleen op een ideale dag werkt, is geen robuust plan: maak minimum, standaard en uitgebreid.",
+        "Plannen en kiezen scheiden: eerst kiezen wat telt, dan pas inplannen."
+      ],
+      "minimaleInterventie": "Kies iedere avond één hoofdtaak voor morgen en schrijf de eerste zichtbare handeling erbij.",
+      "appAdvies": [
+        "Mijn dag toont het 1–2–rest-model: één kern, twee onderhoud, de rest ingeklapt als bonus.",
+        "De ochtend-check-in wordt een dagstart van vijf minuten met één als-dan-regel.",
+        "Taken krijgen geschatte én werkelijke duur; de app stelt volgende keer de gemeten duur voor, zonder oordeel.",
+        "Buffers zijn zichtbare blokken op de dagring, geen lege ruimte."
+      ],
+      "opschalen": "Grote schade op werk, zorg of relaties door chronisch te laat of uitloop.",
+      "waaromKort": "Bijna iedereen schat te krap hoe lang iets duurt, en tijd voelen is lastiger als 'nu' veel harder trekt dan 'straks'. Eén keuze voor morgen, klaar voor gebruik, scheelt dan veel.",
+      "nate": {
+        "normaal": "Kies vanavond één hoofdtaak voor morgen en schrijf de eerste handeling erbij. Dan hoef je morgen niet te beslissen, alleen te beginnen.",
+        "zacht": "Kies vanavond één ding voor morgen, met de eerste stap erbij."
+      },
+      "subthemas": [
+        "A1.3",
+        "A1.1",
+        "A3.3"
+      ]
+    },
+    {
+      "id": "taken",
+      "naam": "Grote taken opdelen",
+      "categorie": 3,
+      "modules": [
+        "taken",
+        "projecten",
+        "checklists",
+        "mindmap",
+        "focus"
+      ],
+      "theorie": "Een grote taak is vaak een categorie ('belasting doen'), geen handeling. Het brein moet dan tegelijk doel, volgorde, materiaal, tijd en kwaliteitsnorm bepalen. Die beslislast verhoogt de startdrempel en kan vermijding oproepen. Uitstel is vaak een regulatieprobleem (onprettig gevoel ontwijken), geen luiheid.",
+      "interventies": [
+        {
+          "naam": "Taakanalyse",
+          "uitleg": "Een goede stap begint met een werkwoord, gebruikt één plek of hulpmiddel, heeft een zichtbaar eindpunt, past in één focusblok en bevat geen verborgen tweede project.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Startformule",
+          "uitleg": "Als [cue], dan [kleine zichtbare actie] op [plek] gedurende [begrensde tijd]. Daarna mag je stoppen of doorgaan; dat moet echt zo zijn.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Projectlijst versus dagactielijst",
+          "uitleg": "Lange lijst voor opslag, korte lijst voor vandaag. Een te lange lijst overweldigt zelf.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "90-secondenonderzoek",
+          "uitleg": "Bij vastlopen: benoem taak en gevoel, vraag wat onduidelijk, onprettig, onzeker of te groot is, kies verduidelijken, verkleinen, steun of uitstellen met nieuwe cue, doe één zichtbare handeling.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Body doubling",
+          "uitleg": "Samen of in aanwezigheid van een ander werken. Plausibel en laagrisico; een kleine gecontroleerde studie vond geen significant effect. Alleen als persoonlijk experiment.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Verantwoorde beloning",
+          "uitleg": "'Te weinig dopamine' is geen bruikbare persoonlijke verklaring. Wel: verklein de tijd tot feedback, maak voortgang zichtbaar, koppel inspanning aan een nabije, gezonde beloning.",
+          "bewijs": "indirect"
+        }
+      ],
+      "valkuilen": [
+        "Perfectionisme: maak 'goed genoeg' vooraf concreet.",
+        "Een 'twee-minutenregel' die stiekem altijd een uur betekent, verliest geloofwaardigheid."
+      ],
+      "minimaleInterventie": "Herschrijf één vastgelopen taak als een fysieke handeling van maximaal vijf minuten.",
+      "appAdvies": [
+        "Bij een taak zonder werkwoord of met een vaag woord ('regelen', 'doen') stelt Nate voor: 'Wat is de eerste handeling?'",
+        "Knop 'Ik loop vast' start het 90-secondenonderzoek.",
+        "Een mindmaptak is de plek om een groot project uit te pluizen; alleen de eerstvolgende stap gaat naar Mijn dag.",
+        "Body doubling (meewerker) staat erbij als experiment, met de vraag achteraf of het hielp."
+      ],
+      "opschalen": "Niet kunnen starten door ernstige somberheid, angst, uitputting of brede uitval.",
+      "waaromKort": "Een grote taak is vaak een verzamelnaam, geen handeling. Dan moet je hoofd alles tegelijk beslissen, en dat maakt beginnen zwaar.",
+      "nate": {
+        "normaal": "Zit iets vast? Maak er een handeling van vijf minuten van, met een werkwoord erin. Klein genoeg om te beginnen, groot genoeg om te tellen.",
+        "zacht": "Maak van één vastgelopen taak een stapje van vijf minuten."
+      },
+      "subthemas": [
+        "A1.4",
+        "A2.2"
+      ]
+    },
+    {
+      "id": "huishouden",
+      "naam": "Huishouden organiseren en volhouden",
+      "categorie": 4,
+      "modules": [
+        "huishouden",
+        "checklists",
+        "mijnDag"
+      ],
+      "theorie": "Huishouden is geen enkele vaardigheid maar een reeks terugkerende, laag belonende cycli: opmerken, verzamelen, sorteren, uitvoeren, wachten, hervatten, opbergen. Het is nooit echt 'af', de directe beloning is laag en geur, geluid en lichamelijke inspanning spelen mee.",
+      "interventies": [
+        {
+          "naam": "Gesloten cycli",
+          "uitleg": "Definieer begin en einde, bijvoorbeeld was: verzamelen, wassen, drogen, vouwen, opbergen.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Drie onderhoudsniveaus",
+          "uitleg": "Minimum (afval weg, kookplek vrij, noodzakelijke was), standaard, extra. Op een zware dag telt alleen het minimum.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Startprocedure",
+          "uitleg": "Eén functionele uitkomst, zone beperken, materiaal klaar, zichtbare timer, zijtaken parkeren, afsluiten met volgende stap.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Zones en plaatsgebonden spullen",
+          "uitleg": "Werk per zone; bewaar middelen waar je ze gebruikt; vaste, gelabelde plekken (CADDRA).",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Selectieve zichtbaarheid",
+          "uitleg": "Als alles zichtbaar is, concurreert alles. Maak alleen de eerstvolgende actie en kritieke spullen opvallend.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "'Als het toch al uit is'",
+          "uitleg": "Koppel een klusje aan een bestaande overgang (aanrecht afnemen terwijl de waterkoker kookt).",
+          "bewijs": "praktisch"
+        }
+      ],
+      "valkuilen": [
+        "Alles-of-niets: 'goed genoeg' moet waarneembaar zijn ('afval weg, vaat verzameld, aanrecht bruikbaar').",
+        "Zonder afsluitstap blijven spullen liggen en voelt het niet af."
+      ],
+      "minimaleInterventie": "Kies één oppervlak en maak het vijf minuten functioneel, niet perfect.",
+      "appAdvies": [
+        "Elke klus krijgt een minimum-, standaard- en extra-variant met een waarneembaar 'klaar'.",
+        "De sessie begint met de startprocedure en eindigt met een afsluitstap ('volgende stap noteren').",
+        "Was en vaat als gesloten cyclus met wachtfase; een verstreken wachttijd betekent 'waarschijnlijk tijd om verder te gaan', niet 'droog'.",
+        "Gemiste klussen stapelen niet op; Nate stelt één herstelronde voor."
+      ],
+      "opschalen": "Onveilige of vervuilde woonsituatie, of verzamelproblematiek.",
+      "waaromKort": "Huishouden is nooit echt af en geeft weinig directe beloning. Klein en 'goed genoeg' houdt het vol.",
+      "nate": {
+        "normaal": "Eén oppervlak, vijf minuten, bruikbaar in plaats van perfect. Daarna mag je trots stoppen.",
+        "zacht": "Kies één plekje en maak het vijf minuten bruikbaar. Perfect hoeft niet."
+      },
+      "subthemas": [
+        "A4.2"
+      ]
+    },
+    {
+      "id": "routines",
+      "naam": "Routines zonder dwang",
+      "categorie": 5,
+      "modules": [
+        "ritme",
+        "gewoontes",
+        "checkin"
+      ],
+      "theorie": "Structuur verlaagt belasting, maar rigide schema's roepen verveling, weerstand of faalangst op. De oplossing: stabiliteit en keuzevrijheid uit elkaar halen. Een anker is een terugkerende gebeurtenis (opstaan, thuiskomen) waaraan gedrag hangt; tijdstip en vorm mogen variëren.",
+      "interventies": [
+        {
+          "naam": "Contextstabiliteit",
+          "uitleg": "Gedrag in een stabiele context wordt sneller automatisch.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Flexibele ankers",
+          "uitleg": "Koppel aan een gebeurtenis, niet aan een klokminuut. Een dubbel anker (reserve-anker) vangt dagen op waarop het eerste niet gebeurt.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Vensters in plaats van minuten",
+          "uitleg": "'Tussen thuiskomst en avondeten' in plaats van '17.30'. Niet voor afspraken of vertrektijden.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Drie varianten",
+          "uitleg": "Minimum (continuïteit), standaard, uitgebreid.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Herstartregel",
+          "uitleg": "'Na uitval begin ik bij het eerstvolgende anker met alleen de minimumversie.'",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Rituelen",
+          "uitleg": "Muziek, een lamp of thee maken een overgang herkenbaar. Het ritueel steunt het gedrag, maar mag geen voorwaarde worden.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Autonomie",
+          "uitleg": "Zelf kiezen vermindert weerstand; taal zonder 'moet'.",
+          "bewijs": "indirect"
+        }
+      ],
+      "valkuilen": [
+        "Een reeks (streak) maakt één gemiste dag tot een mislukking. Meet hoe snel hervatten lukt."
+      ],
+      "minimaleInterventie": "Kies één dagelijks anker en koppel er één handeling van minder dan twee minuten aan.",
+      "appAdvies": [
+        "Routines worden ingesteld met anker (gebeurtenis) en venster, niet met een vaste klokminuut.",
+        "Geen streaks als hoofdgetal; Voortgang toont 'hervat na uitval' als succes.",
+        "Na een gemiste dag toont Nate de herstartregel en alleen de minimumversie."
+      ],
+      "opschalen": "Uitval door slaap-, stemmings- of middelenproblemen.",
+      "waaromKort": "Een vast anker met vrijheid in de uitvoering geeft houvast zonder dat het benauwt.",
+      "nate": {
+        "normaal": "Kies één moment dat toch al elke dag gebeurt en hang er een actie van twee minuten aan. Klein anker, groot effect.",
+        "zacht": "Koppel één mini-actie aan iets dat je elke dag al doet."
+      },
+      "subthemas": [
+        "A4.3",
+        "A3.2"
+      ]
+    },
+    {
+      "id": "gewoontes-aanleren",
+      "naam": "Gewoontes aanleren",
+      "categorie": 6,
+      "modules": [
+        "gewoontes",
+        "ritme",
+        "voortgang"
+      ],
+      "theorie": "Een gewoonte is gedrag dat door een geleerde contextcue vrij automatisch start. Vorming vraagt intentie, herhaling en een stabiele context. Een review van 20 studies vond grote variatie, gemiddeld in de orde van maanden; de 21-dagenregel klopt niet. Juist de herhaalfase vraagt bij ADHD extra steun (prospectief geheugen, starten, afleiding).",
+      "interventies": [
+        {
+          "naam": "Klein en specifiek",
+          "uitleg": "Eén klein gedrag, één cue die je echt waarneemt, weinig frictie.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Habit stacking",
+          "uitleg": "Werkt alleen als het bestaande gedrag echt stabiel is ('nadat ik de eerste koffie inschenk', niet 'na het ontbijt' als je dat vaak overslaat).",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Als-dan en obstakelplan",
+          "uitleg": "'Nadat [stabiele cue], doe ik [handeling ≤ 2 min].' Plus: 'Als [obstakel], dan [alternatief].'",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Eenvoudige zelfmonitoring",
+          "uitleg": "Gedaan, minimum gedaan of niet gedaan. De tracker mag niet belangrijker worden dan het gedrag.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Eén gemiste keer",
+          "uitleg": "Eén keer missen schaadt het vormingsproces nauwelijks; opnieuw beginnen telt.",
+          "bewijs": "indirect"
+        }
+      ],
+      "valkuilen": [
+        "Een vast aantal dagen aftellen; beoordeel liever of het gedrag vanzelf begint te gaan."
+      ],
+      "minimaleInterventie": "Formuleer één zin: 'Nadat [stabiele cue], doe ik [handeling van maximaal twee minuten].'",
+      "appAdvies": [
+        "Nieuwe gewoonte = invulzin 'Nadat …, doe ik …' met controle of de cue stabiel is.",
+        "Registratie in drie standen: gedaan, minimum, niet.",
+        "Na enkele weken vraagt Nate: 'Gaat het al vanzelf?' in plaats van een teller van dagen."
+      ],
+      "opschalen": "Medische of psychische gevolgen van het niet uitvoeren (bv. medicatie).",
+      "waaromKort": "Gewoontes ontstaan door herhaling bij een vaste aanleiding, en dat duurt meestal maanden, niet 21 dagen. Klein en makkelijk houdt de herhaling vol.",
+      "nate": {
+        "normaal": "Maak deze zin af: 'Nadat ik …, doe ik …'. Twee minuten, elke keer. Zo bouw je het, steen voor steen.",
+        "zacht": "'Nadat ik …, doe ik …'. Eén kleine zin is genoeg."
+      },
+      "subthemas": [
+        "A4.3",
+        "A1.4"
+      ]
+    },
+    {
+      "id": "gewoontes-afleren",
+      "naam": "Gewoontes afleren en patronen doorbreken",
+      "categorie": 7,
+      "modules": [
+        "gewoontes",
+        "wishlist",
+        "rookvrij",
+        "financieel"
+      ],
+      "theorie": "Ongewenst gedrag kan een gewoonte, impuls, copingstrategie, compulsie of verslaving zijn; dat vraagt verschillende hulp. Onderdrukken alleen laat de functie leeg: scrollen kan prikkeling, uitstel, verdoving of contact opleveren. Bij ADHD spelen responsinhibitie, directe beloning, emotie en 'vergeten te stoppen' mee.",
+      "interventies": [
+        {
+          "naam": "Functionele analyse",
+          "uitleg": "Wat gebeurde ervoor, welke toestand, wat leverde het direct op, wat kostte het later, welk alternatief vervult dezelfde functie?",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Zevendaags patroonlogboek",
+          "uitleg": "Tijd, plek, aanleiding, gevoel, impuls 0–10, gedrag, directe opbrengst, gevolg later. Te zwaar? Dan trigger – gedrag – directe beloning.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Frictie vóór wilskracht",
+          "uitleg": "Cues weghalen, uitloggen, apparaat buiten bereik, wachttijd toevoegen. Het alternatief juist makkelijker maken.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Vervangingsgedrag",
+          "uitleg": "Vervangen werkt beter dan alleen stoppen: bij onderprikkeling beweging of muziek, bij spanning grounding of contact, bij taakvermijding een piepkleine startstap.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Urge surfing en pauze",
+          "uitleg": "Een impuls benoemen en laten golven zonder discussie; maak de respons lichamelijk (opstaan, water halen).",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Herstelprotocol (binnen 24 uur)",
+          "uitleg": "Stop de keten, reguleer, repareer schade, analyseer één schakel, pas één systeem aan. Geen strafmaatregelen.",
+          "bewijs": "praktisch"
+        }
+      ],
+      "valkuilen": [
+        "Een uitglijder is informatie, geen bewijs dat het niet kan.",
+        "Extreme onthouding, slaaptekort of zelfvernedering maken het volgende falen waarschijnlijker."
+      ],
+      "minimaleInterventie": "Maak één ongewenst gedrag vandaag tien seconden moeilijker en leg één alternatief binnen handbereik.",
+      "appAdvies": [
+        "Wishlist-afkoeltijd is frictie vóór een impulsaankoop; Nate legt uit waarom.",
+        "Een lichte patroonlogger (trigger – gedrag – opbrengst) als optie bij Gewoontes en Rookvrij.",
+        "Na een uitglijder toont Nate het herstelprotocol, nooit een reset naar nul.",
+        "Bij signalen van controleverlies, gokken, middelen of grote financiële schade verwijst Nate naar professionele hulp."
+      ],
+      "opschalen": "Controleverlies, verslaving, gokken, eetproblemen, zelfbeschadiging of ernstige financiële schade: zelfhulp is dan onvoldoende.",
+      "waaromKort": "Wilskracht op het moment zelf is wisselend. Een kleine drempel vooraf en een alternatief binnen handbereik doen het werk voor je.",
+      "nate": {
+        "normaal": "Klein trucje, groot effect: maak het ongewenste tien seconden lastiger. Je brein kiest de makkelijke weg, dus wij bepalen welke dat is.",
+        "zacht": "Leg de verleiding net iets verder weg. Dat is alles."
+      },
+      "subthemas": [
+        "A1.1",
+        "A2.2"
+      ]
+    },
+    {
+      "id": "emoties",
+      "naam": "Emoties, disregulatie en afwijzingsgevoeligheid",
+      "categorie": 8,
+      "modules": [
+        "checkin",
+        "dagboek",
+        "anker"
+      ],
+      "theorie": "Emotieregulatieproblemen zijn geen DSM-criterium en niet bij iedereen aanwezig, maar komen op groepsniveau vaker voor (meta-analyse 13 studies, 2.535 volwassenen; labiliteit gaf het grootste verschil). 'RSD' is geen formele diagnose; beschrijf liever wat er gebeurt: afwijzing verwachten, snel als afwijzing lezen, sterke reactie, verdedigen, terugtrekken of piekeren. Emotie beïnvloedt alle andere domeinen.",
+      "interventies": [
+        {
+          "naam": "Regulatieprotocol",
+          "uitleg": "Herkennen (trigger, lichaam, gedachte, impuls) → stabiliseren → toetsen (feit, interpretatie, voorspelling) → kiezen → herstellen.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Eerst lichaam, dan denken",
+          "uitleg": "In hoge activatie werkt herkaderen slecht. Eerst pauze, grounding en langzaam uitademen.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Vroege signalen",
+          "uitleg": "Maximaal drie persoonlijke waarschuwingssignalen (lichaam, gedachte, gedrag, sociaal). Een lange lijst is zelf een taak.",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Emoties precies benoemen",
+          "uitleg": "Een specifiek woord (teleurgesteld, beschaamd) helpt meer dan 'slecht'.",
+          "bewijs": "indirect"
+        },
+        {
+          "naam": "Herstelzin",
+          "uitleg": "Feit + menselijkheid + verantwoordelijkheid: 'Ik heb de afspraak gemist. Mensen maken fouten; ADHD maakt dit lastiger. Ik stuur nu een bericht en pas één systeem aan.'",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Pauzezin",
+          "uitleg": "'Ik merk dat dit hard binnenkomt; ik kom erop terug als ik rustiger ben.'",
+          "bewijs": "praktisch"
+        },
+        {
+          "naam": "Zelfcompassie",
+          "uitleg": "Geen vrijbrief, wel minder energie naar zelfveroordeling, zodat repareren en hervatten lukt.",
+          "bewijs": "indirect"
+        }
+      ],
+      "valkuilen": [
+        "Populaire termen (RSD, dopaminetekort) als diagnose gebruiken.",
+        "Meteen oplossen of discussiëren tijdens hoge activatie."
+      ],
+      "minimaleInterventie": "Noteer bij één sterke emotionele reactie drie woorden: trigger, lichaamssignaal en impuls.",
+      "appAdvies": [
+        "Check-in en dagboek krijgen een snelle 'drie woorden'-notitie: trigger, lichaam, impuls.",
+        "Knop 'Het komt hard binnen' opent eerst Anker (ademen, grounding), pas daarna de toetsvragen.",
+        "Nate gebruikt de herstelzin na gemiste dingen en spreekt nooit van RSD of een diagnose.",
+        "Bij zelfbeschadiging, suïcidale gedachten of ernstige ontregeling verwijst Nate direct naar hulp (huisarts, 113)."
+      ],
+      "opschalen": "Suïcidale gedachten, agressie, zelfbeschadiging of ernstige ontregeling: direct hulp.",
+      "waaromKort": "In een sterke emotie werkt nadenken slecht. Eerst benoemen wat je lichaam doet, helpt om daarna rustiger te kiezen.",
+      "nate": {
+        "normaal": "Komt iets hard binnen? Drie woorden: wat gebeurde er, wat doet je lijf, wat wil je doen. Benoemen is al halverwege.",
+        "zacht": "Als iets hard binnenkomt: noem de aanleiding, wat je lijf doet en wat je wilt doen."
+      },
+      "subthemas": [
+        "A2.3",
+        "A2.4",
+        "A4.4",
+        "A3.1"
+      ]
+    }
+  ],
+  "fasering": [
+    {
+      "fase": 1,
+      "naam": "Stabiliseren",
+      "inhoud": "Twee weken drie fundamenten: één agenda, één dagprioriteit met eerste stap, één korte avond- of vertrekreset."
+    },
+    {
+      "fase": 2,
+      "naam": "Betrouwbaar maken",
+      "inhoud": "Buffers, vaste plekken, minimumversies, één herstelprotocol; werkelijke duur meten."
+    },
+    {
+      "fase": 3,
+      "naam": "Automatiseren",
+      "inhoud": "Terugkerend gedrag aan stabiele ankers koppelen; overbodige herinneringen afbouwen."
+    },
+    {
+      "fase": 4,
+      "naam": "Generaliseren",
+      "inhoud": "Werkende principes naar een tweede levensgebied, in een passende vorm."
+    },
+    {
+      "fase": 5,
+      "naam": "Onderhouden",
+      "inhoud": "Wekelijkse review van 10–20 minuten: wat ging goed, waar brak de keten, welke ene aanpassing, welke steun."
+    }
+  ],
+  "watNietWerkt": [
+    "Meer wilskracht eisen: verplaats keuzes naar voorbereiding, cues en omgeving.",
+    "Te veel hulpmiddelen tegelijk: voeg pas iets toe als duidelijk is welk knelpunt het oplost.",
+    "Een perfect schema ontwerpen: plan buffers, alternatieven en minimumversies vanaf het begin.",
+    "Moraliserende taal (lui, slordig): beschrijf wat er gebeurde ('de stap was te groot').",
+    "Populaire begrippen als diagnose gebruiken (objectpermanentie, tijdsblindheid, dopaminetekort, RSD).",
+    "Alleen symptomen meten: kijk naar dagelijks functioneren (op tijd komen, rekeningen, afronden, herstel)."
+  ],
+  "persoonlijkeFormulering": [
+    "Situatie",
+    "Doel",
+    "Knelpunt (opmerken, onthouden, plannen, starten, volhouden, stoppen, emotie, herstel)",
+    "Context",
+    "Interventie (kleinste aanpassing)",
+    "Meting (1–2 weken)",
+    "Besluit (houden, aanpassen, vereenvoudigen, vervangen)"
+  ],
+  "bronnen": [
+    {
+      "nr": 1,
+      "tekst": "World Federation of ADHD International Consensus Statement (Faraone e.a., 2021)",
+      "url": "https://pure.amsterdamumc.nl/en/publications/the-world-federation-of-adhd-international-consensus-statement-20-2/"
+    },
+    {
+      "nr": 2,
+      "tekst": "Samenvatting GGZ Zorgstandaard ADHD",
+      "url": "https://www.zorginzicht.nl/binaries/content/assets/zorginzicht/kwaliteitsinstrumenten/samenvatting-ggz-zorgstandaard-adhd.pdf"
+    },
+    {
+      "nr": 3,
+      "tekst": "The efficacy of cognitive-behavioral therapy for adults with ADHD (World Psychiatry)",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1002/wps.21349"
+    },
+    {
+      "nr": 4,
+      "tekst": "CADDRA — Canadian ADHD Practice Guidelines 4.1",
+      "url": "https://adhdlearn.caddra.ca/wp-content/uploads/2022/08/Canadian-ADHD-Practice-Guidelines-4.1-January-6-2021.pdf"
+    },
+    {
+      "nr": 5,
+      "tekst": "Emotion dysregulation in adults with ADHD: a meta-analysis (BMC Psychiatry, 2020)",
+      "url": "https://bmcpsychiatry.biomedcentral.com/articles/10.1186/s12888-020-2442-7"
+    },
+    {
+      "nr": 6,
+      "tekst": "NICE NG87 — ADHD: diagnosis and management",
+      "url": "https://www.nice.org.uk/guidance/ng87"
+    },
+    {
+      "nr": 7,
+      "tekst": "Time to Form a Habit: systematic review and meta-analysis",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11641623/"
+    },
+    {
+      "nr": 8,
+      "tekst": "The effect of implementation intention on prospective memory (meta-analyse)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25639373/"
+    },
+    {
+      "nr": 9,
+      "tekst": "Applying the Science of Habit Formation to Evidence-Based Practice",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12318445/"
+    },
+    {
+      "nr": 10,
+      "tekst": "NHG-Standaard ADHD (herzien, ook voor volwassenen)",
+      "url": "https://www.nhg.org/actueel/nhg-standaard-adhd-herzien/"
+    }
+  ]
+}

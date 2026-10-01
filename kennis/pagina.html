@@ -1,0 +1,484 @@
+<title>Kennisbank Huishouden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,800;1,400&family=Unbounded:wght@500;700&display=swap">
+<style>
+:root{
+  --papier:#f3f7f7;--vlak:#ffffff;--vlak2:#e8f0f0;--inkt:#0f2a30;--grijs:#4b6166;--lijn:#d2dfe0;
+  --teal:#0e7490;--teal-zacht:#d6eef2;--goud:#a8670f;--goud-zacht:#f6ead4;
+  --goed:#15803d;--matig:#a16207;--zwak:#b91c1c;
+  --nacht:#050a0f;--nacht2:#0c1822;--draad:#f5f5f2;
+  --display:"Unbounded","Atkinson Hyperlegible Next",system-ui,sans-serif;
+  --tekst:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Atkinson Hyperlegible Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--papier:#081117;--vlak:#0f1c24;--vlak2:#15262f;--inkt:#e6f0f1;--grijs:#98adb2;--lijn:#233841;
+  --teal:#5dd0e3;--teal-zacht:#123542;--goud:#f0c25a;--goud-zacht:#3a2d12;--goed:#4ade80;--matig:#fbbf24;--zwak:#f87171}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--papier:#081117;--vlak:#0f1c24;--vlak2:#15262f;--inkt:#e6f0f1;--grijs:#98adb2;--lijn:#233841;
+  --teal:#5dd0e3;--teal-zacht:#123542;--goud:#f0c25a;--goud-zacht:#3a2d12;--goed:#4ade80;--matig:#fbbf24;--zwak:#f87171}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--papier);color:var(--inkt);font:17px/1.6 var(--tekst);-webkit-font-smoothing:antialiased}
+a{color:var(--teal);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;line-height:1.15;margin:0}
+h2{font:700 clamp(22px,4vw,28px)/1.15 var(--display);letter-spacing:-.01em}
+h3{font-size:18px;font-weight:800}
+p{margin:0}
+.klein{font-size:14px;color:var(--grijs)}
+.mono{font-family:var(--mono);font-size:.9em}
+
+/* Held: de sessiewereld uit de app */
+.held{background:radial-gradient(90% 80% at 70% 30%,#0e2230 0%,var(--nacht) 70%);color:#eef6f7;padding-inline:16px}
+.held-in{max-width:1120px;margin:0 auto;padding-block:40px 36px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:28px;align-items:center}
+.held-oog{font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#8fd8e6}
+.held h1{font:700 clamp(34px,6.4vw,62px)/1.02 var(--display);letter-spacing:-.025em;margin:14px 0 14px}
+.held h1 span{color:#f0c25a}
+.held-zin{font-size:19px;max-width:34ch;color:#cfe3e6}
+.held-meta{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font:14px var(--mono);color:#9fb9bf}
+.held-meta b{color:#eef6f7;font-weight:600}
+.held-beeld{position:relative;display:flex;flex-direction:column;align-items:center;gap:0}
+.tess{width:min(100%,300px);max-width:100%;aspect-ratio:1;display:block}
+@media (max-width:900px){.tess{width:min(64vw,240px)}}
+.borduur{position:relative;width:min(100%,340px);margin-top:-26px;background:#050505;color:#fff;border:4px solid var(--draad);border-radius:22px;padding:18px 20px 16px;
+  outline:2.5px dashed rgba(245,245,242,.9);outline-offset:-12px;box-shadow:0 20px 50px rgba(0,0,0,.55),0 0 36px rgba(93,208,227,.14)}
+.borduur .kop{display:flex;justify-content:space-between;font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;opacity:.65}
+.borduur .titel{font-size:24px;font-weight:800;margin:10px 0 2px;line-height:1.15}
+.borduur .min{opacity:.85}
+.borduur .min b{font-size:20px}
+.borduur .tip{font-size:14px;color:rgba(255,255,255,.75);margin-top:8px}
+.borduur .knop{margin-top:14px;display:grid;place-items:center;width:100%;min-height:48px;border-radius:14px;border:0;background:#fff;color:#050505;font:800 16px var(--tekst)}
+.borduur .onder{margin-top:8px;font-size:12px;opacity:.5;text-align:center}
+
+/* Opbouw */
+.pagina{max-width:1120px;margin:0 auto;padding-inline:16px;display:grid;grid-template-columns:210px minmax(0,1fr);gap:40px;padding-block:36px 64px}
+.inhoud{min-width:0;display:flex;flex-direction:column;gap:56px}
+nav.index{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));align-self:start;display:flex;flex-direction:column;gap:2px;font-size:14px}
+nav.index span{font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--grijs);margin-bottom:8px}
+nav.index a{color:var(--grijs);text-decoration:none;padding:5px 10px;border-radius:8px;border-left:2px solid transparent}
+nav.index a:hover{color:var(--inkt);background:var(--vlak2)}
+nav.index a.aan{color:var(--inkt);border-left-color:var(--goud);background:var(--vlak)}
+section{display:flex;flex-direction:column;gap:16px}
+.sectiekop{display:flex;flex-direction:column;gap:6px}
+.sectiekop .klein{max-width:62ch}
+.lees{max-width:66ch}
+.vlak{background:var(--vlak);border:1px solid var(--lijn);border-radius:var(--r);padding:18px}
+.twee{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+ul.strak,ol.strak{margin:0;padding-left:20px}
+ul.strak li,ol.strak li{margin:4px 0}
+
+/* Uitgangspunten */
+.principes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--lijn);border:1px solid var(--lijn);border-radius:var(--r);overflow:hidden}
+.principe{background:var(--vlak);padding:16px 18px}
+.principe b{display:block;margin-bottom:2px}
+.principe p{font-size:15px;color:var(--grijs)}
+
+/* Planner */
+.planner{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:16px;align-items:start}
+.bediening{display:flex;flex-direction:column;gap:14px}
+.veld{display:flex;flex-direction:column;gap:6px}
+.veld>span,.veld>label{font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--grijs)}
+select{font:inherit;font-size:16px;color:var(--inkt);background:var(--vlak);border:1px solid var(--lijn);border-radius:10px;min-height:46px;padding:0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:600 15px var(--tekst);min-height:42px;padding:0 13px;border-radius:10px;border:1px solid var(--lijn);background:var(--vlak);color:var(--inkt);cursor:pointer;font-variant-numeric:tabular-nums}
+.chips button[aria-pressed="true"]{background:var(--inkt);color:var(--papier);border-color:var(--inkt)}
+.params{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14px;padding:12px 14px;border-radius:12px;background:var(--vlak2)}
+.params dt{color:var(--grijs)}
+.params dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.plan{background:var(--nacht);color:#eef6f7;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.plan-kop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:14px var(--mono);color:#9fb9bf}
+.plan-kop b{color:#fff}
+.kaartjes{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.kaartje{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;background:#050505;border:2px solid var(--draad);border-radius:12px;padding:10px 14px;outline:1.5px dashed rgba(245,245,242,.55);outline-offset:-7px}
+.kaartje .t{font-weight:700}
+.kaartje .r{grid-column:1;font-size:13px;color:#9fb9bf}
+.kaartje .m{grid-row:1 / span 2;grid-column:2;align-self:center;font:600 17px var(--mono);font-variant-numeric:tabular-nums}
+.kaartje.pauze{background:transparent;border-style:dashed;border-color:#5b7178;outline:0;color:#b9ccd1}
+.noot{font-size:14px;color:#f0c25a}
+.buiten{font-size:14px;color:#9fb9bf}
+
+/* Tabel */
+.tabelwrap{overflow-x:auto;border:1px solid var(--lijn);border-radius:var(--r);background:var(--vlak)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--lijn);vertical-align:top}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+thead th{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--grijs);white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.gekozen{background:var(--goud-zacht)}
+
+/* Tabs voor tips */
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font:600 15px var(--tekst);min-height:42px;padding:0 14px;border-radius:10px;border:1px solid var(--lijn);background:var(--vlak);color:var(--inkt);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:var(--papier)}
+.tiplijst{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.tiplijst div{background:var(--vlak);border:1px solid var(--lijn);border-radius:12px;padding:14px}
+.tiplijst b{display:block;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--grijs);margin-bottom:4px}
+
+/* Stappen */
+.stappen{list-style:none;margin:0;padding:0;counter-reset:stap;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stappen li{counter-increment:stap;background:var(--vlak);border:1px solid var(--lijn);border-radius:12px;padding:14px 16px 14px 52px;position:relative}
+.stappen li::before{content:counter(stap);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--mono);background:var(--inkt);color:var(--papier)}
+.stappen b{display:block}
+.stappen p{font-size:15px;color:var(--grijs)}
+
+/* Vragen */
+.vragen{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none;counter-reset:v}
+.vraag{counter-increment:v;background:var(--vlak);border:1px solid var(--lijn);border-radius:12px;padding:14px 16px}
+.vraag p::before{content:counter(v) ". ";font-family:var(--mono);color:var(--grijs)}
+.schaal{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:10px}
+.schaal button{min-height:42px;border-radius:9px;border:1px solid var(--lijn);background:var(--vlak2);color:var(--inkt);font:600 13px var(--tekst);cursor:pointer;padding:0 2px}
+.schaal button[aria-checked="true"]{background:var(--teal);border-color:var(--teal);color:var(--papier)}
+.uitkomst{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--inkt);color:var(--papier);border-radius:14px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.uitkomst b{font-size:17px}
+.uitkomst .klein{color:inherit;opacity:.75}
+.letop{border-left:4px solid var(--goud);background:var(--goud-zacht);padding:12px 16px;border-radius:0 12px 12px 0;font-size:15px}
+
+/* Onderbouwing */
+.filter{display:flex;gap:6px;flex-wrap:wrap}
+.filter button{font:600 14px var(--tekst);min-height:38px;padding:0 13px;border-radius:99px;border:1px solid var(--lijn);background:var(--vlak);color:var(--inkt);cursor:pointer}
+.filter button[aria-pressed="true"]{background:var(--inkt);color:var(--papier);border-color:var(--inkt)}
+.bewijs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bewijs article{background:var(--vlak);border:1px solid var(--lijn);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.bewijs .kop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bewijs .kop b{font-family:var(--mono)}
+.sterkte{font:600 12px var(--mono);padding:3px 9px;border-radius:99px;border:1.5px solid currentColor;white-space:nowrap}
+.s-sterk{color:var(--goed)}.s-redelijk{color:var(--teal)}.s-matig{color:var(--matig)}.s-zwak{color:var(--zwak)}.s-praktijk,.s-principe{color:var(--grijs)}
+.bewijs .keuze{font-size:15px;background:var(--vlak2);border-radius:9px;padding:9px 11px}
+.bewijs .onder{font-size:13px;color:var(--grijs)}
+
+/* Mechanieken, eisen */
+.mech{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mech div{background:var(--vlak);border:1px solid var(--lijn);border-radius:12px;padding:16px}
+.mech ol{margin:8px 0 0;padding-left:20px;font-size:15px}
+.mech li{margin:5px 0}
+details.eis{background:var(--vlak);border:1px solid var(--lijn);border-radius:12px}
+details.eis+details.eis{margin-top:8px}
+details.eis summary{cursor:pointer;padding:14px 16px;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.eis summary::-webkit-details-marker{display:none}
+details.eis summary::after{content:"+";font-family:var(--mono);color:var(--grijs)}
+details.eis[open] summary::after{content:"−"}
+details.eis ul{margin:0;padding:0 18px 14px 36px;font-size:15px}
+details.eis li{margin:5px 0}
+.tests{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;font-size:15px}
+.tests li::before{content:"✔ ";color:var(--goed);font-weight:800}
+.tests.open li::before{content:"○ ";color:var(--grijs)}
+.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.extras div{background:var(--vlak);border:1px solid var(--lijn);border-radius:12px;padding:14px}
+.extras b{display:block}
+.extras p{font-size:14px;color:var(--grijs)}
+
+/* Voor de app */
+.app{background:var(--vlak);border:1px solid var(--lijn);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px}
+.sleutels{display:flex;flex-wrap:wrap;gap:6px}
+.sleutels code{font:14px var(--mono);background:var(--vlak2);padding:3px 8px;border-radius:6px}
+pre{margin:0;max-height:320px;overflow:auto;background:var(--nacht);color:#cfe3e6;border-radius:12px;padding:14px;font:13px/1.5 var(--mono)}
+.actie{align-self:flex-start;font:700 15px var(--tekst);min-height:44px;padding:0 16px;border-radius:10px;border:0;background:var(--teal);color:var(--papier);cursor:pointer}
+.begrippen{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:0}
+.begrippen dt{font-weight:800}
+.begrippen dd{margin:0;color:var(--grijs)}
+.bronnen{margin:0;padding-left:26px;font-size:15px}
+.bronnen li{margin:6px 0}
+.fout{padding:40px 16px;max-width:640px;margin:0 auto}
+footer{max-width:1120px;margin:0 auto;padding:0 16px 40px;font-size:14px;color:var(--grijs)}
+
+@media (max-width:900px){
+  .pagina{grid-template-columns:1fr;gap:0}
+  nav.index{display:none}
+  .held-in{grid-template-columns:1fr;padding-block:28px}
+  .planner,.bewijs,.mech,.stappen,.tests,.twee{grid-template-columns:1fr}
+}
+@media (max-width:560px){.principes{grid-template-columns:1fr}body{font-size:16px}}
+</style>
+
+<header class="held">
+  <div class="held-in">
+    <div>
+      <div class="held-oog">FutureMe · functioneel ontwerp</div>
+      <h1>Kennisbank <span>Huishouden</span></h1>
+      <p class="held-zin" id="held-zin">Eén klus tegelijk, in de tijd die je hebt.</p>
+      <div class="held-meta" id="held-meta"></div>
+    </div>
+    <div class="held-beeld" aria-hidden="true">
+      <canvas class="tess" id="tess"></canvas>
+      <div class="borduur" id="borduur">
+        <div class="kop"><span>Klus 1 van 3</span><span>Keuken</span></div>
+        <div class="titel">Vuilnis wegbrengen</div>
+        <div class="min"><b>3</b> min</div>
+        <div class="tip">Alleen deze. Niet aan het geheel denken.</div>
+        <div class="knop">Start</div>
+        <div class="onder">Klaar? Veeg naar rechts →</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pagina">
+  <nav class="index" aria-label="Inhoud" id="index"><span>Inhoud</span></nav>
+  <main class="inhoud" id="inhoud"><p class="klein">De kennisbank wordt geladen…</p></main>
+</div>
+<footer id="voet"></footer>
+
+<script>
+"use strict";
+/* Alles op deze pagina komt uit huishouden.json: dezelfde kennisbank die de
+   FutureMe-app bij het bouwen inleest (als FM_KENNIS). */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const S = { richting: "adhd", lijst: "week", min: 30, energie: null, antwoorden: [], filter: "alle", tipRichting: "adhd" };
+let K = null;
+
+fetch("huishouden.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(k => { K = k; bouw(); })
+  .catch(() => { $("#inhoud").innerHTML = `<div class="fout vlak"><h3>De kennisbank kon niet laden</h3><p class="klein">Deze pagina leest huishouden.json uit dezelfde map. Open de pagina via een webserver (niet als los bestand), of controleer of het bestand ernaast staat.</p></div>`; });
+
+const SECTIES = [["wat", "Wat het is"], ["principes", "Uitgangspunten"], ["planner", "Probeer de planner"], ["sessie", "Zo verloopt een sessie"], ["aanpak", "Aanpak per richting"], ["vragen", "De tien vragen"], ["onderbouwing", "Onderbouwing"], ["mechanieken", "Mechanieken"], ["eisen", "Functionele eisen"], ["data", "Datamodel"], ["tests", "Getest"], ["extras", "Extra's"], ["app", "Voor de app"], ["begrippen", "Begrippen"], ["bronnen", "Bronnen"]];
+
+function bouw() {
+  const m = K.meta;
+  $("#held-zin").textContent = m.ondertitel + ".";
+  $("#held-meta").innerHTML = `<span>versie <b>${esc(m.versie)}</b></span><span>${esc(datum(m.datum))}</span><span>status <b>${esc(m.status.toLowerCase())}</b></span>`;
+  $("#index").innerHTML = `<span>Inhoud</span>` + SECTIES.map(([id, n]) => `<a href="#${id}">${esc(n)}</a>`).join("");
+  $("#inhoud").innerHTML = [wat(), principes(), planner(), sessie(), aanpak(), vragen(), onderbouwing(), mechanieken(), eisen(), datamodel(), tests(), extras(), app(), begrippen(), bronnen()].join("");
+  $("#voet").innerHTML = `${esc(m.product)}. ${esc(m.uitleg)}`;
+  tekenPlan(); tekenTips(); tekenUitkomst(); tekenBewijs();
+  volgIndex();
+  startTesseract();
+}
+const datum = iso => { const [y, mm, d] = iso.split("-").map(Number); return `${d} ${["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"][mm - 1]} ${y}`; };
+const kop = (id, titel, sub) => `<div class="sectiekop"><h2>${esc(titel)}</h2>${sub ? `<p class="klein">${sub}</p>` : ""}</div>`;
+
+function wat() {
+  const d = K.doel;
+  return `<section id="wat">${kop("wat", "Wat het is")}
+    <div class="lees"><p><b>Probleem.</b> ${esc(d.probleem)}</p><p style="margin-top:10px"><b>Oplossing.</b> ${esc(d.oplossing)}</p></div>
+    <div class="twee"><div class="vlak"><h3>Wel</h3><ul class="strak">${d.binnen.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+      <div class="vlak"><h3>Niet</h3><ul class="strak">${d.buiten.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div></div></section>`;
+}
+function principes() {
+  return `<section id="principes">${kop("principes", "Uitgangspunten")}<div class="principes">${K.principes.map(([t, u]) => `<div class="principe"><b>${esc(t)}</b><p>${esc(u)}</p></div>`).join("")}</div></section>`;
+}
+
+/* ---------- Planner: dezelfde regels als de app (zonder persoonlijke kalibratie) ---------- */
+function planner() {
+  const lijsten = K.huishouden.startlijsten;
+  return `<section id="planner">${kop("planner", "Probeer de planner", "Kies een richting, een startlijst en je tijd. Dit zijn dezelfde regels als in de app, alleen zonder jouw persoonlijke tijdkalibratie.")}
+    <div class="planner">
+      <div class="bediening">
+        <div class="veld"><label for="p-richting">Richting</label><select id="p-richting">${Object.entries(K.richtingen).map(([k, r]) => `<option value="${k}"${k === S.richting ? " selected" : ""}>${r.ico} ${esc(r.naam)}</option>`).join("")}</select></div>
+        <div class="veld"><label for="p-lijst">Lijst</label><select id="p-lijst">${lijsten.map(l => `<option value="${l.sleutel}"${l.sleutel === S.lijst ? " selected" : ""}>${l.emoji} ${esc(l.naam)}</option>`).join("")}</select></div>
+        <div class="veld"><span>Tijd</span><div class="chips" id="p-tijd" role="group" aria-label="Tijd">${K.huishouden.tijden.map(t => `<button data-t="${t}" aria-pressed="${t === S.min}">${t}′</button>`).join("")}</div></div>
+        <div class="veld"><span>Energie nu</span><div class="chips" id="p-energie" role="group" aria-label="Energie">${[1, 2, 3, 4, 5].map(e => `<button data-e="${e}" aria-pressed="false">${e}</button>`).join("")}</div></div>
+        <dl class="params" id="p-params"></dl>
+      </div>
+      <div class="plan" id="p-plan" aria-live="polite"></div>
+    </div></section>`;
+}
+function aanpakVoor(r) {
+  const a = Object.assign({ richting: r }, K.aanpak[r]);
+  return a;
+}
+const schat = t => { const m = String(t).match(/(\d+)\s*(min|m\b|minuten)/i); if (m) return +m[1]; const k = K.huishouden.schattingen.find(([p]) => new RegExp(p, "i").test(t)); return k ? k[1] : K.huishouden.standaardMin; };
+const zwaarte = t => new RegExp(K.huishouden.zwaar, "i").test(t) ? 2 : new RegExp(K.huishouden.licht, "i").test(t) ? 0 : 1;
+function maakPlan(lijst, beschikbaar, energie, richting) {
+  const a = aanpakVoor(richting), notities = [];
+  let buffer = a.buffer, cap = beschikbaar;
+  if (a.maxSessie && cap > a.maxSessie) { notities.push(`Voor deze aanpak is ${a.maxSessie} minuten achter elkaar genoeg; de rest schuift door.`); cap = a.maxSessie; }
+  const laag = energie != null && energie <= 2;
+  if (laag) { buffer += .1; notities.push("Weinig energie: zware klussen alleen als ze moeten, en wat meer tijd per klus."); }
+  let taken = lijst.taken.map(([ruimte, tekst, min, prio], i) => ({ ruimte, tekst, min, prio, zwaar: zwaarte(tekst), i }));
+  if (laag) taken = taken.filter(t => t.zwaar < 2 || t.prio === "moet");
+  const kosten = w => { const werk = w * buffer; return werk + Math.max(0, Math.ceil(werk / a.pauzeElke) - 1) * a.pauzeMin; };
+  const P = { moet: 0, normaal: 1, bonus: 2 };
+  const kand = taken.map(t => ({ t, m: t.min || schat(t.tekst) })).sort((x, y) => P[x.t.prio] - P[y.t.prio] || x.t.i - y.t.i);
+  const gekozen = [], buiten = []; let werk = 0;
+  if (a.volgorde === "snelsucces") { const k = kand.filter(k => k.m <= 5).sort((x, y) => x.m - y.m)[0]; if (k && kosten(k.m) <= cap + .01) { gekozen.push(k); werk += k.m; kand.splice(kand.indexOf(k), 1); } }
+  for (const k of kand) { if (kosten(werk + k.m) <= cap + .01) { gekozen.push(k); werk += k.m; } else buiten.push(k.t); }
+  if (!gekozen.length && kand.length) { const k = kand.slice().sort((x, y) => x.m - y.m)[0]; k.m = Math.max(1, Math.min(k.m, Math.floor(cap / buffer) || 1)); gekozen.push(k); buiten.splice(buiten.indexOf(k.t), 1); }
+  const ruimtes = [...new Set(gekozen.slice().sort((x, y) => x.t.i - y.t.i).map(k => k.t.ruimte))];
+  let volg = [];
+  if (a.volgorde === "zwaarEerst") volg = gekozen.slice().sort((x, y) => y.t.zwaar - x.t.zwaar || ruimtes.indexOf(x.t.ruimte) - ruimtes.indexOf(y.t.ruimte) || x.t.i - y.t.i);
+  else {
+    ruimtes.forEach(r => { let l = gekozen.filter(k => k.t.ruimte === r).sort((x, y) => x.t.i - y.t.i); if (a.variatie) { const z = l.filter(k => k.t.zwaar === 2), rest = l.filter(k => k.t.zwaar !== 2); l = []; while (z.length || rest.length) { if (rest.length) l.push(rest.shift()); if (z.length) l.push(z.shift()); } } volg.push(...l); });
+    if (a.volgorde === "snelsucces") { const kort = volg.filter(k => k.m <= 3).sort((x, y) => x.m - y.m)[0] || volg.slice().sort((x, y) => x.m - y.m)[0]; if (kort) volg = [kort].concat(volg.filter(k => k !== kort)); }
+  }
+  const items = [];
+  volg.forEach(k => { const tot = Math.max(1, Math.round(k.m * buffer)), delen = Math.max(1, Math.ceil(tot / a.blokMax)); for (let d = 1; d <= delen; d++) items.push({ soort: "taak", tekst: k.t.tekst, ruimte: k.t.ruimte, min: Math.round(tot / delen) || 1, deel: d, delen }); });
+  const uit = []; let acc = 0;
+  items.forEach((it, i) => { uit.push(it); acc += it.min; if (acc >= a.pauzeElke && i < items.length - 1) { uit.push({ soort: "pauze", min: a.pauzeMin }); acc = 0; } });
+  const som = () => uit.reduce((s, x) => s + x.min, 0);
+  for (let n = 0; som() > cap && n < 200; n++) { const l = uit.filter(x => x.soort === "taak" && x.min > 1).sort((x, y) => y.min - x.min)[0]; if (!l) break; l.min--; }
+  return { items: uit, buiten, notities, cap, buffer, a };
+}
+function tekenPlan() {
+  const lijst = K.huishouden.startlijsten.find(l => l.sleutel === S.lijst), p = maakPlan(lijst, S.min, S.energie, S.richting), a = p.a;
+  const werk = p.items.filter(x => x.soort === "taak").reduce((s, x) => s + x.min, 0), pz = p.items.filter(x => x.soort === "pauze").reduce((s, x) => s + x.min, 0);
+  $("#p-params").innerHTML = [["Langste blok", a.blokMax + " min"], ["Pauze", `${a.pauzeMin} min na ${a.pauzeElke} min`], ["Buffer", "+" + Math.round((a.buffer - 1) * 100) + "%"], ["Volgorde", K.volgordeNamen[a.volgorde]], ["Wisselseintje", a.wisselSein ? "ja" : "nee"], ["Langste sessie", a.maxSessie ? a.maxSessie + " min" : "—"]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
+  const n = p.items.filter(x => x.soort === "taak").length;
+  $("#p-plan").innerHTML = `<div class="plan-kop"><span><b>${n}</b> kaartjes · <b>${werk}</b> min werk${pz ? ` · <b>${pz}</b> min pauze` : ""}</span><span>past in ${S.min} min</span></div>
+    ${p.notities.map(t => `<p class="noot">${esc(t)}</p>`).join("")}
+    <ol class="kaartjes">${p.items.map(it => it.soort === "pauze" ? `<li class="kaartje pauze"><span class="t">Pauze</span><span class="r">${esc(pauzeTip(a))}</span><span class="m">${it.min}′</span></li>`
+      : `<li class="kaartje"><span class="t">${esc(it.tekst)}${it.delen > 1 ? ` <small>(${it.deel}/${it.delen})</small>` : ""}</span><span class="r">${esc(it.ruimte)}</span><span class="m">${it.min}′</span></li>`).join("")}</ol>
+    ${p.buiten.length ? `<p class="buiten">Past nu niet: ${p.buiten.map(t => esc(t.tekst)).join(", ")}. Dat schuift door.</p>` : ""}`;
+  // Het held-kaartje toont het eerste kaartje van dit plan.
+  const eerste = p.items.find(x => x.soort === "taak");
+  if (eerste) { const b = $("#borduur"); b.querySelector(".kop").innerHTML = `<span>Klus 1 van ${n}</span><span>${esc(eerste.ruimte)}</span>`; b.querySelector(".titel").textContent = eerste.tekst; b.querySelector(".min").innerHTML = `<b>${eerste.min}</b> min`; b.querySelector(".tip").textContent = taakTip(eerste.tekst, a); }
+}
+const pauzeTip = a => { const t = K.huishouden.pauzeTips; return a.richting === "energie" ? t.energie : (a.richting === "autisme" || a.richting === "audhd") ? t.autisme : (t[a.richting] || t.geen); };
+function taakTip(tekst, a) {
+  const t = (K.huishouden.taakTips.find(([p]) => new RegExp(p, "i").test(tekst)) || [])[1] || "";
+  return (a.richting === "adhd" || a.richting === "audhd") ? K.huishouden.richtingTips.eersteKlus + (t ? " " + t : "") : t || "Eén ding tegelijk.";
+}
+
+function sessie() {
+  return `<section id="sessie">${kop("sessie", "Zo verloopt een sessie")}<ol class="stappen">${K.sessieStappen.map(([t, u]) => `<li><b>${esc(t)}</b><p>${esc(u)}</p></li>`).join("")}</ol></section>`;
+}
+function aanpak() {
+  const kol = [["blokMax", "Blok"], ["pauzeElke", "Pauze na"], ["pauzeMin", "Pauze"], ["buffer", "Buffer"], ["volgorde", "Volgorde"], ["wisselSein", "Seintje"], ["maxSessie", "Max. sessie"], ["afkoelUur", "Afkoelen"]];
+  const w = (k, v) => k === "buffer" ? "+" + Math.round((v - 1) * 100) + "%" : k === "volgorde" ? K.volgordeNamen[v] : k === "wisselSein" ? (v ? "ja" : "nee") : v == null ? "—" : k === "afkoelUur" ? v + " u" : v + " min";
+  return `<section id="aanpak">${kop("aanpak", "Aanpak per richting", "De richting komt uit het profiel. Eén set parameters stuurt de planner, de pauzes en de tips door de hele app.")}
+    <div class="tabelwrap"><table><thead><tr><th>Richting</th>${kol.map(([, n]) => `<th>${n}</th>`).join("")}</tr></thead><tbody>
+      ${Object.entries(K.aanpak).map(([r, a]) => `<tr id="rij-${r}"><th>${K.richtingen[r].ico} ${esc(K.richtingen[r].naam)}</th>${kol.map(([k]) => `<td class="num">${esc(w(k, a[k]))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+    <h3>Tips per plek in de app</h3>
+    <div class="tabs" role="tablist" id="tip-tabs">${Object.entries(K.richtingen).map(([r, x]) => `<button role="tab" data-r="${r}" aria-selected="${r === S.tipRichting}">${x.ico} ${esc(x.kort)}</button>`).join("")}</div>
+    <p class="klein" id="tip-uitleg"></p>
+    <div class="tiplijst" id="tip-lijst" role="tabpanel"></div></section>`;
+}
+function tekenTips() {
+  const r = S.tipRichting;
+  $("#tip-uitleg").textContent = K.richtingen[r].uitleg;
+  $("#tip-lijst").innerHTML = Object.entries(K.tipPlekken).map(([k, n]) => `<div><b>${esc(n)}</b>${esc(K.tips[k][r])}</div>`).join("") + `<div><b>Pauze</b>${esc(pauzeTip({ richting: r }))}</div>`;
+  document.querySelectorAll("#tip-tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.r === r)));
+  document.querySelectorAll("tbody tr[id^='rij-']").forEach(tr => tr.classList.toggle("gekozen", tr.id === "rij-" + r));
+}
+function vragen() {
+  const v = K.vragen;
+  return `<section id="vragen">${kop("vragen", "De tien vragen", "Drie dimensies: " + Object.values(v.dimensies).join(", ").toLowerCase() + ". Probeer ze hier; er wordt niets opgeslagen.")}
+    <p class="letop"><b>Geen diagnose.</b> ${esc(v.geenDiagnose)}</p>
+    <ol class="vragen">${v.lijst.map(([, t], i) => `<li class="vraag"><p>${esc(t)}</p><div class="schaal" role="radiogroup" aria-label="Vraag ${i + 1}">${v.schaal.map((s, w) => `<button role="radio" data-v="${i}" data-w="${w}" aria-checked="false">${esc(s)}</button>`).join("")}</div></li>`).join("")}</ol>
+    <div class="uitkomst" id="uitkomst" aria-live="polite"></div>
+    <details class="eis"><summary>Zo wordt de richting berekend</summary><ul>${v.regel.map(r => `<li>${esc(r)}</li>`).join("")}</ul></details></section>`;
+}
+function tekenUitkomst() {
+  const v = K.vragen, a = S.antwoorden, n = a.filter(x => x != null).length;
+  if (n < 10) { $("#uitkomst").innerHTML = `<b>${n} van 10</b><span class="klein">Beantwoord alle vragen voor een richting.</span>`; return; }
+  const som = d => v.lijst.reduce((t, [dim], i) => t + (dim === d ? a[i] : 0), 0), A = som("A") / 16, Sx = som("S") / 16, E = som("E") / 8, d = v.drempels;
+  const r = A >= d.beide && Sx >= d.beide ? "audhd" : A >= d.enkel && A >= Sx ? "adhd" : Sx >= d.enkel ? "autisme" : E >= d.energie ? "energie" : "geen";
+  $("#uitkomst").innerHTML = `<b>${K.richtingen[r].ico} ${esc(K.richtingen[r].naam)}</b><span class="klein">aandacht ${Math.round(A * 100)}% · prikkels ${Math.round(Sx * 100)}% · energie ${Math.round(E * 100)}%${E >= d.energie && r !== "energie" ? " · met extra rust" : ""}</span>`;
+}
+function onderbouwing() {
+  const st = [...new Set(K.onderbouwing.map(o => o.sterkte))];
+  return `<section id="onderbouwing">${kop("onderbouwing", "Onderbouwing", "Per ontwerpkeuze de bevinding, de bron en een eerlijke inschatting van de sterkte van het bewijs.")}
+    <div class="filter" role="group" aria-label="Filter op sterkte">${[["alle", "Alles"]].concat(st.map(s => [s, K.sterktes[s]])).map(([k, n]) => `<button data-f="${k}" aria-pressed="${k === S.filter}">${esc(n)}</button>`).join("")}</div>
+    <div class="bewijs" id="bewijs"></div></section>`;
+}
+const bronKort = nr => { const b = K.bronnen.find(x => x.nr === nr); if (!b) return ""; const t = esc(b.tekst.split(").")[0] + ")"); return b.url ? `<a href="${esc(b.url)}" target="_blank" rel="noopener">${t}</a>` : t; };
+function tekenBewijs() {
+  $("#bewijs").innerHTML = K.onderbouwing.filter(o => S.filter === "alle" || o.sterkte === S.filter).map(o => `<article><div class="kop"><b>${esc(o.id)}</b><span class="sterkte s-${o.sterkte}">${esc(K.sterktes[o.sterkte])}</span></div>
+    <p>${esc(o.bevinding)}</p><p class="keuze"><b>In de app:</b> ${esc(o.keuze)}</p><p class="onder">${esc(o.kanttekening)} · ${bronKort(o.bron)}${o.bron2 ? " · " + bronKort(o.bron2) : ""}</p></article>`).join("");
+  document.querySelectorAll(".filter button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === S.filter)));
+}
+function mechanieken() {
+  return `<section id="mechanieken">${kop("mechanieken", "Mechanieken")}<div class="mech">${K.mechanieken.map(m => `<div><h3>${esc(m.titel)}</h3><ol>${m.stappen.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>`).join("")}</div></section>`;
+}
+function eisen() {
+  let n = 0;
+  return `<section id="eisen">${kop("eisen", "Functionele eisen", "Alle eisen zijn gebouwd en getest.")}<div>${K.eisen.map((g, gi) => `<details class="eis"${gi === 0 ? " open" : ""}><summary>${esc(g.groep)} <span class="klein">${g.items.length}</span></summary><ul>${g.items.map(i => `<li><span class="mono">FR-${String(++n).padStart(2, "0")}</span> ${esc(i)}</li>`).join("")}</ul></details>`).join("")}</div></section>`;
+}
+function datamodel() {
+  return `<section id="data">${kop("data", "Datamodel", "Opslag in IndexedDB op het toestel. Export en import nemen alles mee.")}${K.datamodel.map(t => `<div class="tabelwrap"><table><thead><tr><th colspan="2"><span class="mono">${esc(t.store)}</span> · ${esc(t.sleutel)}</th></tr></thead><tbody>${t.velden.map(([v, u]) => `<tr><td class="mono">${esc(v)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table></div>`).join("")}</section>`;
+}
+function tests() {
+  return `<section id="tests">${kop("tests", "Getest", "Uitgevoerd in een headless browser op iPhone-formaat, in licht, donker en met minder beweging.")}
+    <ul class="tests">${K.tests.map(([t]) => `<li>${esc(t)}</li>`).join("")}</ul>
+    <h3>Nog te testen op een iPhone</h3><ul class="tests open">${K.teTesten.map(t => `<li>${esc(t)}</li>`).join("")}</ul></section>`;
+}
+function extras() {
+  return `<section id="extras">${kop("extras", "Extra's")}<h3>Gebouwd</h3><div class="extras">${K.extras.gebouwd.map(([e, t, u]) => `<div><b>${e} ${esc(t)}</b><p>${esc(u)}</p></div>`).join("")}</div>
+    <h3>Voorstellen voor later</h3><div class="extras">${K.extras.voorstellen.map(([t, u]) => `<div><b>${esc(t)}</b><p>${esc(u)}</p></div>`).join("")}</div></section>`;
+}
+function app() {
+  return `<section id="app">${kop("app", "Voor de app", "Eén bron, twee gebruikers: deze pagina en de app lezen hetzelfde bestand.")}
+    <div class="app">
+      <p class="lees">Het bestand <span class="mono">kennis/huishouden.json</span> in de repository is leidend. Bij het bouwen zet <span class="mono">ruimtelijk/bouw.py</span> het als <span class="mono">FM_KENNIS</span> in de app. De planner, de profielvragen, de tips, de startlijsten, de schattingen en het scherm “Waarom zo?” lezen daaruit. Pas je de kennisbank aan, dan veranderen app en pagina samen.</p>
+      <div class="sleutels">${Object.keys(K).map(k => `<code>${esc(k)}</code>`).join("")}</div>
+      <button class="actie" id="kopieer">Kopieer de kennisbank (JSON)</button>
+      <pre id="json" tabindex="0" aria-label="Kennisbank als JSON">${esc(JSON.stringify(K, null, 1).slice(0, 2400))}\n…</pre>
+    </div></section>`;
+}
+function begrippen() {
+  return `<section id="begrippen">${kop("begrippen", "Begrippen")}<dl class="begrippen">${K.begrippen.map(([b, u]) => `<dt>${esc(b)}</dt><dd>${esc(u)}</dd>`).join("")}</dl></section>`;
+}
+function bronnen() {
+  return `<section id="bronnen">${kop("bronnen", "Bronnen")}<ol class="bronnen">${K.bronnen.map(b => `<li>${b.url ? `<a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.tekst)}</a>` : esc(b.tekst)}</li>`).join("")}</ol></section>`;
+}
+
+/* ---------- Bediening ---------- */
+document.addEventListener("change", e => {
+  if (e.target.id === "p-richting") { S.richting = e.target.value; S.tipRichting = S.richting; tekenPlan(); tekenTips(); }
+  if (e.target.id === "p-lijst") { S.lijst = e.target.value; tekenPlan(); }
+});
+document.addEventListener("click", async e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.t) { S.min = +b.dataset.t; document.querySelectorAll("#p-tijd button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); tekenPlan(); }
+  else if (b.dataset.e) { const e2 = +b.dataset.e; S.energie = S.energie === e2 ? null : e2; document.querySelectorAll("#p-energie button").forEach(x => x.setAttribute("aria-pressed", String(+x.dataset.e === S.energie))); tekenPlan(); }
+  else if (b.dataset.r) { S.tipRichting = b.dataset.r; tekenTips(); }
+  else if (b.dataset.f) { S.filter = b.dataset.f; tekenBewijs(); }
+  else if (b.dataset.v != null && b.dataset.w != null) { const i = +b.dataset.v; S.antwoorden[i] = +b.dataset.w; b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x === b))); tekenUitkomst(); }
+  else if (b.id === "kopieer") {
+    const tekst = JSON.stringify(K, null, 1);
+    try { await navigator.clipboard.writeText(tekst); b.textContent = "Gekopieerd"; }
+    catch (x) { const pre = $("#json"); pre.textContent = tekst; const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Geselecteerd: kopieer met je toetsenbord"; }
+    setTimeout(() => { b.textContent = "Kopieer de kennisbank (JSON)"; }, 2600);
+  }
+});
+function volgIndex() {
+  if (!("IntersectionObserver" in window)) return;
+  const links = new Map([...document.querySelectorAll("nav.index a")].map(a => [a.getAttribute("href").slice(1), a]));
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { links.forEach(a => a.classList.remove("aan")); const a = links.get(en.target.id); if (a) a.classList.add("aan"); } }), { rootMargin: "-20% 0px -70% 0px" });
+  document.querySelectorAll("main section").forEach(s => io.observe(s));
+}
+
+/* ---------- De tesseract (zelfde meetkunde als in de app) ---------- */
+function startTesseract() {
+  const c = $("#tess"), ctx = c.getContext("2d");
+  const V4 = Array.from({ length: 16 }, (_, i) => [i & 1 ? 1 : -1, i & 2 ? 1 : -1, i & 4 ? 1 : -1, i & 8 ? 1 : -1]);
+  const E = []; for (let i = 0; i < 16; i++) for (let b = 0; b < 4; b++) { const j = i ^ (1 << b); if (i < j) E.push([i, j]); }
+  const h = [.3, .6, .2, .1], stil = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let t = 0, vorig = performance.now();
+  const maat = () => { const r = c.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); c.width = Math.round(r.width * d); c.height = Math.round(r.height * d); };
+  maat(); addEventListener("resize", maat);
+  const proj = p => { let [x, y, z, w] = p, q; const [a, b, cc, e] = h;
+    q = x * Math.cos(a) - w * Math.sin(a); w = x * Math.sin(a) + w * Math.cos(a); x = q;
+    q = y * Math.cos(b) - w * Math.sin(b); w = y * Math.sin(b) + w * Math.cos(b); y = q;
+    q = z * Math.cos(cc) - w * Math.sin(cc); w = z * Math.sin(cc) + w * Math.cos(cc); z = q;
+    q = x * Math.cos(e) - z * Math.sin(e); z = x * Math.sin(e) + z * Math.cos(e); x = q;
+    const f4 = 2.6 / (2.6 - w * .9); x *= f4; y *= f4; z *= f4; const f3 = 4.2 / (4.2 - z * .8); return [x * f3, y * f3, w]; };
+  const teken = nu => {
+    const dt = Math.min(.05, (nu - vorig) / 1000); vorig = nu; t += dt;
+    const i = .35 + .3 * Math.sin(t * .35) ** 2;   // rustig op en neer in helderheid
+    if (!stil) { h[0] += dt * .35; h[1] += dt * .21; h[2] += dt * .14; h[3] += dt * .05; }
+    const W = c.width, H = c.height, cx = W / 2, cy = H / 2, s = Math.min(W, H) * .135;
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) / 2);
+    g.addColorStop(0, `hsla(${190 - i * 20},95%,${60 + i * 25}%,${.12 + i * .35})`); g.addColorStop(1, "hsla(200,90%,50%,0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const P = V4.map(proj), kleur = `hsl(${190 - i * 20},${80 + i * 15}%,${70 + i * 22}%)`, d = W / c.getBoundingClientRect().width || 1;
+    for (const laag of [0, 1]) {
+      ctx.shadowColor = kleur; ctx.shadowBlur = (laag ? 4 + i * 10 : 10 + i * 30) * d;
+      ctx.strokeStyle = laag ? `rgba(255,255,255,${.55 + i * .45})` : kleur; ctx.globalAlpha = laag ? 1 : .35 + i * .5;
+      ctx.lineWidth = (laag ? 1.1 + i : 3 + i * 4) * d; ctx.beginPath();
+      for (const [a, b] of E) { ctx.moveTo(cx + P[a][0] * s, cy + P[a][1] * s); ctx.lineTo(cx + P[b][0] * s, cy + P[b][1] * s); }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1; ctx.fillStyle = "#fff";
+    for (const p of P) { ctx.beginPath(); ctx.arc(cx + p[0] * s, cy + p[1] * s, (1.4 + i * 1.4 + (p[2] + 1) * .5) * d, 0, 7); ctx.fill(); }
+    ctx.shadowBlur = 0;
+    if (!stil) requestAnimationFrame(teken);
+  };
+  requestAnimationFrame(teken);
+}
+</script>

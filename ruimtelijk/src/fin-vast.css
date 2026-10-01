@@ -1,0 +1,69 @@
+/* 59. Financieel — Vaste lasten */
+/* Vijf knoppen altijd op één rij, even breed */
+.segment.vijf{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));flex-wrap:nowrap}
+.segment.vijf button{flex:none;min-height:40px;padding:4px 2px;white-space:normal;line-height:1.15;font-size:calc(11.5px * var(--t));hyphens:auto}
+/* Tegels bovenaan: bedrag op één regel (JS maakt hem zo nodig kleiner) */
+.dp-stat{min-width:0}
+.dp-stat>b{display:block;max-width:100%;white-space:nowrap;overflow:hidden;font-variant-numeric:tabular-nums}
+
+/* Verdeling per maand */
+.fv-kaart{padding:16px 16px 10px}
+.fv-hoofd{display:flex;flex-direction:column;gap:12px}
+.fv-label{font-size:calc(12px * var(--t));font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.fv-totaal{font-size:calc(34px * var(--t));font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-top:2px;font-variant-numeric:tabular-nums}
+.fv-totaal small{font-size:.5em;font-weight:700;color:var(--muted);letter-spacing:0;margin-left:1px}
+.fv-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fv-mini>div{background:color-mix(in srgb,var(--card2) 85%,transparent);border-radius:12px;padding:8px 10px;min-width:0}
+.fv-mini b{display:block;font-size:calc(15px * var(--t));font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fv-mini span{font-size:calc(11.5px * var(--t));color:var(--muted)}
+.fv-balk{display:flex;gap:2px;height:14px;margin:16px 0 6px;border-radius:7px;overflow:hidden}
+.fv-balk i{min-width:3px;height:100%}
+.fv-balk i:first-child{border-radius:7px 0 0 7px}
+.fv-balk i:last-child{border-radius:0 7px 7px 0}
+.fv-tabel{margin-top:8px}
+.fv-kop{display:flex;justify-content:space-between;padding:6px 2px 6px;border-bottom:1px solid var(--line);
+  font-size:calc(11px * var(--t));font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
+.fv-rij{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"naam bedrag" "spoor spoor";align-items:center;column-gap:12px;row-gap:8px;
+  width:100%;text-align:left;padding:10px 2px 12px;border-bottom:1px solid var(--line)}
+.fv-rij:last-child{border-bottom:0}
+.fv-naam{grid-area:naam;display:flex;align-items:center;gap:10px;min-width:0}
+.fv-naam>i{width:10px;height:10px;border-radius:50%;flex:0 0 auto;align-self:flex-start;margin-top:5px}
+.fv-naam>span{min-width:0;display:flex;flex-direction:column;gap:1px}
+.fv-naam b{font-size:calc(14.5px * var(--t));font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fv-naam small,.fv-bedrag small{font-size:calc(12px * var(--t));color:var(--muted);white-space:nowrap}
+.fv-bedrag{grid-area:bedrag;display:flex;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums}
+.fv-bedrag b{font-size:calc(14.5px * var(--t));font-weight:750}
+.fv-bedrag small{min-width:34px;text-align:right}
+.fv-spoor{grid-area:spoor;height:6px;border-radius:3px;background:color-mix(in srgb,var(--line) 70%,transparent);overflow:hidden}
+.fv-spoor i{display:block;height:100%;border-radius:3px}
+.fv-rechts{text-align:right}
+.fv-getal{font-variant-numeric:tabular-nums}
+.fv-sectie{align-items:center;scroll-margin-top:12px}
+.fv-sectie>i{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.fv-flits{animation:fv-flits 1.2s ease-out}
+@keyframes fv-flits{0%{box-shadow:0 0 0 2px var(--accent),var(--shadow)}100%{box-shadow:var(--shadow)}}
+
+/* Tijdlijn: alles binnen de kaart, bakje niet over de datums */
+.fv-tijd{padding:14px 10px 12px}
+.fv-tijdkop{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px}
+.fv-tijdkop b{font-size:calc(14.5px * var(--t))}
+.fv-tijd .vl-lijn{height:auto;padding-bottom:0}
+.fv-tijd .vl-dagen{position:relative;inset:auto}
+.fv-tijd .vl-dag .blokken{height:94px;gap:2px;padding-bottom:2px}
+.fv-tijd .vl-blok{width:62%;min-height:0;border-radius:3px;box-shadow:none}
+.fv-tijd .vl-blok:first-child{border-radius:0 0 3px 3px}
+.fv-tijd .vl-blok:nth-last-child(2){border-radius:4px 4px 0 0}
+.fv-tijd .vl-blok:first-child:nth-last-child(2){border-radius:4px}
+.fv-som{font-size:calc(9px * var(--t));font-weight:800;color:var(--text);white-space:nowrap;letter-spacing:-.02em;line-height:1;margin-bottom:2px;font-variant-numeric:tabular-nums}
+.vl-dag.verleden .fv-som{color:var(--faint)}
+.fv-tijd .vl-dag .gat{height:calc(44px + 22px * var(--t))}
+.fv-tijd .vl-dag .nr{padding-bottom:1px}
+.fv-tijd .vl-dag .dg{padding-bottom:6px}
+.fv-tijd .vl-pot{padding:4px 10px 5px;font-size:calc(13px * var(--t));border-radius:9px 9px 12px 12px}
+.fv-tijd .vl-pot small{font-size:calc(7.5px * var(--t))}
+.fv-tijd .vl-touw{height:8px}
+.fv-legenda{margin-top:10px;gap:6px 12px}
+.fv-sw{background:linear-gradient(90deg,#7a4fd6 0 33%,#0e7490 33% 66%,#c2410c 66%)!important}
+.fv-sw.vaag{opacity:.4;filter:saturate(.4)}
+
+.fv-spoor{margin-left:20px}

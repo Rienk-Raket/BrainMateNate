@@ -1,0 +1,51 @@
+/* === SECTIE 87: MIJN DAG === */
+
+/* Klokje op de vertrektijd en de buffer ervoor (niet alleen kleur: eigen vorm en streepjes). */
+.fm-dr-klok circle { fill: var(--card); stroke: var(--accent); stroke-width: 2; }
+.fm-dr-klok line { stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
+.fm-dr-klok { cursor: pointer; }
+.fm-dr-klok:focus-visible { outline: none; }
+.fm-dr-klok:focus-visible circle { stroke-width: 3.5; }
+.fm-dr-buffer { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 3 4; opacity: .7; }
+.fm-dr-legenda i.klok { border: 2px solid var(--accent); background: var(--card); border-radius: 50%; }
+.fm-dr-legenda i.buffer { background: none; border-top: 3px dashed var(--accent); border-radius: 0; height: 0; }
+
+/* Tijdlijn: tekstversie van de ring. */
+.md-tijdlijn { list-style: none; margin: 0; padding: 0; }
+.md-item button { display: grid; grid-template-columns: 48px 14px 1fr; align-items: center; gap: 8px; width: 100%; min-height: max(var(--tap), 44px); padding: 6px 0; background: none; border: 0; border-top: 1px solid var(--line); text-align: left; color: var(--text); cursor: pointer; }
+.md-item:first-child button { border-top: 0; }
+.md-item button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: 8px; }
+.md-item time { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--muted); font-size: calc(14px * var(--t)); }
+.md-bol { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--card); }
+.md-item.taak.af .md-bol { background: var(--accent); }
+.md-item.afspraak .md-bol { border-radius: 3px; background: var(--accent); }
+.md-item.vertrek .md-bol { border-style: dashed; }
+.md-item.spoor .md-bol { border-color: transparent; }
+.md-item span { display: flex; flex-direction: column; }
+.md-item span b { font-weight: 650; font-size: calc(15px * var(--t)); }
+.md-item span small { color: var(--muted); font-size: calc(13px * var(--t)); }
+.md-item.voorbij span b { color: var(--muted); }
+.md-item.af span b { text-decoration: line-through; }
+.md-leeg { margin: 0; }
+
+/* Nu-kaart. */
+.md-nu h2 { margin: 4px 0 2px; font-size: calc(20px * var(--t)); line-height: 1.3; }
+.md-nu h2 time { color: var(--accent); font-variant-numeric: tabular-nums; }
+.md-nu-acties { display: flex; gap: 8px; margin-top: 10px; }
+.md-nu-acties .knop { flex: 1; }
+.md-daarna { margin: 12px 0 0; color: var(--muted); font-size: calc(14px * var(--t)); line-height: 1.45; }
+.md-daarna .labeltekst { display: inline; }
+.md-rest { white-space: nowrap; }
+.md-nu-leeg p { margin: 6px 0 0; }
+.md-hart { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+
+.md-popsub { margin: 0; color: var(--muted); }
+.md-widgetknop { display: inline-flex; align-items: center; gap: 8px; min-height: max(var(--tap), 44px); margin: 14px auto 6px; padding: 0 14px; background: none; border: 1px solid var(--line2); border-radius: var(--radius-sm); color: var(--muted); font-weight: 650; cursor: pointer; }
+.md-widgetknop svg { width: 18px; height: 18px; }
+.md-widgetknop:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.md-schakels .toggle { min-width: max(var(--tap), 44px); min-height: max(var(--tap), 44px); }
+.md-twee { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Een algemene lijstregel gaf elk item een eigen vlak; in de tijdlijn is dat de knop. */
+.md-tijdlijn .md-item { background: none; padding: 0; margin: 0; border: 0; box-shadow: none; }
+.fm-dr-legenda i.klok { width: 10px; height: 10px; }
+.fm-dr-legenda i.buffer { width: 16px; }

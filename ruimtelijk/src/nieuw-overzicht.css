@@ -1,0 +1,110 @@
+/* 66. Nieuw: overzicht achter de schuifknoppen */
+.nw-paneel{
+  --nwo-0:#2a78d6;--nwo-1:#eb6834;--nwo-2:#1baf7a;--nwo-3:#eda100;--nwo-4:#e87ba4;--nwo-overig:#9a9994;
+  position:absolute;z-index:0;top:0;left:calc(var(--nw-strook) + 12px);right:0;display:flex;flex-direction:column;gap:12px;
+  opacity:calc(1 - var(--nw-p) * 1.4);transform:translateX(calc(var(--nw-p) * 40px)) scale(calc(1 - var(--nw-p) * .04));transform-origin:left top;
+  transition:opacity .45s,transform .55s cubic-bezier(.22,1,.36,1)}
+.nw-rail.sleept .nw-paneel{transition:none}
+.nw-rail.open .nw-paneel{pointer-events:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nw-paneel{--nwo-0:#3987e5;--nwo-1:#d95926;--nwo-2:#199e70;--nwo-3:#c98500;--nwo-4:#d55181;--nwo-overig:#8b8a84}}
+:root[data-theme="dark"] .nw-paneel{--nwo-0:#3987e5;--nwo-1:#d95926;--nwo-2:#199e70;--nwo-3:#c98500;--nwo-4:#d55181;--nwo-overig:#8b8a84}
+
+.nwo-kaart{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:14px 14px 12px}
+.nwo-kop{display:flex;flex-direction:column;gap:1px;margin-bottom:10px}
+.nwo-kop b{font-size:calc(15px * var(--t))}
+.nwo-kop span{font-size:calc(12px * var(--t));color:var(--muted)}
+.nwo-maten{display:flex;gap:4px;background:var(--card2);border-radius:10px;padding:3px;margin-bottom:6px}
+.nwo-maten button{flex:1;min-height:30px;border-radius:8px;font-size:calc(12.5px * var(--t));font-weight:650;color:var(--muted)}
+.nwo-maten button[aria-selected="true"]{background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+.nwo-ring{position:relative;width:min(100%,176px);aspect-ratio:1;margin:4px auto 2px}
+.nwo-ring>svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.nwo-spoor{fill:none;stroke:var(--card2);stroke-width:12}
+.nwo-boog{fill:none;stroke:var(--kl);stroke-width:12;cursor:pointer;transition:opacity .2s,stroke-width .2s}
+.nwo-boog.dim{opacity:.28}
+.nwo-boog:hover{stroke-width:14}
+.nwo-midden{position:absolute;inset:18%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1px;pointer-events:none}
+.nwo-midden b{font-size:calc(17px * var(--t));font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--text);line-height:1.1}
+.nwo-midden span{font-size:calc(10.5px * var(--t));color:var(--muted);line-height:1.2}
+.nwo-zak{width:28px;height:28px;flex:0 0 auto;color:var(--accent);margin-bottom:3px}
+.nwo-geen{text-align:center;font-size:calc(12px * var(--t));color:var(--muted);margin:2px 0 4px}
+.nwo-legenda{display:flex;flex-direction:column;margin-top:8px;border-top:1px solid var(--line)}
+.nwo-lr{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:center;text-align:left;min-height:36px;padding:4px 2px;border-bottom:1px solid var(--line);border-radius:0}
+.nwo-lr:last-child{border-bottom:0}
+.nwo-lr i{width:10px;height:10px;border-radius:3px}
+.nwo-lr .nm{font-size:calc(13px * var(--t));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nwo-lr b{font-size:calc(13px * var(--t));font-variant-numeric:tabular-nums;color:var(--text)}
+.nwo-lr.aan .nm{font-weight:700}
+.nwo-leeg{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:18px 14px}
+.nwo-leegicoon{font-size:30px}
+.nwo-leeg span{font-size:calc(12.5px * var(--t));color:var(--muted)}
+
+.nwo-stats{display:flex;flex-direction:column;gap:8px}
+.nwo-statkop{font-size:calc(12px * var(--t));font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:6px 2px 0}
+html[data-retro="1"] .nwo-statkop{font-family:var(--pixel);font-weight:400;font-size:calc(9px * var(--t))}
+.nwo-thema{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.nwo-themakop{display:flex;align-items:center;gap:10px;width:100%;text-align:left;min-height:52px;padding:8px 12px}
+.nwo-ico{font-size:19px;width:24px;text-align:center;flex:0 0 auto}
+.nwo-tn{flex:1;min-width:0;display:flex;flex-direction:column}
+.nwo-tn b{font-size:calc(14px * var(--t));font-weight:700}
+.nwo-tn small{font-size:calc(11.5px * var(--t));color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nwo-rijen{border-top:1px solid var(--line);padding:2px 12px 8px;animation:ec-in .28s cubic-bezier(.22,1,.36,1)}
+.nwo-rij{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.nwo-rij span{font-size:calc(12.5px * var(--t));color:var(--muted);display:flex;flex-direction:column;min-width:0}
+.nwo-rij small{font-size:calc(11px * var(--t));color:var(--faint)}
+.nwo-rij b{font-size:calc(14px * var(--t));font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--text)}
+.nwo-naar{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:calc(12.5px * var(--t));font-weight:650;color:var(--accent);min-height:32px}
+
+/* 67. Analyse van de geopende statistiek */
+.nwo-analyse{border-top:1px solid var(--line);padding:10px 12px 4px;display:flex;flex-direction:column;gap:10px}
+.nwo-filters{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.nwo-kies{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nwo-kies.breed{grid-column:1 / -1}
+.nwo-kies span{font-size:calc(10.5px * var(--t));font-weight:700;color:var(--muted);letter-spacing:.02em}
+html[data-retro="1"] .nwo-kies span{font-family:var(--pixel);font-weight:400;font-size:calc(7.5px * var(--t))}
+.nwo-kies select{appearance:none;-webkit-appearance:none;width:100%;min-width:0;height:34px;border-radius:10px;border:1.5px solid var(--line);padding:0 24px 0 9px;
+  background:var(--card2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 7px center/12px;
+  color:var(--text);font:inherit;font-size:calc(12.5px * var(--t));font-weight:600;text-overflow:ellipsis;cursor:pointer}
+.nwo-kies select:focus{outline:none;border-color:var(--accent)}
+.nwo-tegels{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.nwo-tegels>div{background:var(--card2);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.nwo-tegels span{font-size:calc(10.5px * var(--t));color:var(--muted);font-weight:650}
+.nwo-tegels b{font-size:calc(16px * var(--t));font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nwo-tegels b.lang{font-size:calc(13.5px * var(--t))}
+.nwo-tegels small{font-size:calc(10.5px * var(--t));color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nwo-tegels small.op{color:var(--green)}
+.nwo-tegels small.af{color:var(--red)}
+.nwo-tip{font-size:calc(12px * var(--t));color:var(--muted);min-height:18px}
+.nwo-tip b{color:var(--text)}
+.nwo-grafiek{width:100%;height:auto;display:block;overflow:visible;touch-action:pan-y}
+.nwo-grid{stroke:var(--line);stroke-width:1}
+.nwo-grid.nul{stroke:var(--line2)}
+.nwo-as{font-size:9px;fill:var(--faint);font-variant-numeric:tabular-nums}
+.nwo-staaf{fill:var(--nwo-0);transition:opacity .15s}
+.nwo-staaf.neg{fill:var(--nwo-1)}
+.nwo-staaf.dim{opacity:.35}
+.nwo-lijn{fill:none;stroke:var(--nwo-0);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.nwo-vlak{fill:var(--nwo-0);opacity:.12}
+.nwo-punt{fill:var(--nwo-0);stroke:var(--card);stroke-width:2}
+.nwo-raak{fill:transparent;cursor:pointer}
+.nwo-leegdiagram{padding:22px 8px;text-align:center;font-size:calc(12.5px * var(--t));color:var(--muted);background:var(--card2);border-radius:12px}
+.nwo-balken{display:flex;flex-direction:column;gap:8px}
+.nwo-balkkop{display:flex;justify-content:space-between;gap:8px;font-size:calc(12.5px * var(--t));margin-bottom:3px}
+.nwo-balkkop span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.nwo-balkkop b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.nwo-balkspoor{display:block;height:8px;border-radius:4px;background:var(--card2);overflow:hidden}
+.nwo-balkspoor i{display:block;height:100%;border-radius:4px;background:var(--nwo-0)}
+.nwo-stapel{display:flex;gap:2px;height:16px;border-radius:6px;overflow:hidden;background:var(--card)}
+.nwo-stapel i{display:block;min-width:3px}
+.nwo-verdeling{margin-top:2px;border-top:0}
+.nwo-verdeling .nwo-lr{min-height:32px}
+.nwo-verdeling small{font-weight:600;color:var(--muted);margin-left:3px}
+.nwo-tabel{width:100%;border-collapse:collapse;font-size:calc(12.5px * var(--t));font-variant-numeric:tabular-nums}
+.nwo-tabel th{text-align:left;font-size:calc(10.5px * var(--t));color:var(--muted);font-weight:700;padding:4px 4px 6px;border-bottom:1px solid var(--line2)}
+.nwo-tabel td{padding:6px 4px;border-bottom:1px solid var(--line);color:var(--text)}
+.nwo-tabel th:not(:first-child),.nwo-tabel td:not(:first-child){text-align:right;white-space:nowrap}
+.nwo-tabel tr.nul td{color:var(--faint)}
+.nwo-tabel tfoot td{font-weight:800;border-bottom:0}
+.nwo-analyse .nwo-tabel{display:block;max-height:280px;overflow-y:auto}
+.nwo-analyse .nwo-tabel thead,.nwo-analyse .nwo-tabel tbody,.nwo-analyse .nwo-tabel tfoot{display:table;width:100%;table-layout:fixed}
+.nwo-tabel td:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nwo-rijenkop{font-size:calc(10.5px * var(--t));font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:10px 0 2px}

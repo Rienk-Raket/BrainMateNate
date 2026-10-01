@@ -1,0 +1,85 @@
+/* === SECTIE 84: NATE — MASCOTTE EN PANEEL ===
+   Ruststand: klein, half achter de rechterrand, boven de onderbalk.
+   Nate beweegt alleen als je op hem tikt (en bij "minder beweging" helemaal niet). */
+
+#nate {
+  position: fixed; z-index: 45;
+  right: calc(-26px + var(--safe-r, 0px));
+  bottom: calc(var(--safe-b, 0px) + 84px);
+  width: 56px; height: 56px; padding: 0; border: 0; background: none;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: transform .22s ease, opacity .22s ease;
+}
+html[data-ruimte="1"] #nate { bottom: calc(var(--fm-nav-onder, 10px) + var(--safe-b, 0px) + 84px); }
+#nate img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,.15)); }
+/* Groter tikvlak dan het zichtbare deel (minimaal 44 × 44 px). */
+#nate::before { content: ""; position: absolute; inset: -6px -6px -6px -14px; }
+#nate:hover, #nate:focus-visible { transform: translateX(-22px); }
+#nate:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 50%; }
+#nate .nate-stip {
+  position: absolute; top: 2px; left: 4px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg);
+}
+#nate .nate-stip[hidden] { display: none; }
+/* Verbergen als er een blad of Nate's eigen paneel openstaat. */
+body.nate-open #nate, body.nate-weg #nate { opacity: 0; pointer-events: none; }
+
+/* Paneel */
+#nate-paneel { position: fixed; inset: 0; z-index: 90; display: none; }
+#nate-paneel.open { display: block; }
+#nate-paneel .nate-achter { position: absolute; inset: 0; background: rgba(10, 12, 16, .35); }
+#nate-paneel .nate-vel {
+  position: absolute; left: 0; right: 0; bottom: 0; margin: 0 auto; max-width: 560px;
+  max-height: calc(100% - 48px); overflow: auto;
+  background: var(--card); color: var(--text);
+  border-radius: 22px 22px 0 0; box-shadow: var(--shadow);
+  padding: 16px 16px calc(20px + var(--safe-b, 0px));
+  transform: translateY(0); transition: transform .24s ease;
+}
+#nate-paneel.komt .nate-vel { transform: translateY(24px); }
+.nate-kop { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.nate-kop img { width: 88px; height: 88px; flex: none; }
+.nate-kop h2 { margin: 0; font-size: 1.15rem; }
+.nate-kop p { margin: 2px 0 0; color: var(--muted); font-size: .95rem; }
+.nate-sluit {
+  margin-left: auto; align-self: flex-start; min-width: var(--tap, 44px); min-height: var(--tap, 44px);
+  border: 0; background: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; border-radius: 12px;
+}
+.nate-sluit:focus-visible { outline: 3px solid var(--accent); }
+.nate-sectie { margin: 16px 0 6px; font-size: .8rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+
+/* Snel naar: de mindmap staat bewust vooraan en is de grootste knop. */
+.nate-snel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.nate-snel button {
+  min-height: 56px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg);
+  color: var(--text); font: inherit; font-size: .95rem; cursor: pointer; padding: 8px;
+}
+.nate-snel button.groot { grid-column: 1 / -1; min-height: 64px; font-weight: 600;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+.nate-snel button:focus-visible { outline: 3px solid var(--accent); }
+
+/* Berichten */
+.nate-berichten { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.nate-bericht { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--bg); }
+.nate-bericht b { display: block; }
+.nate-bericht p { margin: 4px 0 0; }
+.nate-bericht .nate-van { font-size: .8rem; color: var(--muted); }
+.nate-bericht details { margin-top: 6px; }
+.nate-bericht summary { cursor: pointer; color: var(--accent); min-height: 32px; display: flex; align-items: center; }
+.nate-bericht details p { color: var(--muted); font-size: .92rem; }
+.nate-acties { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.nate-acties button {
+  min-height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--card); color: var(--text); font: inherit; cursor: pointer;
+}
+.nate-acties button.primair { background: var(--accent); border-color: var(--accent); color: #fff; }
+.nate-leeg { color: var(--muted); margin: 4px 0; }
+.nate-meer { margin-top: 8px; width: 100%; min-height: 44px; border-radius: 12px; border: 0; background: none; color: var(--accent); font: inherit; cursor: pointer; }
+.nate-voet { margin: 14px 0 0; color: var(--faint); font-size: .85rem; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  #nate, #nate-paneel .nate-vel { transition: none; }
+  #nate:hover, #nate:focus-visible { transform: none; }
+  #nate-paneel.komt .nate-vel { transform: none; }
+}

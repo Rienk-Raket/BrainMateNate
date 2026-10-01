@@ -1,0 +1,14 @@
+/* === SECTIE 89: CHAT MET NATE === */
+.nc { margin-top: 6px; }
+.nc-gesprek { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.nc-gesprek li { max-width: 88%; padding: 9px 12px; border-radius: var(--radius); line-height: 1.45; font-size: calc(15px * var(--t)); }
+.nc-jij { align-self: flex-end; background: var(--accent); color: var(--accent-text); border-bottom-right-radius: 4px; }
+.nc-nate { align-self: flex-start; background: var(--card); border: 1px solid var(--line); border-top-left-radius: 4px; }
+.nc-nate .nate-acties a { display: inline-flex; align-items: center; justify-content: center; min-height: max(var(--tap), 44px); padding: 0 14px; border-radius: var(--radius-sm); border: 1px solid var(--line2); color: var(--text); text-decoration: none; font-weight: 650; }
+.nc-nate .nate-acties a.primair { background: var(--accent); color: var(--accent-text); border-color: transparent; }
+.nc-vorm { display: flex; gap: 8px; }
+.nc-vorm .invoer { flex: 1; min-height: max(var(--tap), 44px); }
+.nc-vorm .knop { flex: none; min-width: max(var(--tap), 44px); padding: 0 12px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Actieknoppen in Nate's paneel (berichten én chat) minstens 44 px hoog. */
+#nate-paneel .nate-acties button, #nate-paneel .nate-acties a { min-height: max(var(--tap), 44px); }
