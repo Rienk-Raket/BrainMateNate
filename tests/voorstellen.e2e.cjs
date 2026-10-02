@@ -118,6 +118,36 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("V6: voorbereiden 20 min verschuift stoppen naar 13:00", await p.evaluate(id => tpVoor(vind("afspraken", id))[0].tijd === "13:00", aid));
   await p.evaluate(() => bladSluit()); await wacht(200);
 
+  /* ---------- V3 Eén invoer ---------- */
+  await p.evaluate(() => { V.nwPad = []; ga("start"); }); await wacht(500);
+  check("V3: één veld bovenaan Vastleggen", await p.evaluate(() => { const v = document.querySelector("#vi-veld"); const s = document.querySelector("#scherm"); return !!v && s.querySelector(".vi") === s.querySelector(":scope > *, .vi"); }));
+  await p.fill("#vi-veld", "tandarts morgen 14:00 reistijd 25"); await wacht(250);
+  check("V3: Nate ziet een afspraak, met datum, tijd en reistijd", (await p.locator(".vi-nate").textContent()).includes("afspraak") && (await p.locator(".vi-wat").textContent()).includes("25 min reistijd"));
+  await p.screenshot({ path: path.join(UIT, "v3-01-afspraak.png") });
+  await p.click('[data-vi="op"]'); await wacht(500);
+  const af = await p.evaluate(() => S.afspraken.find(a => a.titel.toLowerCase().startsWith("tandarts") && a.datum === plusDagen(vandaagISO(), 1)));
+  check("V3: afspraak opgeslagen met reistijd", af && af.tijd === "14:00" && af.reistijd === 25, JSON.stringify(af));
+  check("V3: veld weer leeg", (await p.inputValue("#vi-veld")) === "");
+  await p.fill("#vi-veld", "kapper bellen"); await wacht(250);
+  check("V3: twijfel → opslaan pas na kiezen", await p.locator('[data-vi="op"]').isDisabled());
+  await p.click('[data-vi-soort="taak"]'); await wacht(200);
+  check("V3: één tik corrigeert het type", !(await p.locator('[data-vi="op"]').isDisabled()) && (await p.locator('[data-vi="op"]').textContent()).includes("Taak"));
+  await p.click('[data-vi="op"]'); await wacht(400);
+  check("V3: taak opgeslagen", await p.evaluate(() => S.taken.some(t => t.titel.toLowerCase() === "kapper bellen")));
+  await p.fill("#vi-veld", "idee moestuin op het balkon"); await wacht(250);
+  await p.click('[data-vi="op"]'); await wacht(500);
+  check("V3: gedachte naar de mindmap", await p.evaluate(() => { const mm = mmHuidige(); return !!mm && mm.nodes.some(n => /moestuin/.test(n.tekst || n.titel || "")); }));
+  await p.fill("#vi-veld", "waar staat mijn dagboek?"); await wacht(250);
+  await p.click('[data-vi="op"]'); await wacht(400);
+  check("V3: vraag brengt je naar de plek", await p.evaluate(() => V.view === "dagboek"));
+  // Chat biedt Vastleggen aan bij een datum.
+  await p.evaluate(() => { ga("vandaag"); nateOpen(); }); await wacht(400);
+  await p.fill("#nc-veld", "vrijdag 10:00 offerte nakijken"); await p.press("#nc-veld", "Enter"); await wacht(300);
+  check("V3: chat biedt Vastleggen aan", await p.locator('[data-nate="vastleg"]').count() === 1);
+  await p.click('[data-nate="vastleg"]'); await wacht(600);
+  check("V3: Vastleggen opent met de tekst erin", (await p.inputValue("#vi-veld")) === "vrijdag 10:00 offerte nakijken");
+  check("V3: tikvlakken ≥ 44 px", (await tikvlakken(p, ".vi")).length === 0, JSON.stringify(await tikvlakken(p, ".vi")));
+
   check("geen consolefouten", fouten.length === 0, fouten.slice(0, 3).join(" | "));
   check("nul externe verzoeken", extern.length === 0, extern.slice(0, 3).join(" | "));
   await browser.close(); server.close();

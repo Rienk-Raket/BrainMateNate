@@ -1,0 +1,16 @@
+/* === Eén invoer (V3) === */
+.vi { margin: 4px 0 14px; }
+.vi-label { display: block; font-weight: 700; font-size: calc(17px * var(--t)); margin: 0 0 6px; }
+.vi-veld { width: 100%; min-height: 64px; resize: none; font-size: calc(17px * var(--t)); line-height: 1.35; }
+.vi-uit { margin-top: 10px; }
+.vi-hint { color: var(--muted); margin: 0; font-size: calc(14px * var(--t)); }
+.vi-nate { margin: 0 0 8px; }
+.vi-wat { background: var(--card, #fff); border: 1px solid var(--line, #d0d7e2); border-radius: 14px; padding: 10px 12px; margin-bottom: 10px; }
+.vi-wat .chiprij { margin-top: 6px; flex-wrap: wrap; }
+.vi-soorten { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.vi-soorten .keuze { min-height: 44px; }
+.vi-soorten .keuze[aria-checked="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.vi-acties { display: flex; gap: 8px; }
+.vi-acties .knop { flex: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+/* Het oude Aa-knopje (Snel typen) is overbodig: het veld doet hetzelfde. */
+.vi ~ .nwl-rail .nwl-snel { display: none; }
