@@ -86,3 +86,11 @@ Open (letterlijk gelaten): de vijf compensatievragen hebben `scoring_role: resou
 - `ruimtelijk/src/ik-loop-vast.js/.css` (sectie 90). Knop op de Nu-kaart en in het taakblad. Vijf oorzaken (onduidelijk, te groot, saai, spannend, leeg), elk één handeling; loslaten naar morgen altijd zichtbaar; "Waarom zeg je dit?" met bewijsniveau Praktisch.
 - Eerste handeling wordt de bovenste subtaak en staat op de Nu-kaart. Gebruik in instelling `ivLog` (meting: vast → afgerond binnen 24 uur, `ivMeting`).
 - Tests: `tests/vast.test.mjs` (pure kern), `tests/voorstellen.e2e.cjs` (V7-deel). E2e-tests van Mijn dag draaien nu met een vaste klok (10:42); 's avonds liepen tijden tegen 23:59 aan.
+
+## Stap 9: V6 Terugplannen en alarmen via Opdrachten
+
+- `ruimtelijk/src/terugplannen.js/.css` (sectie 91). Terugrekenen vanaf het begin: stoppen, voorbereiden, vertrekken. In de tijdlijn van Mijn dag en als keten op het afspraakscherm. Nieuw veld Voorbereiden (min) in het afspraakblad (`bouw.py` stap 11, gaat mee bij herhalingen).
+- Opdrachten-brug: lokale link `shortcuts://run-shortcut?name=Nate alarmen&input=text&text=<JSON>`; eerste keer uitleg met stappenplan en testknop; wekker alleen bij vertrekken (schakelbaar). Handleiding: `docs/opdracht-nate-alarmen.md`. Instellingen `tpAlarmen`, `tpIngesteld`; per afspraak `tpGezet`.
+- .ics-reserve krijgt dezelfde drie alarmen.
+- Nog niet: gemeten reistijd (mediaan na 5–10 afspraken) → samen met V9 duurkalibratie.
+- Niet te testen hier: of Opdrachten op Kas' iOS-versie de JSON zo leest. Eerste echte test op de iPhone met de testknop.

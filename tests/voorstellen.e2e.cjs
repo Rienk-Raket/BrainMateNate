@@ -86,6 +86,38 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("V7: tikvlakken ≥ 44 px", (await tikvlakken(p, "#blad")).length === 0, JSON.stringify(await tikvlakken(p, "#blad")));
   await p.evaluate(() => bladSluit()); await wacht(300);
 
+  /* ---------- V6 Terugplannen en Opdrachten-brug ---------- */
+  const aid = await p.evaluate(async () => {
+    const a = { id: uid(), titel: "Tandarts", soort: "gesprek", datum: vandaagISO(), tijd: "14:00", eindTijd: "14:45", plek: "Stationsweg 12", personen: [], voorbereiding: "", notities: "", uitkomst: "", reistijd: 25, buffer: 10, gemaakt: new Date().toISOString() };
+    await bewaar("afspraken", a); window.__urls = []; tpOpen = u => window.__urls.push(u); ga("vandaag"); return a.id;
+  });
+  await wacht(400);
+  check("V6: tijdlijn toont stoppen en voorbereiden", await p.evaluate(() => { const t = [...document.querySelectorAll(".md-tijdlijn .md-item")].map(x => x.textContent.replace(/\s+/g, " ")); return t.some(x => x.includes("13:10") && x.includes("Stoppen")) && t.some(x => x.includes("13:15") && x.includes("Voorbereiden")) && t.some(x => x.includes("13:25") && x.includes("Vertrekken")); }));
+  await p.evaluate(id => ga("afspraak", id), aid); await wacht(400);
+  check("V6: keten op het afspraakscherm (3 momenten + begin)", await p.locator(".tp-keten li").count() === 4);
+  await p.screenshot({ path: path.join(UIT, "v6-01-afspraak.png") });
+  await p.click('[data-tp="zet"]'); await wacht(350);
+  check("V6: eerste keer: uitleg en stappenplan", await p.locator("#blad.open .tp-recept").count() === 1);
+  check("V6: wekker staat standaard aan", (await p.getAttribute("#tp-wekker", "aria-pressed")) === "true");
+  await p.click("#tp-recept summary, .tp-recept summary").catch(() => {});
+  await p.screenshot({ path: path.join(UIT, "v6-02-uitleg.png") });
+  check("V6: tikvlakken in de uitleg ≥ 44 px", (await tikvlakken(p, "#blad")).length === 0, JSON.stringify(await tikvlakken(p, "#blad")));
+  await p.click("#tp-klaar"); await wacht(500);
+  const urls = await p.evaluate(() => window.__urls);
+  check("V6: één lokale link naar Opdrachten", urls.length === 1 && urls[0].startsWith("shortcuts://run-shortcut?name=Nate%20alarmen&input=text&text="), urls[0]);
+  const pl = JSON.parse(decodeURIComponent(urls[0].split("&text=")[1]));
+  check("V6: drie alarmen, wekker bij vertrekken", pl.alarmen.length === 3 && pl.alarmen[2].wekker === "ja" && pl.alarmen[2].moment.endsWith("13:25"), JSON.stringify(pl.alarmen.map(x => x.moment)));
+  check("V6: tijdstip van doorgeven bewaard", await p.locator(".tp-gezet").count() === 1);
+  await p.click('[data-tp="zet"]'); await wacht(300);
+  check("V6: tweede keer meteen doorgeven, zonder uitleg", (await p.evaluate(() => window.__urls.length)) === 2 && !(await p.locator("#blad.open .tp-recept").count()));
+  const ics = await p.evaluate(id => afspraakNaarIcs(vind("afspraken", id)).join("\n"), aid);
+  check("V6: .ics-reserve met vier alarmen (15 min + drie momenten)", (ics.match(/BEGIN:VALARM/g) || []).length === 4, ics.match(/TRIGGER:[^\n]+/g).join(","));
+  await p.evaluate(id => openAfspraakBlad(id), aid); await wacht(350);
+  check("V6: voorbereidingsveld in het afspraakblad", await p.locator("#a-voorb").count() === 1);
+  await p.fill("#a-voorb", "20"); await p.click("#bladvoet .primair"); await wacht(400);
+  check("V6: voorbereiden 20 min verschuift stoppen naar 13:00", await p.evaluate(id => tpVoor(vind("afspraken", id))[0].tijd === "13:00", aid));
+  await p.evaluate(() => bladSluit()); await wacht(200);
+
   check("geen consolefouten", fouten.length === 0, fouten.slice(0, 3).join(" | "));
   check("nul externe verzoeken", extern.length === 0, extern.slice(0, 3).join(" | "));
   await browser.close(); server.close();

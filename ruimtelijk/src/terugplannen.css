@@ -1,0 +1,18 @@
+/* === Terugplannen en alarmen (V6) === */
+.tp-kaart { margin-top: 12px; }
+.tp-keten { list-style: none; margin: 8px 0 12px; padding: 0; border-left: 2px solid var(--line, #d0d7e2); }
+.tp-keten li { display: flex; gap: 12px; align-items: baseline; padding: 6px 0 6px 12px; position: relative; }
+.tp-keten li::before { content: ""; position: absolute; left: -6px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--card, #fff); border: 2px solid var(--accent); }
+.tp-keten li.tp-begin::before { background: var(--accent); }
+.tp-keten time { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); min-width: 44px; }
+.tp-keten span { display: flex; flex-direction: column; }
+.tp-keten small { color: var(--muted); }
+.tp-gezet { margin: 8px 0 0; }
+.tp-stappen, .tp-recept-lijst { padding-left: 20px; }
+.tp-stappen li, .tp-recept-lijst li { margin-bottom: 6px; }
+.tp-recept summary { min-height: 44px; display: flex; align-items: center; color: var(--accent); cursor: pointer; }
+.md-item.tp .md-bol { background: transparent; border: 2px dashed var(--accent); }
+.tp-schakel { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; padding: 8px 0; margin: 8px 0;
+  background: none; border: 0; border-top: 1px solid var(--line, #d0d7e2); border-bottom: 1px solid var(--line, #d0d7e2); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.tp-schakel .tekst { display: flex; flex-direction: column; }
+.tp-schakel .toggle { flex: none; pointer-events: none; }

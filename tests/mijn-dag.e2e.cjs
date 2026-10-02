@@ -54,7 +54,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("wijzer op nu", await p.locator("[data-fm-wijzer]").count() === 1);
   const vertrek = await p.evaluate(() => { const a = S.afspraken.find(x => x.titel === "Tandarts"); return mdVertrek(a); });
   check("vertrektijd = begin − reistijd − buffer", vertrek && vertrek.vertrek === vertrek.start - 30, JSON.stringify(vertrek));
-  check("tijdlijn is de tekstversie van de ring", await p.evaluate(() => { const t = [...document.querySelectorAll(".md-tijdlijn .md-item")]; return t.length === 5 && t.some(x => x.classList.contains("vertrek")) && t.filter(x => x.classList.contains("afspraak")).length === 2; }));
+  check("tijdlijn is de tekstversie van de ring", await p.evaluate(() => { const t = [...document.querySelectorAll(".md-tijdlijn .md-item:not(.tp)")]; return t.length === 5 && document.querySelectorAll(".md-tijdlijn .md-item.tp").length === 4 && t.some(x => x.classList.contains("vertrek")) && t.filter(x => x.classList.contains("afspraak")).length === 2; }));
   check("tijdlijn op tijd gesorteerd", await p.evaluate(() => { const t = [...document.querySelectorAll(".md-tijdlijn time")].map(x => x.textContent); return t.every((x, i) => !i || x >= t[i - 1]); }));
   check("hooguit één Nu-kaart", await p.locator(".md-nu").count() === 1);
   check("Nu-kaart: 1–2–rest", await p.evaluate(() => { const k = document.querySelector(".md-nu"); const n = mdNu(); return k.querySelector("h2").textContent.includes("Formulier invullen") && n.twee[0].titel === "Was ophangen" && n.twee.length === 2 && n.rest >= 1 && /en nog \d/.test(k.querySelector(".md-daarna").textContent); }));
