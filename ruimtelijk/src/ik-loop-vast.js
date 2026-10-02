@@ -66,8 +66,9 @@ function ivMeting(log, taken, nu) {
     const ts = Date.parse(r.ts); if (!(ts <= n)) continue;
     gebruikt++;
     const t = (taken || []).find(x => x.id === r.taakId);
-    const klaar = t && t.afOp && Date.parse(t.afOp) >= ts && Date.parse(t.afOp) - ts <= dag;
-    if (klaar || r.stapAf) gevolgd++;
+    const binnen = x => x && Date.parse(x) >= ts && Date.parse(x) - ts <= dag;
+    const klaar = t && (binnen(t.afOp) || (t.subtaken || []).some(s => s.af && binnen(s.afOp)));
+    if (klaar) gevolgd++;
   }
   return { gebruikt, gevolgd };
 }
@@ -87,7 +88,8 @@ function ivOpen(taakId) {
   const t = vind("taken", taakId); if (!t) return;
   bladOpen("Wat is het lastigst?", `<p class="klein iv-titel">${esc(t.titel)}</p>
     <div class="iv-keuzes">${IV_OORZAKEN.map(o => `<button type="button" class="iv-keuze" data-iv-oorzaak="${o.id}"><b>${esc(o.label)}</b><small>${esc(o.sub)}</small></button>`).join("")}</div>
-    <button type="button" class="iv-los" data-iv-los="1">${esc(IV_LOSLATEN.label)}</button>`);
+    <button type="button" class="iv-los" data-iv-los="1">${esc(IV_LOSLATEN.label)}</button>
+    ${(m => m.gebruikt >= 3 ? `<p class="klein iv-meting">Eerder: ${m.gevolgd} van de ${m.gebruikt} keer kwam er binnen een dag een stap af.</p>` : "")(ivMeting(ivLog(), S.taken))}`);
   $("#bladinhoud").onclick = e => {
     const k = e.target.closest("[data-iv-oorzaak]");
     if (k) return ivRoute(t, ivOorzaak(k.dataset.ivOorzaak));
@@ -118,9 +120,12 @@ function ivRoute(t, o) {
 }
 
 async function ivDoe(t, o, stap, tekst) {
+  let bovenaan = true;
   if (stap.actie === "stap") {
     if (!String(tekst || "").trim()) { toast("Schrijf eerst één handeling op"); return; }
+    const voor = (t.subtaken || []).length;
     t.subtaken = normaliseerSubtaken(ivMetStap(t.subtaken, tekst));
+    bovenaan = t.subtaken.length > voor;
     await bewaar("taken", t);
   }
   await ivLogVoeg(t.id, o.id, stap.actie);
@@ -137,13 +142,14 @@ async function ivDoe(t, o, stap, tekst) {
   }
   if (stap.actie === "timer" || stap.timer) startTimer(t.id);
   teken();
-  if (stap.actie === "stap") toast(stap.timer ? "Eerste stap staat bovenaan. De timer loopt." : "Eerste stap staat bovenaan.");
+  if (stap.actie === "stap") toast((bovenaan ? "Eerste stap staat bovenaan." : "Die stap stond er al.") + (stap.timer ? " De timer loopt." : ""));
 }
 
 async function ivLoslaten(t) {
   t.datum = plusDagen(vandaagISO(), 1); t.tijd = t.tijd || "";
-  t.uitgesteld = (t.uitgesteld || 0) + 1;
+  t.uitgesteld = (t.uitgesteld || 0) + 1; t.uitgesteldTot = null;
   await bewaar("taken", t);
+  if (typeof plangMeldingen === "function") plangMeldingen();
   await ivLogVoeg(t.id, "los", "morgen");
   bladSluit(); teken(); toast(IV_LOSLATEN.toast);
 }
@@ -163,3 +169,13 @@ document.addEventListener("click", e => {
   e.preventDefault(); e.stopImmediatePropagation();
   ivOpen(b.dataset.iv);   // bladOpen vervangt een open taakblad meteen
 }, true);
+
+// Tijdstip bij het afvinken van een subtaak (voor de meting hierboven).
+{
+  const _vink = subVink;
+  subVink = function (lijst, i) {
+    const af = _vink.apply(this, arguments);
+    if (lijst && lijst[i]) { if (af) lijst[i].afOp = new Date().toISOString(); else delete lijst[i].afOp; }
+    return af;
+  };
+}

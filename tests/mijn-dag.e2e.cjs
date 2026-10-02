@@ -137,7 +137,8 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("alle schermen tekenen zonder fout", views.length === 0, views.join(", "));
   // Gedachte naar de mindmap.
   await p.click('#tabs [data-tab="start"]'); await wacht(400);
-  check("+ Vastleggen: Gedachte naar de mindmap bovenaan", await p.evaluate(() => { const f = document.querySelector("#scherm .nv-gedachte"); return !!f && f === document.querySelector("#scherm").firstElementChild; }));
+  // Sinds V3 staat het ene invoerveld bovenaan; Gedachte naar de mindmap volgt direct.
+  check("+ Vastleggen: invoerveld, dan Gedachte naar de mindmap", await p.evaluate(() => { const s = document.querySelector("#scherm"), f = s.querySelector(".nv-gedachte"); return !!f && s.firstElementChild.classList.contains("vi") && f === s.firstElementChild.nextElementSibling; }));
   await p.screenshot({ path: path.join(UIT, "nv-04-vastleggen-390.png") });
   await p.fill("#nv-gedachte", "Misschien een moestuin"); await p.press("#nv-gedachte", "Enter"); await wacht(500);
   check("gedachte landt in de tak Losse gedachten", await p.evaluate(() => { const mm = mmHuidige(); const tak = mm && mm.nodes.find(n => n.tekst === "Losse gedachten"); return !!tak && mm.nodes.some(n => n.parentId === tak.id && n.tekst === "Misschien een moestuin"); }));

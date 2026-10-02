@@ -22,6 +22,8 @@ test("reistijd uit de tekst", () => {
   assert.deepEqual(kaal(I.viReistijd("tandarts morgen 14:00 reistijd 25")), { tekst: "tandarts morgen 14:00", reistijd: 25 });
   assert.deepEqual(kaal(I.viReistijd("kapper 30 min reizen vrijdag")), { tekst: "kapper vrijdag", reistijd: 30 });
   assert.equal(I.viReistijd("boodschappen").reistijd, 0);
+  assert.deepEqual(kaal(I.viReistijd("tandarts morgen 14:00 reistijd: 25")), { tekst: "tandarts morgen 14:00", reistijd: 25 });
+  assert.equal(I.viReistijd("bruiloft reistijd 1,5 uur").reistijd, 90);
 });
 
 test("afspraakwoord met tijd: zeker een afspraak", () => {

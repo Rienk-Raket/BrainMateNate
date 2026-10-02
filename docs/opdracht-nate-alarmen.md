@@ -4,15 +4,20 @@ Brain-Mate Nate kan op iOS geen melding sturen als de app dicht is, want daarvoo
 
 ## Stappen
 
-1. Open **Opdrachten** en tik op **+**. Noem de opdracht **Nate alarmen** (precies zo, of pas de naam aan in Nate).
-2. **Haal woordenboek op uit** *Invoer van opdracht* (Get Dictionary from Input).
-3. **Haal waarde op voor** `alarmen` in *Woordenboek* (Get Dictionary Value).
-4. **Herhaal met elk** (Repeat with Each) item in *Woordenboekwaarde*. Daarbinnen:
-   1. **Haal waarde op voor** `moment` in *Herhaalitem*, daarna **Haal datums op uit invoer** (Get Dates from Input).
-   2. **Voeg nieuwe herinnering toe** (Add New Reminder): titel = waarde `titel`, waarschuw = *Datums*, notities = waarde `notitie`.
-   3. **Als** (If) waarde `wekker` *is* `ja`: **Maak wekker aan** (Create Alarm) op *Datums*, label = waarde `titel`. Zie je die actie niet, sla hem over; de herinnering blijft.
-5. Bij de eerste vraag om toestemming voor Herinneringen en Klok: **Sta altijd toe**.
-6. In Nate: open een afspraak met een tijd → **Alarmen instellen** → **Test: herinnering over 2 minuten**. Krijg je die, tik op **Opdracht staat klaar**.
+1. Open **Opdrachten**, tik op **+** en noem de opdracht **Nate alarmen** (precies zo, of pas de naam aan in Nate).
+2. Tik op **ⓘ** (details) en zet **Ontvang invoer van** aan, soort **Tekst** (Receive Text input). Anders komt de tekst uit Nate niet binnen.
+3. **Haal woordenboek op uit** *Invoer van opdracht* (Get Dictionary from Input).
+4. **Haal waarde op voor** sleutel `alarmen` in *Woordenboek* (Get Dictionary Value).
+5. **Herhaal met elk** item in *Woordenboekwaarde* (Repeat with Each). Daarbinnen, in deze volgorde:
+   1. **Haal waarde op voor** `moment` in *Herhaalitem*, daarna **Haal datums op uit** die waarde (Get Dates from Input). Hernoem het resultaat naar *Wanneer*.
+   2. **Haal waarde op voor** `titel` in *Herhaalitem*. Hernoem naar *Titel*.
+   3. **Haal waarde op voor** `notitie` in *Herhaalitem*. Hernoem naar *Notitie*.
+   4. **Voeg nieuwe herinnering toe** (Add New Reminder): titel *Titel*, waarschuw op *Wanneer*, notities *Notitie*.
+   5. **Haal waarde op voor** `wekker` in *Herhaalitem*, daarna **Als** die waarde *is* `ja` (If): **Maak wekker aan** om *Wanneer* met label *Titel* (Create Alarm). Zie je die actie niet, sla hem over; de herinnering blijft.
+6. Bij de eerste vraag om toestemming voor Herinneringen en Klok: **Sta altijd toe**.
+7. In Nate: open een afspraak met een tijd → **Alarmen instellen** → **Test: herinnering over 2 minuten**. Krijg je die, tik op **Opdracht staat klaar**.
+
+Een wekker in Klok kent alleen een kloktijd, geen datum. Daarom zet Nate `wekker` alleen op `ja` als de afspraak **vandaag** is; tik op de dag zelf nog eens op de knop. Herinneringen werken voor elke dag.
 
 De namen van de acties kunnen per iOS-versie iets anders heten; zoek op het Engelse woord als het Nederlandse niet werkt.
 
@@ -21,7 +26,7 @@ De namen van de acties kunnen per iOS-versie iets anders heten; zoek op het Enge
 ```json
 { "app": "BrainMateNate", "versie": 1,
   "alarmen": [
-    { "soort": "stoppen", "moment": "2026-10-02 13:10", "titel": "NU afronden: over 5 minuten voorbereiden voor Tandarts", "notitie": "Tandarts · begint 14:00 · Stationsweg 12", "wekker": "nee" },
+    { "soort": "stoppen", "moment": "2026-10-02 13:10", "titel": "NU afronden waar je mee bezig bent, straks Tandarts", "notitie": "Tandarts · begint 14:00 · Stationsweg 12", "wekker": "nee" },
     { "soort": "voorbereiden", "moment": "2026-10-02 13:15", "titel": "NU spullen pakken voor Tandarts", "notitie": "…", "wekker": "nee" },
     { "soort": "vertrekken", "moment": "2026-10-02 13:25", "titel": "NU jas aan en vertrekken naar Tandarts", "notitie": "…", "wekker": "ja" } ] }
 ```
@@ -30,4 +35,4 @@ Terugrekenen: vertrekken = begin − reistijd − buffer (standaard 10); voorber
 
 ## Reserve
 
-**Naar Agenda** (.ics) bevat dezelfde drie alarmen plus het bestaande alarm 15 minuten vooraf.
+**Naar Agenda** (.ics) bevat bij een afspraak met reistijd dezelfde drie alarmen plus het bestaande alarm 15 minuten vooraf.

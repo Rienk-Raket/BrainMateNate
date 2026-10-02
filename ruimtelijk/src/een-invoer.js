@@ -26,9 +26,10 @@ const VI_SOORTEN = {
 /** Reistijd uit de tekst halen ("reistijd 25", "25 min reizen"). */
 function viReistijd(tekst) {
   const s = String(tekst || "");
-  const m = /\breis(?:tijd)?\s*(\d{1,3})\s*(?:min(?:uten)?|m)?\b/i.exec(s) || /\b(\d{1,3})\s*(?:min(?:uten)?|m)\s+reizen\b/i.exec(s);
+  const m = /\breis(?:tijd)?\s*:?\s*(\d{1,3}(?:[.,]\d)?)\s*(min(?:uten)?|m|uur|u)?\b/i.exec(s) || /\b(\d{1,3}(?:[.,]\d)?)\s*(min(?:uten)?|m|uur|u)\s+reizen\b/i.exec(s);
   if (!m) return { tekst: s, reistijd: 0 };
-  return { tekst: (s.slice(0, m.index) + s.slice(m.index + m[0].length)).replace(/\s{2,}/g, " ").trim(), reistijd: Math.min(600, +m[1]) };
+  const getal = parseFloat(m[1].replace(",", ".")), min = /^u/i.test(m[2] || "") ? getal * 60 : getal;
+  return { tekst: (s.slice(0, m.index) + s.slice(m.index + m[0].length)).replace(/\s{2,}/g, " ").trim(), reistijd: Math.min(600, Math.round(min)) };
 }
 
 function viWoorden(tekst) {
@@ -92,7 +93,13 @@ function viVeldHTML() {
   </section>`;
 }
 
+let viBezig = false;
 async function viOpslaan() {
+  if (viBezig) return;
+  viBezig = true;
+  try { await viOpslaanNu(); } finally { viBezig = false; }
+}
+async function viOpslaanNu() {
   const tekst = V.vi.tekst.trim(); if (!tekst) return;
   const b = viBegrijp(tekst), soort = b.soort;
   if (!b.s.zeker && !V.vi.keuze) return;
@@ -102,8 +109,11 @@ async function viOpslaan() {
     toastTekst = "Taak opgeslagen" + (t.datum ? " · " + datumLabel(t.datum) : ""); terug = () => openTaakBlad(t.id);
   } else if (soort === "afspraak") {
     const p = b.p, a = { id: uid(), titel: p.titel || tekst, soort: "gesprek", datum: p.datum || (p.tijd ? vandaagISO() : null), tijd: p.tijd || "", eindTijd: "",
-      plek: "", personen: p.personen || [], voorbereiding: "", notities: "", uitkomst: "", reistijd: b.reistijd || 0, buffer: null, gemaakt: new Date().toISOString() };
-    await bewaar("afspraken", a); await logGebeurtenis("afspraak", "Afspraak vastgelegd: " + a.titel, a.id).catch(() => {});
+      plek: "", personen: p.personen || [], voorbereiding: "", notities: "", uitkomst: "", reistijd: b.reistijd || 0, buffer: null,
+      herhaal: p.herhaal || null, labels: p.labels || [], gemaakt: new Date().toISOString() };
+    if (p.project) a.notities = "#" + p.project;
+    await bewaar("afspraken", a);
+    if (a.herhaal && typeof reeksNieuw === "function") await reeksNieuw("afspraken", a); await logGebeurtenis("afspraak", "Afspraak vastgelegd: " + a.titel, a.id).catch(() => {});
     toastTekst = "Afspraak opgeslagen" + (a.datum ? " · " + datumLabel(a.datum) : ""); terug = () => openAfspraakBlad(a.id);
   } else if (soort === "gedachte") {
     await nvGedachte(b.r && b.r.uitkomst === "gedachte" ? b.r.tekst : tekst);
@@ -134,7 +144,7 @@ document.addEventListener("input", e => {
   const uit = $("#vi-uit"); if (uit) uit.innerHTML = viVoorbeeldHTML(V.vi.tekst);
 });
 document.addEventListener("keydown", e => {
-  if (e.target && e.target.id === "vi-veld" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); viOpslaan(); }
+  if (e.target && e.target.id === "vi-veld" && e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); viOpslaan(); }
 });
 document.addEventListener("click", e => {
   const k = e.target.closest && e.target.closest("[data-vi-soort], [data-vi]"); if (!k) return;

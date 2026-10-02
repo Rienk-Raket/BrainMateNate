@@ -42,6 +42,9 @@ test("payload voor Opdrachten: datum en tijd, titel in actievorm, wekker alleen 
   assert.equal(p.alarmen[2].moment, "2026-10-02 13:25");
   assert.match(p.alarmen[2].titel, /^NU jas aan/);
   assert.deepEqual(kaal(p.alarmen.map(x => x.wekker)), ["nee", "nee", "ja"]);
+  // Klok kent geen datum: alleen een wekker als de afspraak vandaag is.
+  assert.equal(P.tpPayload(tand, P.tpMomenten(tand), { vandaag: "2026-10-02" }).alarmen[2].wekker, "ja");
+  assert.equal(P.tpPayload(tand, P.tpMomenten(tand), { vandaag: "2026-10-01" }).alarmen[2].wekker, "nee");
   assert.equal(P.tpPayload(tand, P.tpMomenten(tand), { wekker: false }).alarmen[2].wekker, "nee");
   assert.ok(p.alarmen[0].notitie.includes("begint 14:00"));
 });

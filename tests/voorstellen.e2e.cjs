@@ -76,6 +76,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.click(".md-nu [data-iv]"); await wacht(300);
   await p.click("[data-iv-los]"); await wacht(400);
   check("V7: loslaten zet de taak op morgen", await p.evaluate(() => S.taken.find(t => t.titel === "Belastingaangifte").datum === plusDagen(vandaagISO(), 1)));
+  check("V7: loslaten heft oud uitstel op", await p.evaluate(() => !S.taken.find(t => t.titel === "Belastingaangifte").uitgesteldTot));
   check("V7: toast zonder schuld", !/moet|jammer|helaas/i.test(await p.locator("#toast, .toast").first().textContent().catch(() => "")));
 
   // In het taakblad.
@@ -106,8 +107,8 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   const urls = await p.evaluate(() => window.__urls);
   check("V6: één lokale link naar Opdrachten", urls.length === 1 && urls[0].startsWith("shortcuts://run-shortcut?name=Nate%20alarmen&input=text&text="), urls[0]);
   const pl = JSON.parse(decodeURIComponent(urls[0].split("&text=")[1]));
-  check("V6: drie alarmen, wekker bij vertrekken", pl.alarmen.length === 3 && pl.alarmen[2].wekker === "ja" && pl.alarmen[2].moment.endsWith("13:25"), JSON.stringify(pl.alarmen.map(x => x.moment)));
-  check("V6: tijdstip van doorgeven bewaard", await p.locator(".tp-gezet").count() === 1);
+  check("V6: drie alarmen, wekker bij vertrekken (afspraak vandaag)", pl.alarmen.length === 3 && pl.alarmen[2].wekker === "ja" && pl.alarmen[2].moment.endsWith("13:25"), JSON.stringify(pl.alarmen.map(x => x.moment)));
+  check("V6: tijdstip van doorgeven in lokale tijd", (await p.locator(".tp-gezet").textContent()).includes("10:42"));
   await p.click('[data-tp="zet"]'); await wacht(300);
   check("V6: tweede keer meteen doorgeven, zonder uitleg", (await p.evaluate(() => window.__urls.length)) === 2 && !(await p.locator("#blad.open .tp-recept").count()));
   const ics = await p.evaluate(id => afspraakNaarIcs(vind("afspraken", id)).join("\n"), aid);
@@ -128,6 +129,9 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   const af = await p.evaluate(() => S.afspraken.find(a => a.titel.toLowerCase().startsWith("tandarts") && a.datum === plusDagen(vandaagISO(), 1)));
   check("V3: afspraak opgeslagen met reistijd", af && af.tijd === "14:00" && af.reistijd === 25, JSON.stringify(af));
   check("V3: veld weer leeg", (await p.inputValue("#vi-veld")) === "");
+  await p.fill("#vi-veld", "overleg elke maandag 09:00");
+  await p.click('[data-vi="op"]'); await wacht(500);
+  check("V3: afspraak met herhaling", await p.evaluate(() => { const a = S.afspraken.find(x => /^overleg/i.test(x.titel)); return !!(a && a.herhaal && a.herhaal.soort === "week"); }));
   await p.fill("#vi-veld", "kapper bellen"); await wacht(250);
   check("V3: twijfel → opslaan pas na kiezen", await p.locator('[data-vi="op"]').isDisabled());
   await p.click('[data-vi-soort="taak"]'); await wacht(200);

@@ -32291,8 +32291,9 @@ function ivMeting(log, taken, nu) {
     const ts = Date.parse(r.ts); if (!(ts <= n)) continue;
     gebruikt++;
     const t = (taken || []).find(x => x.id === r.taakId);
-    const klaar = t && t.afOp && Date.parse(t.afOp) >= ts && Date.parse(t.afOp) - ts <= dag;
-    if (klaar || r.stapAf) gevolgd++;
+    const binnen = x => x && Date.parse(x) >= ts && Date.parse(x) - ts <= dag;
+    const klaar = t && (binnen(t.afOp) || (t.subtaken || []).some(s => s.af && binnen(s.afOp)));
+    if (klaar) gevolgd++;
   }
   return { gebruikt, gevolgd };
 }
@@ -32312,7 +32313,8 @@ function ivOpen(taakId) {
   const t = vind("taken", taakId); if (!t) return;
   bladOpen("Wat is het lastigst?", `<p class="klein iv-titel">${esc(t.titel)}</p>
     <div class="iv-keuzes">${IV_OORZAKEN.map(o => `<button type="button" class="iv-keuze" data-iv-oorzaak="${o.id}"><b>${esc(o.label)}</b><small>${esc(o.sub)}</small></button>`).join("")}</div>
-    <button type="button" class="iv-los" data-iv-los="1">${esc(IV_LOSLATEN.label)}</button>`);
+    <button type="button" class="iv-los" data-iv-los="1">${esc(IV_LOSLATEN.label)}</button>
+    ${(m => m.gebruikt >= 3 ? `<p class="klein iv-meting">Eerder: ${m.gevolgd} van de ${m.gebruikt} keer kwam er binnen een dag een stap af.</p>` : "")(ivMeting(ivLog(), S.taken))}`);
   $("#bladinhoud").onclick = e => {
     const k = e.target.closest("[data-iv-oorzaak]");
     if (k) return ivRoute(t, ivOorzaak(k.dataset.ivOorzaak));
@@ -32343,9 +32345,12 @@ function ivRoute(t, o) {
 }
 
 async function ivDoe(t, o, stap, tekst) {
+  let bovenaan = true;
   if (stap.actie === "stap") {
     if (!String(tekst || "").trim()) { toast("Schrijf eerst één handeling op"); return; }
+    const voor = (t.subtaken || []).length;
     t.subtaken = normaliseerSubtaken(ivMetStap(t.subtaken, tekst));
+    bovenaan = t.subtaken.length > voor;
     await bewaar("taken", t);
   }
   await ivLogVoeg(t.id, o.id, stap.actie);
@@ -32362,13 +32367,14 @@ async function ivDoe(t, o, stap, tekst) {
   }
   if (stap.actie === "timer" || stap.timer) startTimer(t.id);
   teken();
-  if (stap.actie === "stap") toast(stap.timer ? "Eerste stap staat bovenaan. De timer loopt." : "Eerste stap staat bovenaan.");
+  if (stap.actie === "stap") toast((bovenaan ? "Eerste stap staat bovenaan." : "Die stap stond er al.") + (stap.timer ? " De timer loopt." : ""));
 }
 
 async function ivLoslaten(t) {
   t.datum = plusDagen(vandaagISO(), 1); t.tijd = t.tijd || "";
-  t.uitgesteld = (t.uitgesteld || 0) + 1;
+  t.uitgesteld = (t.uitgesteld || 0) + 1; t.uitgesteldTot = null;
   await bewaar("taken", t);
+  if (typeof plangMeldingen === "function") plangMeldingen();
   await ivLogVoeg(t.id, "los", "morgen");
   bladSluit(); teken(); toast(IV_LOSLATEN.toast);
 }
@@ -32388,6 +32394,16 @@ document.addEventListener("click", e => {
   e.preventDefault(); e.stopImmediatePropagation();
   ivOpen(b.dataset.iv);   // bladOpen vervangt een open taakblad meteen
 }, true);
+
+// Tijdstip bij het afvinken van een subtaak (voor de meting hierboven).
+{
+  const _vink = subVink;
+  subVink = function (lijst, i) {
+    const af = _vink.apply(this, arguments);
+    if (lijst && lijst[i]) { if (af) lijst[i].afOp = new Date().toISOString(); else delete lijst[i].afOp; }
+    return af;
+  };
+}
 
 </script>
 <script>
@@ -32412,7 +32428,7 @@ document.addEventListener("click", e => {
 /* NATE-TP-BEGIN */
 const TP_STD = { voorbereiden: 10, afronden: 5, buffer: 10, naam: "Nate alarmen", wekker: true };
 const TP_SOORTEN = {
-  stoppen: { label: "Stoppen", zin: t => `NU afronden: over 5 minuten voorbereiden voor ${t}` },
+  stoppen: { label: "Stoppen", zin: t => `NU afronden waar je mee bezig bent, straks ${t}` },
   voorbereiden: { label: "Voorbereiden", zin: t => `NU spullen pakken voor ${t}` },
   vertrekken: { label: "Vertrekken", zin: t => `NU jas aan en vertrekken naar ${t}` },
   beginnen: { label: "Beginnen", zin: t => `NU naar ${t}` }
@@ -32441,7 +32457,8 @@ function tpMomenten(a, std) {
   return uit.filter(m => m.min >= 0).sort((x, y) => x.min - y.min).map(m => Object.assign(m, { tijd: tpHHMM(m.min) }));
 }
 
-/** De tekst die naar de opdracht gaat: JSON met per alarm datum, tijd, titel en of er een wekker bij moet. */
+/** De tekst die naar de opdracht gaat: JSON met per alarm datum, tijd, titel en of er een wekker bij hoort.
+    Een wekker in Klok kent alleen een kloktijd, geen datum: daarom alleen een wekker als de afspraak vandaag is (o.vandaag). */
 function tpPayload(a, momenten, std) {
   const o = Object.assign({}, TP_STD, std || {});
   return {
@@ -32451,7 +32468,7 @@ function tpPayload(a, momenten, std) {
       moment: `${a.datum} ${m.tijd}`,
       titel: TP_SOORTEN[m.soort].zin(a.titel),
       notitie: [a.titel, a.tijd ? `begint ${a.tijd}` : "", a.plek || ""].filter(Boolean).join(" · "),
-      wekker: o.wekker && m.soort === "vertrekken" ? "ja" : "nee"
+      wekker: o.wekker && m.soort === "vertrekken" && (!o.vandaag || a.datum === o.vandaag) ? "ja" : "nee"
     }))
   };
 }
@@ -32467,7 +32484,7 @@ function tpIcsAlarmen(a, momenten) {
 }
 /* NATE-TP-EINDE */
 
-const tpInst = () => Object.assign({}, TP_STD, inst("tpAlarmen", {}) || {});
+const tpInst = () => Object.assign({}, TP_STD, { buffer: typeof mdBufferStd === "function" ? mdBufferStd() : TP_STD.buffer }, inst("tpAlarmen", {}) || {});
 const tpVoor = a => tpMomenten(a, tpInst());
 
 /* ---------- Tijdlijn van Mijn dag: stoppen en voorbereiden erbij ---------- */
@@ -32494,7 +32511,7 @@ function tpKaartHTML(a) {
       <li class="tp-begin"><time>${esc(a.tijd)}</time><span><b>${esc(a.titel)}</b>${a.plek ? `<small>${esc(a.plek)}</small>` : ""}</span></li></ol>
     <button class="knop breed primair" data-tp="zet" data-id="${esc(a.id)}">${ico("klok")} ${ingesteld ? "Alarmen op mijn iPhone zetten" : "Alarmen instellen"}</button>
     ${ingesteld ? `<button class="iv-los" data-tp="uitleg">Opdracht of wekker wijzigen</button>` : ""}
-    ${a.tpGezet ? `<p class="klein tp-gezet">Doorgegeven aan Opdrachten op ${esc(datumLabel(a.tpGezet.slice(0, 10)))} om ${esc(a.tpGezet.slice(11, 16))}.</p>` : ""}
+    ${a.tpGezet ? (d => `<p class="klein tp-gezet">Doorgegeven aan Opdrachten op ${esc(datumLabel(dISO(d)))} om ${pad(d.getHours())}:${pad(d.getMinutes())}.</p>`)(new Date(a.tpGezet)) : ""}
     <details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Herinneringen met een alarm helpen beter dan een lijst die je zelf nakijkt, en meer dan één herinnering helpt meer dan één. Dat is onderzocht in brede groepen, niet specifiek bij ADHD; de precieze tijden zijn een experiment.</p></details>
   </div>`;
 }
@@ -32513,22 +32530,22 @@ function tpKaartHTML(a) {
   const _ics = afspraakNaarIcs;
   afspraakNaarIcs = function (a) {
     const L = _ics.apply(this, arguments);
-    if (!L || !a || !a.datum || !a.tijd) return L;
+    if (!L || !a || !a.datum || !a.tijd || !(+a.reistijd > 0)) return L;   // alleen waar terugplannen echt iets toevoegt
     const extra = tpIcsAlarmen(a, tpVoor(a)), i = L.lastIndexOf("END:VEVENT");
     return i < 0 ? L : L.slice(0, i).concat(extra, L.slice(i));
   };
 }
 
 /* ---------- De brug naar Opdrachten ---------- */
-async function tpZet(id) {
+// Synchroon tot tpOpen: iOS opent een andere app alleen direct na een tik (geen await ervoor).
+function tpZet(id) {
   const a = vind("afspraken", id); if (!a) return;
   if (!inst("tpIngesteld", false)) return tpUitleg(id);
-  const ms = tpVoor(a).filter(m => new Date(`${a.datum}T${m.tijd}`) > new Date());
+  const nu = new Date(), ms = tpVoor(a).filter(m => new Date(`${a.datum}T${m.tijd}`) > nu);
   if (!ms.length) { toast("Alle momenten zijn al voorbij"); return; }
-  const url = tpUrl(tpInst().naam, tpPayload(a, ms, tpInst()));
-  a.tpGezet = new Date().toISOString(); await bewaar("afspraken", a);
-  tpOpen(url);
-  teken();
+  tpOpen(tpUrl(tpInst().naam, tpPayload(a, ms, Object.assign(tpInst(), { vandaag: vandaagISO() }))));
+  a.tpGezet = nu.toISOString();
+  bewaar("afspraken", a).then(() => teken());
 }
 function tpOpen(url) {
   const l = document.createElement("a"); l.href = url; l.rel = "noopener"; document.body.appendChild(l); l.click(); l.remove();
@@ -32537,33 +32554,40 @@ function tpOpen(url) {
 function tpUitleg(id) {
   const o = tpInst();
   bladOpen("Alarmen via Opdrachten", `<p>Een app op je beginscherm kan geen wekker zetten als hij dicht is. De app Opdrachten kan dat wel, op je eigen iPhone.</p>
-    <ol class="tp-stappen"><li>Maak één keer de opdracht <b>${esc(o.naam)}</b>. Het stappenplan staat hieronder.</li><li>Tik daarna bij een afspraak op <b>Alarmen op mijn iPhone zetten</b>.</li><li>Opdrachten maakt de herinneringen${o.wekker ? " en een wekker voor vertrekken" : ""}.</li></ol>
-    <details class="tp-recept"><summary>Stappenplan voor de opdracht</summary>${TP_RECEPT}</details>
+    <ol class="tp-stappen"><li>Maak één keer de opdracht <b>${esc(o.naam)}</b>. Het stappenplan staat hieronder.</li><li>Tik daarna bij een afspraak op <b>Alarmen op mijn iPhone zetten</b>.</li><li>Opdrachten maakt de herinneringen${o.wekker ? " en, op de dag zelf, een wekker voor vertrekken" : ""}.</li></ol>
+    <details class="tp-recept"><summary>Stappenplan voor de opdracht</summary>${tpRecept(o.naam)}</details>
     <button type="button" class="tp-schakel" id="tp-wekker" aria-pressed="${o.wekker}"><span class="tekst"><b>Wekker voor vertrekken</b><small class="klein">Gaat ook af als je telefoon op stil staat.</small></span><span class="toggle" aria-hidden="true" aria-pressed="${o.wekker}"></span></button>
     <div class="veld"><label for="tp-naam">Naam van de opdracht</label><input class="invoer" id="tp-naam" value="${esc(o.naam)}" autocomplete="off"></div>
     <button class="knop breed rand" id="tp-test">Test: herinnering over 2 minuten</button>
     <p class="klein">Er gaat niets via internet. De app geeft de tijden als tekst door aan Opdrachten.</p>`,
     `<button class="knop breed primair" id="tp-klaar">Opdracht staat klaar</button>`);
-  const bewaarInst = async () => zetInst("tpAlarmen", { naam: $("#tp-naam").value.trim() || TP_STD.naam, wekker: $("#tp-wekker").getAttribute("aria-pressed") === "true" });
+  const leesInst = () => ({ naam: $("#tp-naam").value.trim() || TP_STD.naam, wekker: $("#tp-wekker").getAttribute("aria-pressed") === "true" });
   $("#tp-wekker").onclick = e => { const b = e.currentTarget, aan = String(b.getAttribute("aria-pressed") !== "true"); b.setAttribute("aria-pressed", aan); b.querySelector(".toggle").setAttribute("aria-pressed", aan); };
-  $("#tp-test").onclick = async () => {
-    await bewaarInst();
-    const d = new Date(Date.now() + 2 * 60000), hhmm = pad(d.getHours()) + ":" + pad(d.getMinutes());
-    tpOpen(tpUrl(tpInst().naam, { app: "BrainMateNate", versie: 1, alarmen: [{ soort: "test", moment: `${dISO(d)} ${hhmm}`, titel: "Test van Nate: het werkt", notitie: "Deze mag je verwijderen.", wekker: "nee" }] }));
+  $("#tp-test").onclick = () => {
+    const o = leesInst(), d = new Date(Date.now() + 2 * 60000), hhmm = pad(d.getHours()) + ":" + pad(d.getMinutes());
+    zetInst("tpAlarmen", o);
+    tpOpen(tpUrl(o.naam, { app: "BrainMateNate", versie: 1, alarmen: [{ soort: "test", moment: `${dISO(d)} ${hhmm}`, titel: "Test van Nate: het werkt", notitie: "Deze mag je verwijderen.", wekker: "nee" }] }));
   };
-  $("#tp-klaar").onclick = async () => { await bewaarInst(); await zetInst("tpIngesteld", true); bladSluit(); if (id) tpZet(id); else teken(); };
+  $("#tp-klaar").onclick = () => {
+    // Instellingen eerst in het geheugen (inst leest S.inst), dan meteen de link; opslaan loopt erachteraan.
+    const o = leesInst(); zetInst("tpAlarmen", o); zetInst("tpIngesteld", true);
+    bladSluit(); if (id) tpZet(id); else teken();
+  };
 }
 
-const TP_RECEPT = `<ol class="tp-recept-lijst">
-  <li>Open <b>Opdrachten</b> en tik op <b>+</b>. Noem de opdracht <b>Nate alarmen</b> (precies zo).</li>
-  <li>Voeg toe: <b>Haal woordenboek op uit</b> <i>Invoer van opdracht</i> (Get Dictionary from Input).</li>
-  <li>Voeg toe: <b>Haal waarde op voor</b> <i>alarmen</i> in <i>Woordenboek</i> (Get Dictionary Value).</li>
-  <li>Voeg toe: <b>Herhaal met elk</b> (Repeat with Each) item in <i>Woordenboekwaarde</i>. Daarbinnen:
-    <ol><li><b>Haal waarde op voor</b> <i>moment</i>, daarna <b>Haal datums op uit invoer</b> (Get Dates from Input).</li>
-    <li><b>Voeg nieuwe herinnering toe</b> (Add New Reminder): titel = waarde <i>titel</i>, waarschuw = <i>Datums</i>, notities = waarde <i>notitie</i>.</li>
-    <li><b>Als</b> (If) waarde <i>wekker</i> <i>is</i> ja: <b>Maak wekker aan</b> (Create Alarm) op <i>Datums</i>, label = waarde <i>titel</i>. Zie je die actie niet, sla hem dan over; de herinnering blijft.</li></ol></li>
-  <li>Tik bij de eerste vraag om toestemming voor Herinneringen en Klok op <b>Sta altijd toe</b>.</li>
-</ol><p class="klein">De namen van de acties kunnen per iOS-versie iets anders heten; zoek op het Engelse woord als het Nederlandse niet werkt.</p>`;
+const tpRecept = naam => `<ol class="tp-recept-lijst">
+  <li>Open <b>Opdrachten</b>, tik op <b>+</b> en noem de opdracht <b>${esc(naam)}</b> (precies zo).</li>
+  <li>Tik op <b>ⓘ</b> (details) en zet <b>Ontvang invoer van</b> aan, met als soort <b>Tekst</b> (Receive Text input).</li>
+  <li><b>Haal woordenboek op uit</b> <i>Invoer van opdracht</i> (Get Dictionary from Input).</li>
+  <li><b>Haal waarde op voor</b> sleutel <i>alarmen</i> in <i>Woordenboek</i> (Get Dictionary Value).</li>
+  <li><b>Herhaal met elk</b> item in <i>Woordenboekwaarde</i> (Repeat with Each). Zet daarbinnen, in deze volgorde:
+    <ol><li><b>Haal waarde op voor</b> <i>moment</i> in <i>Herhaalitem</i>, daarna <b>Haal datums op uit</b> die waarde (Get Dates from Input). Hernoem het resultaat naar <i>Wanneer</i>.</li>
+    <li><b>Haal waarde op voor</b> <i>titel</i> in <i>Herhaalitem</i>. Hernoem naar <i>Titel</i>.</li>
+    <li><b>Haal waarde op voor</b> <i>notitie</i> in <i>Herhaalitem</i>. Hernoem naar <i>Notitie</i>.</li>
+    <li><b>Voeg nieuwe herinnering toe</b> (Add New Reminder): titel <i>Titel</i>, waarschuw op <i>Wanneer</i>, notities <i>Notitie</i>.</li>
+    <li><b>Haal waarde op voor</b> <i>wekker</i> in <i>Herhaalitem</i>, daarna <b>Als</b> die waarde <i>is</i> <b>ja</b> (If): <b>Maak wekker aan</b> om <i>Wanneer</i> met label <i>Titel</i> (Create Alarm). Zie je die actie niet, sla hem over.</li></ol></li>
+  <li>Bij de eerste vraag om toestemming voor Herinneringen en Klok: <b>Sta altijd toe</b>.</li>
+</ol><p class="klein">Een wekker kent alleen een kloktijd, geen datum. Daarom vraagt Nate alleen een wekker voor afspraken van vandaag; tik op de dag zelf nog eens op de knop. Herinneringen werken voor elke dag. De namen van de acties kunnen per iOS-versie iets anders heten; zoek dan op het Engelse woord.</p>`;
 
 document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest("[data-tp]"); if (!b) return;
@@ -32602,9 +32626,10 @@ const VI_SOORTEN = {
 /** Reistijd uit de tekst halen ("reistijd 25", "25 min reizen"). */
 function viReistijd(tekst) {
   const s = String(tekst || "");
-  const m = /\breis(?:tijd)?\s*(\d{1,3})\s*(?:min(?:uten)?|m)?\b/i.exec(s) || /\b(\d{1,3})\s*(?:min(?:uten)?|m)\s+reizen\b/i.exec(s);
+  const m = /\breis(?:tijd)?\s*:?\s*(\d{1,3}(?:[.,]\d)?)\s*(min(?:uten)?|m|uur|u)?\b/i.exec(s) || /\b(\d{1,3}(?:[.,]\d)?)\s*(min(?:uten)?|m|uur|u)\s+reizen\b/i.exec(s);
   if (!m) return { tekst: s, reistijd: 0 };
-  return { tekst: (s.slice(0, m.index) + s.slice(m.index + m[0].length)).replace(/\s{2,}/g, " ").trim(), reistijd: Math.min(600, +m[1]) };
+  const getal = parseFloat(m[1].replace(",", ".")), min = /^u/i.test(m[2] || "") ? getal * 60 : getal;
+  return { tekst: (s.slice(0, m.index) + s.slice(m.index + m[0].length)).replace(/\s{2,}/g, " ").trim(), reistijd: Math.min(600, Math.round(min)) };
 }
 
 function viWoorden(tekst) {
@@ -32668,7 +32693,13 @@ function viVeldHTML() {
   </section>`;
 }
 
+let viBezig = false;
 async function viOpslaan() {
+  if (viBezig) return;
+  viBezig = true;
+  try { await viOpslaanNu(); } finally { viBezig = false; }
+}
+async function viOpslaanNu() {
   const tekst = V.vi.tekst.trim(); if (!tekst) return;
   const b = viBegrijp(tekst), soort = b.soort;
   if (!b.s.zeker && !V.vi.keuze) return;
@@ -32678,8 +32709,11 @@ async function viOpslaan() {
     toastTekst = "Taak opgeslagen" + (t.datum ? " · " + datumLabel(t.datum) : ""); terug = () => openTaakBlad(t.id);
   } else if (soort === "afspraak") {
     const p = b.p, a = { id: uid(), titel: p.titel || tekst, soort: "gesprek", datum: p.datum || (p.tijd ? vandaagISO() : null), tijd: p.tijd || "", eindTijd: "",
-      plek: "", personen: p.personen || [], voorbereiding: "", notities: "", uitkomst: "", reistijd: b.reistijd || 0, buffer: null, gemaakt: new Date().toISOString() };
-    await bewaar("afspraken", a); await logGebeurtenis("afspraak", "Afspraak vastgelegd: " + a.titel, a.id).catch(() => {});
+      plek: "", personen: p.personen || [], voorbereiding: "", notities: "", uitkomst: "", reistijd: b.reistijd || 0, buffer: null,
+      herhaal: p.herhaal || null, labels: p.labels || [], gemaakt: new Date().toISOString() };
+    if (p.project) a.notities = "#" + p.project;
+    await bewaar("afspraken", a);
+    if (a.herhaal && typeof reeksNieuw === "function") await reeksNieuw("afspraken", a); await logGebeurtenis("afspraak", "Afspraak vastgelegd: " + a.titel, a.id).catch(() => {});
     toastTekst = "Afspraak opgeslagen" + (a.datum ? " · " + datumLabel(a.datum) : ""); terug = () => openAfspraakBlad(a.id);
   } else if (soort === "gedachte") {
     await nvGedachte(b.r && b.r.uitkomst === "gedachte" ? b.r.tekst : tekst);
@@ -32710,7 +32744,7 @@ document.addEventListener("input", e => {
   const uit = $("#vi-uit"); if (uit) uit.innerHTML = viVoorbeeldHTML(V.vi.tekst);
 });
 document.addEventListener("keydown", e => {
-  if (e.target && e.target.id === "vi-veld" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); viOpslaan(); }
+  if (e.target && e.target.id === "vi-veld" && e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); viOpslaan(); }
 });
 document.addEventListener("click", e => {
   const k = e.target.closest && e.target.closest("[data-vi-soort], [data-vi]"); if (!k) return;

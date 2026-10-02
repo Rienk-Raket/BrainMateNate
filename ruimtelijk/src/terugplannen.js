@@ -19,7 +19,7 @@
 /* NATE-TP-BEGIN */
 const TP_STD = { voorbereiden: 10, afronden: 5, buffer: 10, naam: "Nate alarmen", wekker: true };
 const TP_SOORTEN = {
-  stoppen: { label: "Stoppen", zin: t => `NU afronden: over 5 minuten voorbereiden voor ${t}` },
+  stoppen: { label: "Stoppen", zin: t => `NU afronden waar je mee bezig bent, straks ${t}` },
   voorbereiden: { label: "Voorbereiden", zin: t => `NU spullen pakken voor ${t}` },
   vertrekken: { label: "Vertrekken", zin: t => `NU jas aan en vertrekken naar ${t}` },
   beginnen: { label: "Beginnen", zin: t => `NU naar ${t}` }
@@ -48,7 +48,8 @@ function tpMomenten(a, std) {
   return uit.filter(m => m.min >= 0).sort((x, y) => x.min - y.min).map(m => Object.assign(m, { tijd: tpHHMM(m.min) }));
 }
 
-/** De tekst die naar de opdracht gaat: JSON met per alarm datum, tijd, titel en of er een wekker bij moet. */
+/** De tekst die naar de opdracht gaat: JSON met per alarm datum, tijd, titel en of er een wekker bij hoort.
+    Een wekker in Klok kent alleen een kloktijd, geen datum: daarom alleen een wekker als de afspraak vandaag is (o.vandaag). */
 function tpPayload(a, momenten, std) {
   const o = Object.assign({}, TP_STD, std || {});
   return {
@@ -58,7 +59,7 @@ function tpPayload(a, momenten, std) {
       moment: `${a.datum} ${m.tijd}`,
       titel: TP_SOORTEN[m.soort].zin(a.titel),
       notitie: [a.titel, a.tijd ? `begint ${a.tijd}` : "", a.plek || ""].filter(Boolean).join(" · "),
-      wekker: o.wekker && m.soort === "vertrekken" ? "ja" : "nee"
+      wekker: o.wekker && m.soort === "vertrekken" && (!o.vandaag || a.datum === o.vandaag) ? "ja" : "nee"
     }))
   };
 }
@@ -74,7 +75,7 @@ function tpIcsAlarmen(a, momenten) {
 }
 /* NATE-TP-EINDE */
 
-const tpInst = () => Object.assign({}, TP_STD, inst("tpAlarmen", {}) || {});
+const tpInst = () => Object.assign({}, TP_STD, { buffer: typeof mdBufferStd === "function" ? mdBufferStd() : TP_STD.buffer }, inst("tpAlarmen", {}) || {});
 const tpVoor = a => tpMomenten(a, tpInst());
 
 /* ---------- Tijdlijn van Mijn dag: stoppen en voorbereiden erbij ---------- */
@@ -101,7 +102,7 @@ function tpKaartHTML(a) {
       <li class="tp-begin"><time>${esc(a.tijd)}</time><span><b>${esc(a.titel)}</b>${a.plek ? `<small>${esc(a.plek)}</small>` : ""}</span></li></ol>
     <button class="knop breed primair" data-tp="zet" data-id="${esc(a.id)}">${ico("klok")} ${ingesteld ? "Alarmen op mijn iPhone zetten" : "Alarmen instellen"}</button>
     ${ingesteld ? `<button class="iv-los" data-tp="uitleg">Opdracht of wekker wijzigen</button>` : ""}
-    ${a.tpGezet ? `<p class="klein tp-gezet">Doorgegeven aan Opdrachten op ${esc(datumLabel(a.tpGezet.slice(0, 10)))} om ${esc(a.tpGezet.slice(11, 16))}.</p>` : ""}
+    ${a.tpGezet ? (d => `<p class="klein tp-gezet">Doorgegeven aan Opdrachten op ${esc(datumLabel(dISO(d)))} om ${pad(d.getHours())}:${pad(d.getMinutes())}.</p>`)(new Date(a.tpGezet)) : ""}
     <details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Herinneringen met een alarm helpen beter dan een lijst die je zelf nakijkt, en meer dan één herinnering helpt meer dan één. Dat is onderzocht in brede groepen, niet specifiek bij ADHD; de precieze tijden zijn een experiment.</p></details>
   </div>`;
 }
@@ -120,22 +121,22 @@ function tpKaartHTML(a) {
   const _ics = afspraakNaarIcs;
   afspraakNaarIcs = function (a) {
     const L = _ics.apply(this, arguments);
-    if (!L || !a || !a.datum || !a.tijd) return L;
+    if (!L || !a || !a.datum || !a.tijd || !(+a.reistijd > 0)) return L;   // alleen waar terugplannen echt iets toevoegt
     const extra = tpIcsAlarmen(a, tpVoor(a)), i = L.lastIndexOf("END:VEVENT");
     return i < 0 ? L : L.slice(0, i).concat(extra, L.slice(i));
   };
 }
 
 /* ---------- De brug naar Opdrachten ---------- */
-async function tpZet(id) {
+// Synchroon tot tpOpen: iOS opent een andere app alleen direct na een tik (geen await ervoor).
+function tpZet(id) {
   const a = vind("afspraken", id); if (!a) return;
   if (!inst("tpIngesteld", false)) return tpUitleg(id);
-  const ms = tpVoor(a).filter(m => new Date(`${a.datum}T${m.tijd}`) > new Date());
+  const nu = new Date(), ms = tpVoor(a).filter(m => new Date(`${a.datum}T${m.tijd}`) > nu);
   if (!ms.length) { toast("Alle momenten zijn al voorbij"); return; }
-  const url = tpUrl(tpInst().naam, tpPayload(a, ms, tpInst()));
-  a.tpGezet = new Date().toISOString(); await bewaar("afspraken", a);
-  tpOpen(url);
-  teken();
+  tpOpen(tpUrl(tpInst().naam, tpPayload(a, ms, Object.assign(tpInst(), { vandaag: vandaagISO() }))));
+  a.tpGezet = nu.toISOString();
+  bewaar("afspraken", a).then(() => teken());
 }
 function tpOpen(url) {
   const l = document.createElement("a"); l.href = url; l.rel = "noopener"; document.body.appendChild(l); l.click(); l.remove();
@@ -144,33 +145,40 @@ function tpOpen(url) {
 function tpUitleg(id) {
   const o = tpInst();
   bladOpen("Alarmen via Opdrachten", `<p>Een app op je beginscherm kan geen wekker zetten als hij dicht is. De app Opdrachten kan dat wel, op je eigen iPhone.</p>
-    <ol class="tp-stappen"><li>Maak één keer de opdracht <b>${esc(o.naam)}</b>. Het stappenplan staat hieronder.</li><li>Tik daarna bij een afspraak op <b>Alarmen op mijn iPhone zetten</b>.</li><li>Opdrachten maakt de herinneringen${o.wekker ? " en een wekker voor vertrekken" : ""}.</li></ol>
-    <details class="tp-recept"><summary>Stappenplan voor de opdracht</summary>${TP_RECEPT}</details>
+    <ol class="tp-stappen"><li>Maak één keer de opdracht <b>${esc(o.naam)}</b>. Het stappenplan staat hieronder.</li><li>Tik daarna bij een afspraak op <b>Alarmen op mijn iPhone zetten</b>.</li><li>Opdrachten maakt de herinneringen${o.wekker ? " en, op de dag zelf, een wekker voor vertrekken" : ""}.</li></ol>
+    <details class="tp-recept"><summary>Stappenplan voor de opdracht</summary>${tpRecept(o.naam)}</details>
     <button type="button" class="tp-schakel" id="tp-wekker" aria-pressed="${o.wekker}"><span class="tekst"><b>Wekker voor vertrekken</b><small class="klein">Gaat ook af als je telefoon op stil staat.</small></span><span class="toggle" aria-hidden="true" aria-pressed="${o.wekker}"></span></button>
     <div class="veld"><label for="tp-naam">Naam van de opdracht</label><input class="invoer" id="tp-naam" value="${esc(o.naam)}" autocomplete="off"></div>
     <button class="knop breed rand" id="tp-test">Test: herinnering over 2 minuten</button>
     <p class="klein">Er gaat niets via internet. De app geeft de tijden als tekst door aan Opdrachten.</p>`,
     `<button class="knop breed primair" id="tp-klaar">Opdracht staat klaar</button>`);
-  const bewaarInst = async () => zetInst("tpAlarmen", { naam: $("#tp-naam").value.trim() || TP_STD.naam, wekker: $("#tp-wekker").getAttribute("aria-pressed") === "true" });
+  const leesInst = () => ({ naam: $("#tp-naam").value.trim() || TP_STD.naam, wekker: $("#tp-wekker").getAttribute("aria-pressed") === "true" });
   $("#tp-wekker").onclick = e => { const b = e.currentTarget, aan = String(b.getAttribute("aria-pressed") !== "true"); b.setAttribute("aria-pressed", aan); b.querySelector(".toggle").setAttribute("aria-pressed", aan); };
-  $("#tp-test").onclick = async () => {
-    await bewaarInst();
-    const d = new Date(Date.now() + 2 * 60000), hhmm = pad(d.getHours()) + ":" + pad(d.getMinutes());
-    tpOpen(tpUrl(tpInst().naam, { app: "BrainMateNate", versie: 1, alarmen: [{ soort: "test", moment: `${dISO(d)} ${hhmm}`, titel: "Test van Nate: het werkt", notitie: "Deze mag je verwijderen.", wekker: "nee" }] }));
+  $("#tp-test").onclick = () => {
+    const o = leesInst(), d = new Date(Date.now() + 2 * 60000), hhmm = pad(d.getHours()) + ":" + pad(d.getMinutes());
+    zetInst("tpAlarmen", o);
+    tpOpen(tpUrl(o.naam, { app: "BrainMateNate", versie: 1, alarmen: [{ soort: "test", moment: `${dISO(d)} ${hhmm}`, titel: "Test van Nate: het werkt", notitie: "Deze mag je verwijderen.", wekker: "nee" }] }));
   };
-  $("#tp-klaar").onclick = async () => { await bewaarInst(); await zetInst("tpIngesteld", true); bladSluit(); if (id) tpZet(id); else teken(); };
+  $("#tp-klaar").onclick = () => {
+    // Instellingen eerst in het geheugen (inst leest S.inst), dan meteen de link; opslaan loopt erachteraan.
+    const o = leesInst(); zetInst("tpAlarmen", o); zetInst("tpIngesteld", true);
+    bladSluit(); if (id) tpZet(id); else teken();
+  };
 }
 
-const TP_RECEPT = `<ol class="tp-recept-lijst">
-  <li>Open <b>Opdrachten</b> en tik op <b>+</b>. Noem de opdracht <b>Nate alarmen</b> (precies zo).</li>
-  <li>Voeg toe: <b>Haal woordenboek op uit</b> <i>Invoer van opdracht</i> (Get Dictionary from Input).</li>
-  <li>Voeg toe: <b>Haal waarde op voor</b> <i>alarmen</i> in <i>Woordenboek</i> (Get Dictionary Value).</li>
-  <li>Voeg toe: <b>Herhaal met elk</b> (Repeat with Each) item in <i>Woordenboekwaarde</i>. Daarbinnen:
-    <ol><li><b>Haal waarde op voor</b> <i>moment</i>, daarna <b>Haal datums op uit invoer</b> (Get Dates from Input).</li>
-    <li><b>Voeg nieuwe herinnering toe</b> (Add New Reminder): titel = waarde <i>titel</i>, waarschuw = <i>Datums</i>, notities = waarde <i>notitie</i>.</li>
-    <li><b>Als</b> (If) waarde <i>wekker</i> <i>is</i> ja: <b>Maak wekker aan</b> (Create Alarm) op <i>Datums</i>, label = waarde <i>titel</i>. Zie je die actie niet, sla hem dan over; de herinnering blijft.</li></ol></li>
-  <li>Tik bij de eerste vraag om toestemming voor Herinneringen en Klok op <b>Sta altijd toe</b>.</li>
-</ol><p class="klein">De namen van de acties kunnen per iOS-versie iets anders heten; zoek op het Engelse woord als het Nederlandse niet werkt.</p>`;
+const tpRecept = naam => `<ol class="tp-recept-lijst">
+  <li>Open <b>Opdrachten</b>, tik op <b>+</b> en noem de opdracht <b>${esc(naam)}</b> (precies zo).</li>
+  <li>Tik op <b>ⓘ</b> (details) en zet <b>Ontvang invoer van</b> aan, met als soort <b>Tekst</b> (Receive Text input).</li>
+  <li><b>Haal woordenboek op uit</b> <i>Invoer van opdracht</i> (Get Dictionary from Input).</li>
+  <li><b>Haal waarde op voor</b> sleutel <i>alarmen</i> in <i>Woordenboek</i> (Get Dictionary Value).</li>
+  <li><b>Herhaal met elk</b> item in <i>Woordenboekwaarde</i> (Repeat with Each). Zet daarbinnen, in deze volgorde:
+    <ol><li><b>Haal waarde op voor</b> <i>moment</i> in <i>Herhaalitem</i>, daarna <b>Haal datums op uit</b> die waarde (Get Dates from Input). Hernoem het resultaat naar <i>Wanneer</i>.</li>
+    <li><b>Haal waarde op voor</b> <i>titel</i> in <i>Herhaalitem</i>. Hernoem naar <i>Titel</i>.</li>
+    <li><b>Haal waarde op voor</b> <i>notitie</i> in <i>Herhaalitem</i>. Hernoem naar <i>Notitie</i>.</li>
+    <li><b>Voeg nieuwe herinnering toe</b> (Add New Reminder): titel <i>Titel</i>, waarschuw op <i>Wanneer</i>, notities <i>Notitie</i>.</li>
+    <li><b>Haal waarde op voor</b> <i>wekker</i> in <i>Herhaalitem</i>, daarna <b>Als</b> die waarde <i>is</i> <b>ja</b> (If): <b>Maak wekker aan</b> om <i>Wanneer</i> met label <i>Titel</i> (Create Alarm). Zie je die actie niet, sla hem over.</li></ol></li>
+  <li>Bij de eerste vraag om toestemming voor Herinneringen en Klok: <b>Sta altijd toe</b>.</li>
+</ol><p class="klein">Een wekker kent alleen een kloktijd, geen datum. Daarom vraagt Nate alleen een wekker voor afspraken van vandaag; tik op de dag zelf nog eens op de knop. Herinneringen werken voor elke dag. De namen van de acties kunnen per iOS-versie iets anders heten; zoek dan op het Engelse woord.</p>`;
 
 document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest("[data-tp]"); if (!b) return;

@@ -102,3 +102,18 @@ Open (letterlijk gelaten): de vijf compensatievragen hebben `scoring_role: resou
 - Het Aa-knopje (Snel typen) is verborgen naast het veld; "Gedachte naar de mindmap" (besluit 3, stap 5) blijft staan. **Vraag aan Kas:** samenvoegen met het nieuwe veld?
 - Spraak: via de microfoon van het iOS-toetsenbord. De Web Speech API is bewust niet gebruikt (kan audio naar een server sturen).
 - Tests: `tests/een-invoer.test.mjs` (kern met de echte intentieherkenning), V3-deel van `tests/voorstellen.e2e.cjs`.
+
+## Review stap 8–10 (verwerkt)
+
+1. Wekker in Klok kent geen datum: alleen een wekker voor afspraken van vandaag (payload `wekker`), herinneringen voor elke dag. Recept zegt dit.
+2. "Doorgegeven om …" in lokale tijd (was UTC).
+3. Eén invoer: afspraak houdt herhaling (`reeksNieuw`), labels; project als notitie.
+4. Recept uitgeschreven: "Ontvang invoer: Tekst", elke sleutel met eigen Haal-waarde-stap, naam uit de instelling.
+5. Link naar Opdrachten synchroon na de tik (iOS blokkeert anders).
+6. Buffer uit dezelfde instelling als de Dagring (`mdBuffer`).
+7. "reistijd: 25" en "reistijd 1,5 uur" herkend.
+8. Loslaten naar morgen heft oud uitstel op en plant meldingen opnieuw.
+9. .ics-alarmen van terugplannen alleen bij afspraken met reistijd; stoptekst klopt ook zonder voorbereiden.
+10. Meting werkt: subtaken krijgen `afOp` bij afvinken; na 3× gebruik toont het oorzakenblad "x van de y keer kwam er binnen een dag een stap af".
+Kleiner: dubbel opslaan voorkomen, Enter tijdens IME, eerlijke toast als de stap er al stond.
+Bekend (niet van deze stappen): `keuzemachine.e2e.cjs` faalt nu op 6 punten, ook op main (e914d31); de zesde ("versnelde band") is timing.
