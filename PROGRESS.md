@@ -72,3 +72,17 @@ Open (letterlijk gelaten): de vijf compensatievragen hebben `scoring_role: resou
 - `tests/keuzemachine.e2e.cjs` faalt op 5 punten, ook op het onaangeroerde `nate-basis`: 3× de verwijderde AI-laag (stap 2), 1× een FutureMe-commit (d99ca35) die niet in deze repo zit, 1× timing. Niet aangeraakt.
 - Het oude profielscherm (sectie 76, reserve voor `ndAanpak()`) heeft schakelaars van 31 px en toont procenten; buiten de scope van stap 3.
 - Tikvlaktest meet `offsetWidth/Height` (lay-out), omdat de inschuif-animatie van de ruimtelijke laag tijdelijk schaalt.
+
+## Besluiten Kas, 2 oktober 2026 (conceptvoorstel app-structuur)
+
+1. V4 Ruimtes in vijf clusters met "Voor jou, nu": ja, met schakelaar Vaste indeling.
+2. V2 Mijn aanpak: ja, het oude profiel (10 vragen) vervalt zodra Mijn aanpak er is.
+3. V6 alarmen: geen .ics als hoofdroute. Gekozen: **Opdrachten-brug** (Herinneringen + Klok-wekker via een eenmalig ingestelde Opdracht, lokaal). .ics blijft reserve.
+4. Pixellettertype alleen voor logo en decoratie; kopjes leesbaar.
+5. Eerst V7, V6 en V3.
+
+## Stap 8: V7 Ik loop vast
+
+- `ruimtelijk/src/ik-loop-vast.js/.css` (sectie 90). Knop op de Nu-kaart en in het taakblad. Vijf oorzaken (onduidelijk, te groot, saai, spannend, leeg), elk één handeling; loslaten naar morgen altijd zichtbaar; "Waarom zeg je dit?" met bewijsniveau Praktisch.
+- Eerste handeling wordt de bovenste subtaak en staat op de Nu-kaart. Gebruik in instelling `ivLog` (meting: vast → afgerond binnen 24 uur, `ivMeting`).
+- Tests: `tests/vast.test.mjs` (pure kern), `tests/voorstellen.e2e.cjs` (V7-deel). E2e-tests van Mijn dag draaien nu met een vaste klok (10:42); 's avonds liepen tijden tegen 23:59 aan.

@@ -1,0 +1,17 @@
+/* === Ik loop vast (V7) === */
+.iv-knop { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.md-nu .iv-nu { width: 100%; margin-top: 8px; min-height: 44px; }
+.md-eerste { margin: 6px 0 0; font-size: calc(14px * var(--t)); }
+.md-eerste .labeltekst { margin-right: 6px; }
+.iv-titel { margin: 0 0 10px; }
+.iv-keuzes { display: grid; gap: 8px; }
+.iv-keuze { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 56px; padding: 10px 14px;
+  border: 1px solid var(--rand, var(--line)); border-radius: 14px; background: var(--kaart, var(--card)); color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.iv-keuze b { font-size: calc(16px * var(--t)); }
+.iv-keuze small { color: var(--muted); }
+.iv-zin { font-size: calc(17px * var(--t)); line-height: 1.4; margin: 0 0 12px; }
+.iv-voorbeelden { flex-wrap: wrap; margin: -4px 0 10px; }
+.iv-waarom { margin: 6px 0 10px; }
+.iv-waarom summary { cursor: pointer; color: var(--accent); min-height: 44px; display: flex; align-items: center; }
+.iv-los { display: block; width: 100%; min-height: 44px; margin-top: 10px; background: none; border: 0; color: var(--muted); text-decoration: underline; font: inherit; cursor: pointer; }
+#bladvoet #iv-tweede, #bladvoet .knop + .knop { margin-top: 8px; }

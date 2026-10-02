@@ -115,8 +115,10 @@ function mdNuHTML() {
   return `<div class="card card-pad md-nu"><span class="labeltekst">${MD_TEKST.nu}</span>
     <h2>${een.tijd ? `<time>${esc(een.tijd)}</time> ` : ""}${esc(een.titel)}</h2>
     ${een.duur ? `<p class="klein">± ${een.duur} min</p>` : ""}
+    ${typeof ivEersteStap === "function" && ivEersteStap(een) ? `<p class="md-eerste"><span class="labeltekst">Eerste handeling</span> ${esc(ivEersteStap(een))}</p>` : ""}
     <div class="md-nu-acties"><button class="knop primair" data-act="vink" data-id="${esc(een.id)}">${ico("check")} Klaar</button>
       <button class="knop rand" data-act="open-taak" data-id="${esc(een.id)}">Openen</button></div>
+    ${typeof ivKnop === "function" ? ivKnop(een.id, "iv-nu") : ""}
     ${twee.length ? `<p class="md-daarna"><span class="labeltekst">${MD_TEKST.daarna}</span> ${twee.map(t => esc(t.titel)).join(" · ")}${rest ? ` <span class="md-rest">${MD_TEKST.rest(rest)}</span>` : ""}</p>` : ""}
   </div>`;
 }
