@@ -4475,6 +4475,7 @@ body.kn-actief #nate { opacity: 0; pointer-events: none; }
 .iv-waarom summary { cursor: pointer; color: var(--accent); min-height: 44px; display: flex; align-items: center; }
 .iv-los { display: block; width: 100%; min-height: 44px; margin-top: 10px; background: none; border: 0; color: var(--muted); text-decoration: underline; font: inherit; cursor: pointer; }
 #bladvoet #iv-tweede, #bladvoet .knop + .knop { margin-top: 8px; }
+.iv-voorbeelden .keuze { min-height: 44px; }
 
 
 /* === Terugplannen en alarmen (V6) === */
@@ -4659,6 +4660,27 @@ html[data-nate-rust="uit"] #nate { display: none; }
 .wr-vergelijk div { background: var(--bg2, rgba(127,127,127,.1)); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; }
 .wr-vergelijk small { color: var(--muted); }
 .wr-vergelijk b { font-size: calc(22px * var(--t)); }
+
+
+/* === Impulsfrictie (V11) en werkwoordcheck (V12) === */
+.pl-zin { font-size: calc(16px * var(--t)); line-height: 1.4; margin: 0 0 8px; }
+.pl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pl-chips .keuze { min-height: 44px; }
+.pl-chips .keuze[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pl-kaart { display: block; margin: 12px 0; }
+.pl-knoppen { display: flex; gap: 8px; margin-top: 8px; }
+.pl-knoppen .knop { flex: 1; min-height: 44px; }
+.pl-anders { font-weight: 600; }
+#bladvoet #pl-niet, #bladvoet #pl-toch { margin-top: 8px; }
+.ww-vraag { background: var(--card, #fff); border: 1px solid var(--line, #d0d7e2); border-radius: 14px; padding: 12px; margin-top: 8px; }
+.ww-zin { margin: 0 0 8px; }
+.ww-veld { width: 100%; }
+.ww-suggesties { flex-wrap: wrap; margin: 8px 0; }
+.ww-suggesties .keuze { min-height: 44px; }
+.ww-knoppen { display: flex; gap: 8px; }
+.ww-knoppen .knop { flex: 1; min-height: 44px; }
+.ww-nu { margin: 4px 0 0; }
+.ww-knop { display: block; margin-top: 4px; }
 
 </style>
 </head>
@@ -34008,6 +34030,273 @@ document.addEventListener("click", async e => {
   const ook = NV_MEER[1][1];
   if (!ook.some(r => r[0] === "weekreview")) ook.splice(1, 0, ["weekreview", "Weekreview", "grafiek", "Tien minuten terugkijken en één ding uitproberen"]);
 }
+
+</script>
+<script>
+"use strict";
+// === SECTIE 100: IMPULSFRICTIE, PATROONLOGGER EN UITGLIJDER (V11) ===
+/* ==========================================================================
+   Conceptvoorstel V11 (categorie 7: gewoontes afleren).
+   - Wishlist: binnen de afkoeltijd (uit Mijn aanpak, bij aankopen boven € 50)
+     vraagt "Gekocht" eerst even: wachten, niet kopen, of toch kopen.
+   - Patroonlogger bij Rookvrij en Gewoontes: trigger, gedrag, opbrengst. Na
+     een paar keer laat Nate zien welk moment het vaakst terugkomt en wat
+     hetzelfde kan opleveren (functioneel vervangingsgedrag).
+   - Uitglijder bij Rookvrij, naast "Opnieuw beginnen": de teller loopt door.
+     Eén gemiste keer maakt een gewoonte niet kapot.
+   - Klinkt een notitie naar controleverlies, gokken of gevaar, dan verwijst
+     Nate naar de huisarts en bij acuut gevaar naar 113 (zoals de chat).
+
+   De kern (NATE-FRICTIE-BEGIN/EINDE) is puur en wordt getest in tests/frictie-werkwoord.test.mjs.
+   ========================================================================== */
+
+/* NATE-FRICTIE-BEGIN */
+const PL_TRIGGERS = ["Stress", "Verveling", "Na het eten", "Koffie", "Moe", "Alleen", "Met anderen", "Telefoon of scherm", "Onderweg"];
+const PL_OPBRENGST = [
+  { id: "rust", naam: "Rust", anders: "Eén minuut landen in Anker." },
+  { id: "afleiding", naam: "Afleiding", anders: "Even naar buiten of één nummer muziek." },
+  { id: "beloning", naam: "Beloning", anders: "Een kleine beloning die je vooraf kiest." },
+  { id: "gezelschap", naam: "Gezelschap", anders: "Iemand een berichtje sturen." },
+  { id: "energie", naam: "Energie", anders: "Een glas water en even bewegen." },
+  { id: "spanning", naam: "Minder spanning", anders: "Lang uitademen, drie keer." }
+];
+
+/** Nog aan het afkoelen? Alleen boven de drempel, en tot gemaakt + uren. Geeft resterende uren of 0. */
+function plAfkoelen(item, uren, nu, drempel) {
+  if (!item || !(+item.prijs > (drempel == null ? 50 : drempel)) || !item.gemaakt || !(uren > 0)) return 0;
+  const rest = (Date.parse(item.gemaakt) + uren * 3600e3 - nu) / 3600e3;
+  return rest > 0 ? Math.ceil(rest) : 0;
+}
+/** Patronen: welke triggers en opbrengsten komen het vaakst terug (minstens 3 momenten nodig). */
+function plPatronen(log, waar) {
+  const l = (log || []).filter(r => r.waar === waar);
+  if (l.length < 3) return { n: l.length, triggers: [], opbrengst: [] };
+  const tel = sleutel => Object.entries(l.reduce((a, r) => { for (const x of [].concat(r[sleutel] || [])) a[x] = (a[x] || 0) + 1; return a; }, {}))
+    .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).slice(0, 3).map(([naam, aantal]) => ({ naam, aantal }));
+  return { n: l.length, triggers: tel("trigger"), opbrengst: tel("opbrengst") };
+}
+/** Uitglijders tellen, zonder de teller te raken. */
+function plUitglijders(log, waar) { return (log || []).filter(r => r.waar === waar && r.soort === "uitglijder").length; }
+/* NATE-FRICTIE-EINDE */
+
+const plLog = () => inst("plLog", []) || [];
+
+/* ---------- 100.1 Wishlist: eerst afkoelen ---------- */
+{
+  const _zet = wlZet;
+  wlZet = async function (id, status) {
+    const x = vind("wl_items", id), uren = (typeof ndAanpak === "function" ? ndAanpak().afkoelUur : 24) || 24;
+    const rest = status === "gekocht" && x && (x.status || "actief") === "actief" ? plAfkoelen(x, uren, Date.now()) : 0;
+    if (!rest || V.plToch === id) { V.plToch = null; return _zet.apply(this, arguments); }
+    bladOpen("Even afkoelen", `<p class="pl-zin">Nog ongeveer ${rest} ${rest === 1 ? "uur" : "uur"} afkoelen voor <b>${esc(x.naam)}</b>. Wil je het dan nog steeds, dan is het een goede koop.</p>
+      <details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Een korte wachttijd tussen zin en kopen maakt een impulsaankoop kleiner, zonder het te verbieden. Praktisch: laag risico, kijk of het bij jou werkt.</p></details>`,
+      `<button class="knop breed primair" id="pl-wacht">Ik wacht nog even</button><button class="knop breed rand" id="pl-niet">Toch niet kopen</button><button class="knop breed rand" id="pl-toch">Ik koop het nu</button>`);
+    $("#pl-wacht").onclick = () => { bladSluit(); toast(`Staat nog op je lijst.`); };
+    $("#pl-niet").onclick = () => { bladSluit(); _zet.call(this, id, "niet"); };
+    $("#pl-toch").onclick = () => { bladSluit(); V.plToch = id; wlZet(id, "gekocht"); };
+  };
+}
+
+/* ---------- 100.2 Patroonlogger ---------- */
+function plBlad(waar, soort, naam) {
+  const st = { trigger: [], opbrengst: [] };
+  bladOpen(soort === "uitglijder" ? "Uitglijder" : "Moment vastleggen", `
+    ${soort === "uitglijder" ? `<p class="pl-zin">Eén keer is één keer. De teller loopt door, en dit moment helpt je het patroon te zien.</p>` : `<p class="klein">Wat gebeurde er rond ${esc(naam)}? Kort is genoeg.</p>`}
+    <h3 class="hs-stap"><span>1</span> Wat ging eraan vooraf?</h3>
+    <div class="pl-chips" data-pl-groep="trigger">${PL_TRIGGERS.map(t => `<button type="button" class="keuze" data-pl="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join("")}</div>
+    <h3 class="hs-stap"><span>2</span> Wat deed je?</h3>
+    <label class="sr-only" for="pl-gedrag">Wat deed je?</label><input class="invoer" id="pl-gedrag" maxlength="120" autocomplete="off" placeholder="${soort === "uitglijder" ? "Bijvoorbeeld: één sigaret bij de koffie" : "Bijvoorbeeld: trek, maar niet gedaan"}">
+    <h3 class="hs-stap"><span>3</span> Wat leverde het op?</h3>
+    <div class="pl-chips" data-pl-groep="opbrengst">${PL_OPBRENGST.map(o => `<button type="button" class="keuze" data-pl="${o.id}" aria-pressed="false">${esc(o.naam)}</button>`).join("")}</div>
+    <div id="pl-hulp" aria-live="polite"></div>`,
+    `<button class="knop breed primair" id="pl-op">Bewaren</button>`);
+  $("#bladinhoud").addEventListener("click", e => {
+    const b = e.target.closest("[data-pl]"); if (!b) return;
+    const g = b.closest("[data-pl-groep]").dataset.plGroep, w = b.dataset.pl, aan = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", String(aan));
+    st[g] = aan ? st[g].concat(w) : st[g].filter(x => x !== w);
+  });
+  $("#pl-gedrag").addEventListener("change", e => {
+    // Klinkt het naar gevaar of controleverlies? Dan eerst de verwijzing.
+    const r = typeof ncBegrijp === "function" ? ncBegrijp(e.target.value, NATE_INTENTIES) : null;
+    $("#pl-hulp").innerHTML = r && r.uitkomst === "nood" ? `<p class="kn-hulp">${esc(NATE_INTENTIES.nood.antwoord)}</p>` : "";
+  });
+  $("#pl-op").onclick = async () => {
+    await zetInst("plLog", plLog().concat({ id: uid(), ts: new Date().toISOString(), waar, soort, trigger: st.trigger, opbrengst: st.opbrengst, gedrag: $("#pl-gedrag").value.trim() }).slice(-500));
+    if (soort === "uitglijder") await logGebeurtenis("notitie", `Uitglijder bij ${naam}; de teller loopt door`).catch(() => {});
+    bladSluit(); teken(); toast(soort === "uitglijder" ? "Genoteerd. De teller loopt gewoon door." : "Moment bewaard.");
+  };
+}
+function plSamenvattingHTML(waar) {
+  const p = plPatronen(plLog(), waar), uit = plUitglijders(plLog(), waar);
+  let h = "";
+  if (p.n < 3) h += `<p class="klein">${p.n ? `${p.n} van de 3 momenten vastgelegd. Daarna zie je je patroon.` : "Leg een paar momenten vast, dan zie je wanneer het vaak gebeurt."}</p>`;
+  else {
+    const top = PL_OPBRENGST.find(o => p.opbrengst[0] && o.id === p.opbrengst[0].naam);
+    h += `<p>${p.triggers.length ? `Vaakst: <b>${esc(p.triggers.map(t => t.naam.toLowerCase()).join(", "))}</b>.` : ""} ${top ? `Het levert vooral <b>${esc(top.naam.toLowerCase())}</b> op.` : ""}</p>`;
+    if (top) h += `<p class="pl-anders">Dat kan ook anders: ${esc(top.anders)}</p>`;
+    h += `<details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Iets afleren lukt beter als je weet wat het je oplevert en daar iets anders voor in de plaats zet. Praktisch: een experiment, kijk wat bij jou past.</p></details>`;
+  }
+  if (uit) h += `<p class="klein">${uit} ${uit === 1 ? "uitglijder" : "uitglijders"} genoteerd. De teller liep door.</p>`;
+  return h;
+}
+
+/* ---------- 100.3 Rookvrij en Gewoontes ---------- */
+{
+  const _rook = vwRoken;
+  vwRoken = function () {
+    const h = _rook.apply(this, arguments);
+    if (!inst("rookStop", null)) return h;
+    const blok = `<section class="card card-pad pl-kaart" aria-label="Patroon"><span class="labeltekst">Je patroon</span>${plSamenvattingHTML("roken")}
+      <div class="pl-knoppen"><button class="knop rand" data-pl-open="roken" data-pl-soort="trek">Moment vastleggen</button><button class="knop rand" data-pl-open="roken" data-pl-soort="uitglijder">Uitglijder</button></div></section>`;
+    // Vóór "Opnieuw beginnen", zodat de uitglijder eerst in beeld komt.
+    const i = h.indexOf('<button class="knop gevaar" data-act="rook-opnieuw"');
+    if (i < 0) return h + blok;
+    const j = h.lastIndexOf("<div", i);
+    return h.slice(0, j) + blok + h.slice(j);
+  };
+  const _gew = vwGewoontes;
+  vwGewoontes = function () {
+    return _gew.apply(this, arguments) + `<section class="card card-pad pl-kaart" aria-label="Patroon"><span class="labeltekst">Iets afleren?</span>${plSamenvattingHTML("gewoontes")}
+      <div class="pl-knoppen"><button class="knop rand" data-pl-open="gewoontes" data-pl-soort="trek">Moment vastleggen</button></div></section>`;
+  };
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-pl-open]"); if (!b) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  plBlad(b.dataset.plOpen, b.dataset.plSoort, b.dataset.plOpen === "roken" ? "roken" : "een gewoonte");
+}, true);
+
+</script>
+<script>
+"use strict";
+// === SECTIE 101: WERKWOORDCHECK — "WAT IS DE EERSTE HANDELING?" (V12) ===
+/* ==========================================================================
+   Conceptvoorstel V12. Taken als "belasting", "regelen" of "tandarts" zijn
+   te vaag om te starten (schakel 5: concreet maken). Nate vraagt één keer
+   naar de eerste handeling, met suggesties; overslaan mag altijd.
+   - Vastleggen ("Wat speelt er?"): direct na het opslaan van een vage taak.
+   - Taakblad: een knop "Eerste handeling kiezen" bij een vage taak zonder stappen.
+   - Nu-kaart: "Nog vaag?" bij een vage taak zonder eerste handeling.
+   De eerste handeling wordt de bovenste subtaak (zoals bij Ik loop vast, V7)
+   en staat op de Nu-kaart. Per taak hooguit één keer gevraagd (wwGevraagd).
+
+   De kern (NATE-WERKWOORD-BEGIN/EINDE) is puur en wordt getest in tests/frictie-werkwoord.test.mjs.
+   ========================================================================== */
+
+/* NATE-WERKWOORD-BEGIN */
+const WW_VAAG = ["regelen", "doen", "fixen", "uitzoeken", "oppakken", "afhandelen", "organiseren", "iets", "dingen", "zaken", "gedoe", "spullen", "kijken", "nadenken"];
+const WW_GEBIEDEND = ["bel", "mail", "app", "koop", "schrijf", "maak", "stuur", "betaal", "plan", "lees", "zoek", "pak", "leg", "zet", "breng", "haal", "check", "vul", "print", "open", "was", "ruim", "boek", "vraag", "zeg", "geef", "teken", "scan", "upload", "download", "bestel"];
+const WW_SUGGESTIES = [
+  [/belasting|aangifte|toeslag/, ["Inlogpagina openen", "Map met papieren pakken", "DigiD-app klaarzetten"]],
+  [/tandarts|huisarts|dokter|kapper|afspraak/, ["Telefoonnummer opzoeken", "Agenda openen voor een datum", "Bellen tijdens openingstijd"]],
+  [/administratie|post|papieren|brief/, ["Stapel op tafel leggen", "Bovenste brief openen", "Prullenbak ernaast zetten"]],
+  [/verjaardag|cadeau/, ["Datum in de agenda zetten", "Drie ideeën opschrijven", "Budget kiezen"]],
+  [/opruimen|schoonmaken|huis|kamer|keuken|zolder/, ["Eén vuilniszak pakken", "Timer op 5 minuten", "Alles van één plank pakken"]],
+  [/verzekering|abonnement|contract/, ["Polis of contract opzoeken", "Website openen", "Klantnummer opschrijven"]]
+];
+const WW_STANDAARD = ["Bestand openen", "Telefoon pakken", "Spullen klaarleggen", "Eén zin opschrijven"];
+
+function wwWoorden(t) { return String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9 ]+/g, " ").trim().split(/\s+/).filter(Boolean); }
+/** Is deze taaktitel te vaag om te starten? Vaag woord, of geen werkwoord (geen -en-vorm en geen gebiedende wijs). */
+function wwVaag(titel) {
+  const w = wwWoorden(titel);
+  if (!w.length) return false;
+  if (w.some(x => WW_VAAG.includes(x))) return true;
+  if (w.some(x => WW_GEBIEDEND.includes(x))) return false;
+  const werkwoord = w.some(x => x.length >= 5 && /(en|eren|elen)$/.test(x) && !["keuken", "toeslagen", "papieren", "spullen", "zaken", "dingen", "kinderen", "boodschappen"].includes(x));
+  return !werkwoord && w.length <= 4;
+}
+/** Drie suggesties voor de eerste handeling, passend bij de titel. */
+function wwSuggesties(titel) {
+  const t = wwWoorden(titel).join(" ");
+  for (const [re, s] of WW_SUGGESTIES) if (re.test(t)) return s;
+  return WW_STANDAARD.slice(0, 3);
+}
+/** Moet Nate vragen? Vaag, open, nog niet gevraagd en nog geen open stap. */
+function wwVragen(t) {
+  return !!t && !t.af && !t.wwGevraagd && wwVaag(t.titel) && !(t.subtaken || []).some(s => !s.af && String(s.tekst || "").trim());
+}
+/* NATE-WERKWOORD-EINDE */
+
+/* ---------- 101.1 Het vraagblok (inline, geen pop-up) ---------- */
+function wwVraagHTML(t, klasse) {
+  return `<div class="ww-vraag ${klasse || ""}" data-ww-taak="${esc(t.id)}">
+    <p class="ww-zin">Wat is de eerste handeling voor <b>${esc(t.titel)}</b>?</p>
+    <label class="sr-only" for="ww-veld-${esc(t.id)}">Eerste handeling</label>
+    <input class="invoer ww-veld" id="ww-veld-${esc(t.id)}" maxlength="80" autocomplete="off" enterkeyhint="done" placeholder="${esc(wwSuggesties(t.titel)[0])}">
+    <div class="chiprij ww-suggesties">${wwSuggesties(t.titel).map(s => `<button type="button" class="keuze" data-ww-vb="${esc(s)}">${esc(s)}</button>`).join("")}</div>
+    <div class="ww-knoppen"><button type="button" class="knop primair" data-ww="op">Opslaan</button><button type="button" class="knop rand" data-ww="over">Overslaan</button></div>
+    <details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Een stap die met een werkwoord begint en meteen kan starten, is makkelijker te beginnen dan een vage taak. Indirect: dit komt uit onderzoek naar plannen en taakopdeling, niet specifiek bij ADHD.</p></details>
+  </div>`;
+}
+async function wwBewaar(id, tekst) {
+  const t = vind("taken", id); if (!t) return;
+  t.wwGevraagd = true;
+  if (tekst && tekst.trim()) t.subtaken = normaliseerSubtaken(ivMetStap(t.subtaken, tekst.trim()));
+  await bewaar("taken", t);
+}
+document.addEventListener("click", async e => {
+  const vb = e.target.closest && e.target.closest("[data-ww-vb]");
+  if (vb) { const v = vb.closest(".ww-vraag").querySelector(".ww-veld"); v.value = vb.dataset.wwVb; v.focus(); return; }
+  const b = e.target.closest && e.target.closest("[data-ww]"); if (!b) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const blok = b.closest(".ww-vraag"), id = blok.dataset.wwTaak, tekst = b.dataset.ww === "op" ? blok.querySelector(".ww-veld").value : "";
+  if (b.dataset.ww === "op" && !tekst.trim()) { toast("Schrijf eerst één handeling op, of sla over"); return; }
+  await wwBewaar(id, tekst);
+  if (blok.classList.contains("ww-vi")) { blok.remove(); }
+  tril(6); teken();
+  if (tekst) toast("Eerste handeling staat bovenaan.");
+}, true);
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter" || !e.target.classList || !e.target.classList.contains("ww-veld")) return;
+  e.preventDefault(); const k = e.target.closest(".ww-vraag").querySelector('[data-ww="op"]'); if (k) k.click();
+});
+
+/* ---------- 101.2 Vastleggen: direct na het opslaan ---------- */
+{
+  const _op = viOpslaanNu;
+  viOpslaanNu = async function () {
+    const voor = new Set(S.taken.map(t => t.id));
+    const r = await _op.apply(this, arguments);
+    const nieuw = S.taken.find(t => !voor.has(t.id));
+    if (nieuw && wwVragen(nieuw)) {
+      // Na teken(): het blok komt onder het veld, waar je net typte.
+      setTimeout(() => { const uit = document.querySelector("#scherm #vi-uit"); if (uit) uit.innerHTML = wwVraagHTML(nieuw, "ww-vi"); }, 0);
+    }
+    return r;
+  };
+}
+
+/* ---------- 101.3 Taakblad: knop bij een vage taak zonder stappen ---------- */
+{
+  const _open = openTaakBlad;
+  openTaakBlad = function (id) {
+    const r = _open.apply(this, arguments), t = id && vind("taken", id), titel = $("#f-titel");
+    if (t && titel && wwVragen(t) && !$("#ww-knop"))
+      titel.closest(".veld").insertAdjacentHTML("beforeend", `<button type="button" class="dk-neem ww-knop" id="ww-knop" data-iv-route="${esc(t.id)}">Nog vaag? Eerste handeling kiezen</button>`);
+    return r;
+  };
+}
+/* ---------- 101.4 Nu-kaart: "Nog vaag?" ---------- */
+{
+  const _html = mdNuHTML;
+  mdNuHTML = function () {
+    let h = _html.apply(this, arguments);
+    const een = mdNu().een;
+    if (een && wwVragen(een) && !(typeof ivEersteStap === "function" && ivEersteStap(een)))
+      h = h.replace('<div class="md-nu-acties">', `<p class="ww-nu"><button type="button" class="dk-neem" data-iv-route="${esc(een.id)}">Nog vaag? Eerste handeling kiezen</button></p><div class="md-nu-acties">`);
+    return h;
+  };
+}
+// Beide knoppen openen de route "Onduidelijk" van Ik loop vast (V7): één plek voor de eerste handeling.
+document.addEventListener("click", async e => {
+  const b = e.target.closest && e.target.closest("[data-iv-route]"); if (!b) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const t = vind("taken", b.dataset.ivRoute); if (!t) return;
+  t.wwGevraagd = true; await bewaar("taken", t);
+  ivRoute(t, ivOorzaak("onduidelijk"));
+}, true);
 
 </script>
 <script>

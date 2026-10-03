@@ -1,0 +1,19 @@
+/* === Impulsfrictie (V11) en werkwoordcheck (V12) === */
+.pl-zin { font-size: calc(16px * var(--t)); line-height: 1.4; margin: 0 0 8px; }
+.pl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pl-chips .keuze { min-height: 44px; }
+.pl-chips .keuze[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pl-kaart { display: block; margin: 12px 0; }
+.pl-knoppen { display: flex; gap: 8px; margin-top: 8px; }
+.pl-knoppen .knop { flex: 1; min-height: 44px; }
+.pl-anders { font-weight: 600; }
+#bladvoet #pl-niet, #bladvoet #pl-toch { margin-top: 8px; }
+.ww-vraag { background: var(--card, #fff); border: 1px solid var(--line, #d0d7e2); border-radius: 14px; padding: 12px; margin-top: 8px; }
+.ww-zin { margin: 0 0 8px; }
+.ww-veld { width: 100%; }
+.ww-suggesties { flex-wrap: wrap; margin: 8px 0; }
+.ww-suggesties .keuze { min-height: 44px; }
+.ww-knoppen { display: flex; gap: 8px; }
+.ww-knoppen .knop { flex: 1; min-height: 44px; }
+.ww-nu { margin: 4px 0 0; }
+.ww-knop { display: block; margin-top: 4px; }

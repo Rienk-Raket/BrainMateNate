@@ -241,3 +241,17 @@ Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vra
 8. Keuzes in de weekreview horen bij één week; een nieuwe week begint leeg.
 9. Tikken op het schuifje zonder te bewegen telt ook.
 10. Na de reistijdvraag gaat de focus naar de volgende kaart.
+
+## Stap 18: V11 Impulsfrictie, patroonlogger en uitglijder
+
+- `ruimtelijk/src/impulsfrictie.js` (sectie 100). Wishlist: binnen de afkoeltijd (`ndAanpak().afkoelUur`, aankopen boven € 50) vraagt "Gekocht" eerst: wachten, toch niet kopen, of toch kopen (altijd mogelijk).
+- Patroonlogger bij Rookvrij en Gewoontes: trigger (keuzes), gedrag (tekst), opbrengst (rust, afleiding, beloning, gezelschap, energie, minder spanning). Na drie momenten: vaakste triggers en wat het oplevert, met een vervangingsgedrag. Logboek `plLog`.
+- Rookvrij: "Uitglijder" vóór "Opnieuw beginnen"; de teller loopt door, het aantal uitglijders staat erbij.
+- Klinkt een notitie naar controleverlies of gevaar (intentieherkenning "nood"), dan staat de verwijzing naar huisarts en 113 erbij.
+
+## Stap 19: V12 Werkwoordcheck
+
+- `ruimtelijk/src/werkwoord.js` (sectie 101). `wwVaag`: vaag woord (regelen, doen, uitzoeken …) of geen werkwoord (geen -en-vorm en geen gebiedende wijs). Suggesties passend bij de titel (belasting, tandarts, administratie, opruimen …).
+- Vastleggen: na het opslaan van een vage taak meteen "Wat is de eerste handeling?" onder het veld (opslaan of overslaan). Taakblad en Nu-kaart: "Nog vaag? Eerste handeling kiezen" opent de route Onduidelijk van V7. Per taak hooguit één keer (`wwGevraagd`).
+- Ook: voorbeeldknoppen in Ik loop vast 44 px.
+- `frictie-werkwoord.css`. Tests: `tests/frictie-werkwoord.test.mjs`, `tests/frictie-werkwoord.e2e.cjs` (22 checks).
