@@ -42,10 +42,12 @@ function dkFactor(log) {
   const f = dkMediaan((log || []).filter(r => r.werkelijk > 0 && r.geschat > 0).map(r => r.werkelijk / r.geschat));
   return f == null ? null : Math.round(f * 10) / 10;
 }
-/** Welke taak van vandaag wacht nog op de vraag? Afgerond vandaag, met schatting, nog niet in het logboek. */
+/** Lokale datum (JJJJ-MM-DD) van een tijdstempel; afOp en ts staan in UTC. */
+function dkLokaal(ts) { const d = new Date(ts); return isNaN(d) ? "" : d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+/** Welke taak van vandaag wacht nog op de vraag? Afgerond vandaag (lokale tijd), met schatting, nog niet in het logboek. */
 function dkTeVragen(taken, log, vandaag) {
   const gehad = new Set((log || []).map(r => r.taakId));
-  return (taken || []).filter(t => t.af && t.duur > 0 && t.afOp && t.afOp.slice(0, 10) === vandaag && !gehad.has(t.id))
+  return (taken || []).filter(t => t.af && t.duur > 0 && t.afOp && dkLokaal(t.afOp) === vandaag && !gehad.has(t.id))
     .sort((a, b) => (a.afOp < b.afOp ? 1 : -1))[0] || null;
 }
 /** Reistijd: eerst dezelfde plek (minstens 2 keer), anders de gewone verhouding (minstens 3 keer) op de geplande tijd. */
@@ -62,6 +64,8 @@ function dkReisVoorstel(plek, gepland, reis) {
 /* NATE-DUUR-EINDE */
 
 const dkLog = () => inst("dkLog", []) || [];
+// Voor voorstellen en verhoudingen alleen metingen van taken die nog af zijn (of niet meer bestaan); een ongedane taak telt niet.
+const dkLogGeldig = () => dkLog().filter(r => { const t = vind("taken", r.taakId); return !t || t.af; });
 const dkReis = () => inst("dkReis", []) || [];
 async function dkBewaar(r) { await zetInst("dkLog", dkLog().filter(x => x.taakId !== r.taakId).concat(r).slice(-300)); }
 
@@ -70,8 +74,13 @@ async function dkBewaar(r) { await zetInst("dkLog", dkLog().filter(x => x.taakId
   const _vink = vinkTaak;
   vinkTaak = async function (id) {
     const voor = vind("taken", id), wasAf = voor && voor.af;
+    // Loopt de timer op deze taak? Eerst stoppen, zodat die tijd meetelt.
+    if (voor && !wasAf && T.taakId === id && (T.actief || T.opgebouwd)) await stopTimer(true);
+    // Opnieuw afronden is een nieuwe meting: een oude (bv. van vóór "Ongedaan") vervalt.
+    if (voor && !wasAf && dkLog().some(x => x.taakId === id)) await zetInst("dkLog", dkLog().filter(x => x.taakId !== id));
     const r = await _vink.apply(this, arguments);
     const t = vind("taken", id);
+    if (t && wasAf && !t.af && dkLog().some(x => x.taakId === id)) { await zetInst("dkLog", dkLog().filter(x => x.taakId !== id)); return r; }
     if (t && !wasAf && t.af && t.duur > 0 && !dkLog().some(x => x.taakId === t.id)) {
       const sec = (S.tijdlog || []).filter(l => l.taakId === t.id).reduce((a, l) => a + (+l.seconden || 0), 0);
       if (sec >= 60) { await dkBewaar({ taakId: t.id, titel: t.titel, geschat: +t.duur, werkelijk: Math.round(sec / 60), bron: "timer", ts: new Date().toISOString() }); teken(); }
@@ -111,7 +120,7 @@ document.addEventListener("click", async e => {
     if (!veld) return r;
     const toon = () => {
       const oud = $("#dk-hint"); if (oud) oud.remove();
-      const v = dkVoorstel(titel ? titel.value : "", dkLog(), id); if (!v) return;
+      const v = dkVoorstel(titel ? titel.value : "", dkLogGeldig(), id); if (!v) return;
       veld.closest(".veld").insertAdjacentHTML("beforeend", `<p class="klein dk-hint" id="dk-hint">Vergelijkbare taken duurden meestal ± ${v.min} min (${v.n}×). <button type="button" class="dk-neem" data-dk-neem="${v.min}">Neem over</button></p>`);
     };
     toon();
@@ -136,6 +145,7 @@ function dkReisVraag(a) {
     const b = e.target.closest("[data-dk-reis]"); if (!b) return;
     await zetInst("dkReis", dkReis().concat({ afspraakId: a.id, plek: a.plek || "", gepland: r, werkelijk: +b.dataset.dkReis, ts: new Date().toISOString() }).slice(-100));
     bladSluit(); toast("Genoteerd.");
+    setTimeout(() => { const v = document.querySelector("[data-hs]") || document.querySelector('[data-dn][aria-checked="true"]'); if (v) v.focus({ preventScroll: true }); }, 320);
   };
 }
 {

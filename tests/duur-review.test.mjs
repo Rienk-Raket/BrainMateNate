@@ -9,7 +9,7 @@ const html = readFileSync(fileURLToPath(new URL("../index.html", import.meta.url
 const knip = (a, b) => { const i = html.indexOf(a), j = html.indexOf(b); assert.ok(i > 0 && j > i, a); return html.slice(i, j); };
 const ctx = vm.createContext({});
 vm.runInContext(knip("/* NATE-DUUR-BEGIN */", "/* NATE-DUUR-EINDE */") + knip("/* NATE-REVIEW-BEGIN */", "/* NATE-REVIEW-EINDE */")
-  + ";globalThis.D = { DK_KEUZES, dkLijkt, dkVoorstel, dkFactor, dkTeVragen, dkReisVoorstel, WR_SCHAKELS, WR_MATEN, wrWeek, wrFeiten, wrZinnen, wrMaat, wrExperimentStand, wrKaartNodig };", ctx);
+  + ";globalThis.D = { DK_KEUZES, dkLijkt, dkVoorstel, dkFactor, dkTeVragen, dkReisVoorstel, WR_SCHAKELS, WR_MATEN, wrWeek, wrFeiten, wrZinnen, wrMaat, wrExperimentStand, wrKaartNodig, wrDoelWeek, dkLokaal };", ctx);
 const D = ctx.D, kaal = x => JSON.parse(JSON.stringify(x));
 const zinnen = t => (t.match(/[.?!](\s|$)/g) || []).length;
 
@@ -83,6 +83,31 @@ test("kaart op Mijn dag: vrijdagmiddag en weekend, niet als al gedaan of weggekl
   assert.equal(D.wrKaartNodig(new Date(2026, 9, 1, 20), [], null), false);      // donderdag
   assert.equal(D.wrKaartNodig(new Date(2026, 9, 3, 10), [{ week: "2026-09-28" }], null), false);
   assert.equal(D.wrKaartNodig(new Date(2026, 9, 3, 10), [], "2026-09-28"), false);
+});
+
+test("maandag t/m donderdag: de vorige week, als die nog open staat", () => {
+  assert.deepEqual(kaal(D.wrDoelWeek("2026-10-05", [])), { week: "2026-09-28", van: "2026-09-28", tot: "2026-10-04" });   // maandag
+  assert.deepEqual(kaal(D.wrDoelWeek("2026-10-05", [{ week: "2026-09-28" }])), { week: "2026-10-05", van: "2026-10-05", tot: "2026-10-05" });
+  assert.equal(D.wrDoelWeek("2026-10-09", []).week, "2026-10-05");   // vrijdag: deze week
+});
+
+test("belasting: de review van de startdag telt als 'ervoor', die van dag 14 als 'tijdens'", () => {
+  const d = { reviews: [{ datum: "2026-09-20", belasting: 8 }, { datum: "2026-09-27", belasting: 7 }, { datum: "2026-10-11", belasting: 3 }] };
+  const s = D.wrExperimentStand({ start: "2026-09-27", maat: "belasting" }, d, "2026-10-12");
+  assert.equal(s.voor, 7.5); assert.equal(s.tijdens, 3); assert.equal(s.klaar, true);
+});
+
+test("aantallen: even lange periodes, dus geen schijnbare instorting op dag 2", () => {
+  const gebeurtenissen = [];
+  for (let i = 1; i <= 14; i++) gebeurtenissen.push({ soort: "taak", tekst: "Afgerond: x", datum: `2026-09-${String(14 + i).padStart(2, "0")}` });
+  gebeurtenissen.push({ soort: "taak", tekst: "Afgerond: y", datum: "2026-09-29" });
+  const s = D.wrExperimentStand({ start: "2026-09-29", maat: "taken" }, { gebeurtenissen }, "2026-09-30");
+  assert.equal(s.dag, 2); assert.equal(s.voor, 2); assert.equal(s.tijdens, 1);
+});
+
+test("lokale datum van een UTC-tijdstempel", () => {
+  const ts = new Date(2026, 9, 3, 0, 30).toISOString();   // 00:30 lokaal
+  assert.equal(D.dkLokaal(ts), "2026-10-03");
 });
 
 test("teksten: hooguit twee zinnen, geen 'moet'", () => {

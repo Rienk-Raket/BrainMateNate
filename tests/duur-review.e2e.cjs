@@ -44,6 +44,12 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   const t2 = await p.evaluate(async () => { const t = await maakTaakUitTekst("Badkamer schoonmaken boven vandaag ~20m"); await bewaar("tijdlog", { id: uid(), taakId: t.id, seconden: 40 * 60, datum: vandaagISO(), ts: new Date().toISOString() }); await vinkTaak(t.id); return t.id; });
   await wacht(300);
   check("V9: met timer zelf gemeten (40 min), geen vraag", await p.evaluate(id => inst("dkLog").some(r => r.taakId === id && r.werkelijk === 40 && r.bron === "timer") && !document.querySelector(".dk-vraag"), t2));
+  // Lopende timer bij afronden: eerst stoppen en meten.
+  const t3 = await p.evaluate(async () => { const t = await maakTaakUitTekst("Opruimen zolder vandaag ~30m"); startTimer(t.id); T.start = Date.now() - 45 * 60000; await vinkTaak(t.id); return t.id; });
+  await wacht(300);
+  check("V9: lopende timer wordt gestopt en gemeten (45 min)", await p.evaluate(id => !T.actief && inst("dkLog").some(r => r.taakId === id && r.werkelijk === 45 && r.bron === "timer"), t3));
+  await p.evaluate(async id => { await vinkTaak(id); }, t3); await wacht(200);
+  check("V9: weer openzetten haalt de meting weg", await p.evaluate(id => !inst("dkLog").some(r => r.taakId === id), t3));
   // Nieuwe vergelijkbare taak: voorstel in het taakblad.
   await p.evaluate(async () => { const t = await maakTaakUitTekst("badkamer schoonmaken morgen ~15m"); openTaakBlad(t.id); }); await wacht(400);
   check("V9: voorstel in het taakblad", (await p.locator("#dk-hint").textContent()).includes("± 35 min"));
@@ -90,8 +96,14 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await wacht(300);
   check("V10: na twee weken drie keuzes", await p.locator("[data-wr-exp]").count() === 3);
   await p.screenshot({ path: path.join(UIT, "v10-02-experiment.png") });
+  await p.click('[data-wr-exp="aanpassen"]'); await wacht(300);
+  check("V10: aanpassen toont het formulier, ook als de week al gedaan is", await p.locator('[data-wr="herstart"]').count() === 1 && (await p.inputValue("#wr-tekst")).includes("Ik loop vast"));
+  await p.fill("#wr-tekst", "Bij twijfel meteen 'Ik loop vast'"); await p.dispatchEvent("#wr-tekst", "input");
+  await p.click('[data-wr="herstart"]'); await wacht(300);
+  check("V10: aangepast experiment loopt", await p.evaluate(() => { const e = inst("wrExperimenten"); return e.length === 2 && e[0].status === "aanpassen" && e[1].status === "bezig" && /twijfel/.test(e[1].aanpassing); }));
+  await p.evaluate(async () => { const e = inst("wrExperimenten"); e[1].start = plusDagen(vandaagISO(), -15); await zetInst("wrExperimenten", e); teken(); }); await wacht(300);
   await p.click('[data-wr-exp="behouden"]'); await wacht(300);
-  check("V10: behouden en in de geschiedenis", await p.evaluate(() => inst("wrExperimenten")[0].status === "behouden" && /behouden/.test(document.querySelector("#scherm").textContent)));
+  check("V10: behouden en in de geschiedenis", await p.evaluate(() => inst("wrExperimenten")[1].status === "behouden" && /behouden/.test(document.querySelector("#scherm").textContent)));
   await p.evaluate(() => ga("meer")); await wacht(300);
   check("V10: Weekreview in Meer → Alle schermen", await p.locator('#scherm [data-view="weekreview"]').count() === 1);
 

@@ -41,14 +41,22 @@ const wrISO = n => new Date(n * 86400000).toISOString().slice(0, 10);
 /** Maandag van de week van een ISO-datum. */
 function wrWeek(iso) { const n = wrDag(iso), wd = (new Date(n * 86400000).getUTCDay() + 6) % 7; return wrISO(n - wd); }
 const wrIn = (d, van, tot) => !!d && d >= van && d <= tot;
+/** Lokale datum van een tijdstempel (ts staat in UTC). */
+function wrLokaal(ts) { const d = new Date(ts); return isNaN(d) ? "" : d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+/** Welke week bekijken we? Maandag t/m donderdag: de vorige week, als die nog niet teruggekeken is. */
+function wrDoelWeek(vandaag, reviews) {
+  const w = wrWeek(vandaag), wd = wrDag(vandaag) - wrDag(w), vorige = wrISO(wrDag(w) - 7);
+  if (wd <= 3 && !(reviews || []).some(r => r.week === vorige)) return { week: vorige, van: vorige, tot: wrISO(wrDag(vorige) + 6) };
+  return { week: w, van: w, tot: vandaag };
+}
 
 /** Feiten over een periode, uit losse lijsten (geen app-state nodig). */
 function wrFeiten(d, van, tot) {
   const taken = (d.gebeurtenissen || []).filter(g => g.soort === "taak" && /^Afgerond/.test(g.tekst || "") && wrIn(g.datum || (g.ts || "").slice(0, 10), van, tot)).length;
   const afs = (d.afspraken || []).filter(a => wrIn(a.datum, van, tot) && a.hsStatus);
   const gehaald = afs.filter(a => a.hsStatus === "geweest").length, gemist = afs.filter(a => a.hsStatus === "gemist").length;
-  const vast = (d.ivLog || []).filter(r => wrIn((r.ts || "").slice(0, 10), van, tot));
-  const dk = (d.dkLog || []).filter(r => r.werkelijk > 0 && r.geschat > 0 && wrIn((r.ts || "").slice(0, 10), van, tot));
+  const vast = (d.ivLog || []).filter(r => wrIn(wrLokaal(r.ts), van, tot));
+  const dk = (d.dkLog || []).filter(r => r.werkelijk > 0 && r.geschat > 0 && wrIn(wrLokaal(r.ts), van, tot));
   const f = dk.length ? dk.map(r => r.werkelijk / r.geschat).sort((a, b) => a - b)[Math.floor(dk.length / 2)] : null;
   return { taken, gehaald, gemist, vast: vast.length, factor: f == null ? null : Math.round(f * 10) / 10, schattingen: dk.length };
 }
@@ -67,7 +75,7 @@ function wrMaat(maat, d, van, tot) {
   if (maat === "taken") return f.taken;
   if (maat === "optijd") return f.gehaald + f.gemist ? Math.round(f.gehaald / (f.gehaald + f.gemist) * 100) : null;
   if (maat === "vaststap") {
-    const log = (d.ivLog || []).filter(r => wrIn((r.ts || "").slice(0, 10), van, tot)); if (!log.length) return null;
+    const log = (d.ivLog || []).filter(r => wrIn(wrLokaal(r.ts), van, tot)); if (!log.length) return null;
     const dag = 864e5, binnen = (x, ts) => x && Date.parse(x) >= ts && Date.parse(x) - ts <= dag;
     const ok = log.filter(r => { const t = (d.taken || []).find(x => x.id === r.taakId), ts = Date.parse(r.ts); return t && (binnen(t.afOp, ts) || (t.subtaken || []).some(s => s.af && binnen(s.afOp, ts))); }).length;
     return Math.round(ok / log.length * 100);
@@ -77,9 +85,21 @@ function wrMaat(maat, d, van, tot) {
 }
 /** Stand van een experiment: bezig (dag x) of klaar; met de maat ervoor en tijdens. */
 function wrExperimentStand(exp, d, vandaag) {
-  const start = wrDag(exp.start), eind = start + WR_DUUR - 1, nu = wrDag(vandaag);
-  const voor = wrMaat(exp.maat, d, wrISO(start - WR_DUUR), wrISO(start - 1)), tijdens = wrMaat(exp.maat, d, exp.start, wrISO(Math.min(eind, nu)));
-  return { dag: Math.min(WR_DUUR, nu - start + 1), klaar: nu > eind, eind: wrISO(eind), voor, tijdens };
+  const start = wrDag(exp.start), eind = start + WR_DUUR - 1, nu = wrDag(vandaag), dag = Math.min(WR_DUUR, nu - start + 1);
+  let voor, tijdens;
+  if (exp.maat === "belasting") {
+    // De review op de startdag gaat over de week ervóór; die van dag 14 over de laatste experimentweek.
+    voor = wrMaat("belasting", d, wrISO(start - WR_DUUR + 1), exp.start);
+    tijdens = wrMaat("belasting", d, wrISO(start + 1), wrISO(Math.min(start + WR_DUUR, nu)));
+  } else if (exp.maat === "taken") {
+    // Aantallen: even lange periodes vergelijken, anders lijkt dag 2 een instorting.
+    voor = wrMaat("taken", d, wrISO(start - dag), wrISO(start - 1));
+    tijdens = wrMaat("taken", d, exp.start, wrISO(start + dag - 1));
+  } else {
+    voor = wrMaat(exp.maat, d, wrISO(start - WR_DUUR), wrISO(start - 1));
+    tijdens = wrMaat(exp.maat, d, exp.start, wrISO(Math.min(eind, nu)));
+  }
+  return { dag, klaar: nu > eind, eind: wrISO(eind), voor, tijdens };
 }
 /** Moet de kaart op Mijn dag staan? Vrijdag vanaf 15 uur, zaterdag en zondag, als deze week nog niet gedaan of weggeklikt. */
 function wrKaartNodig(nu, reviews, weg) {
@@ -97,21 +117,29 @@ const wrActief = () => wrExps().find(e => e.status === "bezig") || null;
 
 /* ---------- 99.1 Het scherm ---------- */
 function vwWeekreview() {
-  const v = vandaagISO(), w = wrWeek(v), d = wrData(), f = wrFeiten(d, w, v);
+  const v = vandaagISO(), doel = wrDoelWeek(v, wrReviews()), w = doel.week, d = wrData(), f = wrFeiten(d, doel.van, doel.tot);
   const gedaan = wrReviews().find(r => r.week === w), act = wrActief();
-  const st = V.wr || (V.wr = { schakel: null, tekst: "", maat: "taken", belasting: null });
+  if (V.wr && V.wr.week !== w) V.wr = null;   // geen keuzes van een andere week meenemen
+  const st = V.wr || (V.wr = { week: w, schakel: null, tekst: "", maat: "taken", belasting: null });
   let h = "";
   if (act) {
     const s = wrExperimentStand(act, d, v), m = WR_MATEN.find(x => x.id === act.maat);
     h += `<section class="card card-pad wr-exp"><span class="labeltekst">Je experiment</span><p class="wr-exp-titel">${esc(act.aanpassing)}</p>
       <p class="klein">${s.klaar ? "Twee weken voorbij." : `Dag ${s.dag} van ${WR_DUUR}.`} Maat: ${esc(m.naam)}.</p>
-      <div class="wr-vergelijk"><div><small>2 weken ervoor</small><b>${s.voor == null ? "–" : s.voor + (act.maat === "taken" || act.maat === "belasting" ? "" : "%")}</b></div>
+      <div class="wr-vergelijk"><div><small>${act.maat === "taken" && !s.klaar ? "Even lang ervoor" : "Ervoor"}</small><b>${s.voor == null ? "–" : s.voor + (act.maat === "taken" || act.maat === "belasting" ? "" : "%")}</b></div>
         <div><small>${s.klaar ? "Tijdens" : "Tot nu toe"}</small><b>${s.tijdens == null ? "–" : s.tijdens + (act.maat === "taken" || act.maat === "belasting" ? "" : "%")}</b></div></div>
       ${s.klaar ? `<p>Wat doe je ermee?</p><div class="wr-knoppen"><button class="knop primair" data-wr-exp="behouden">Behouden</button><button class="knop rand" data-wr-exp="aanpassen">Aanpassen</button><button class="knop rand" data-wr-exp="vallen">Laten vallen</button></div>`
         : `<button class="iv-los" data-wr-exp="stoppen">Experiment stoppen</button>`}
       <details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Of iets helpt, verschilt per persoon; twee weken met één maat laat zien wat voor jou werkt. Praktisch: een persoonlijk experiment, geen bewijs.</p></details></section>`;
   }
-  h += `<section class="card card-pad wr-stap"><h3 class="hs-stap"><span>1</span> Deze week, zonder oordeel</h3>
+  if (st.aanpassen && !act) {
+    h += `<section class="card card-pad wr-stap"><h3 class="hs-stap"><span>↻</span> Experiment aanpassen</h3>
+      <label class="sr-only" for="wr-tekst">Aanpassing</label><textarea class="invoer" id="wr-tekst" rows="2" maxlength="160">${esc(st.tekst)}</textarea>
+      <label class="labeltekst" for="wr-maat">Hoe merk je of het helpt?</label>
+      <select class="invoer" id="wr-maat">${WR_MATEN.map(m => `<option value="${m.id}"${st.maat === m.id ? " selected" : ""}>${esc(m.naam)}</option>`).join("")}</select>
+      <div class="wr-knoppen" style="margin-top:12px"><button class="knop breed primair" data-wr="herstart">Start opnieuw, twee weken</button></div></section>`;
+  }
+  h += `<section class="card card-pad wr-stap"><h3 class="hs-stap"><span>1</span> ${w === wrWeek(v) ? "Deze week" : "Vorige week"}, zonder oordeel</h3>
     <ul class="wr-feiten">${wrZinnen(f).map(z => `<li>${esc(z)}</li>`).join("")}</ul></section>`;
   if (gedaan) {
     h += `<section class="card card-pad"><p><b>Deze week al teruggekeken.</b> ${gedaan.schakel ? `Schakel: ${esc((WR_SCHAKELS.find(s => s.id === gedaan.schakel) || {}).naam || "")}.` : ""}</p>${gedaan.aanpassing ? `<p>Aanpassing: ${esc(gedaan.aanpassing)}</p>` : ""}</section>`;
@@ -151,12 +179,18 @@ document.addEventListener("input", e => {
   if (e.target.id === "wr-belasting") { V.wr.belasting = +e.target.value; e.target.setAttribute("aria-valuetext", String(V.wr.belasting)); const t = $("#wr-belasting-tekst"); if (t) t.textContent = `Gekozen: ${V.wr.belasting}`; }
 });
 document.addEventListener("change", e => { if (V.wr && e.target.id === "wr-maat") V.wr.maat = e.target.value; });
+// Tikken op het schuifje zonder te bewegen (bv. op 5) telt ook als keuze.
+for (const soort of ["change", "pointerup"]) document.addEventListener(soort, e => {
+  if (!V.wr || !e.target || e.target.id !== "wr-belasting") return;
+  V.wr.belasting = +e.target.value; e.target.setAttribute("aria-valuetext", String(V.wr.belasting));
+  const t = $("#wr-belasting-tekst"); if (t) t.textContent = `Gekozen: ${V.wr.belasting}`;
+});
 document.addEventListener("click", async e => {
   const s = e.target.closest && e.target.closest("[data-wr-schakel], [data-wr], [data-wr-exp], [data-wr-kaart]"); if (!s) return;
   e.preventDefault(); e.stopImmediatePropagation();
-  const v = vandaagISO(), w = wrWeek(v);
+  const v = vandaagISO(), doel = wrDoelWeek(v, wrReviews()), w = doel.week;
   if (s.dataset.wrKaart) {
-    if (s.dataset.wrKaart === "weg") { await zetInst("wrWeg", w); teken(); return; }
+    if (s.dataset.wrKaart === "weg") { await zetInst("wrWeg", wrWeek(v)); teken(); return; }
     return ga("weekreview");
   }
   if (s.dataset.wrSchakel) {
@@ -164,9 +198,15 @@ document.addEventListener("click", async e => {
     teken(); const b = document.querySelector(`[data-wr-schakel="${s.dataset.wrSchakel}"]`); if (b) b.focus({ preventScroll: true });
     return;
   }
+  if (s.dataset.wr === "herstart") {
+    const st = V.wr, tekst = (st.tekst || "").trim();
+    if (tekst && !wrActief()) await zetInst("wrExperimenten", wrExps().concat({ id: uid(), aanpassing: tekst, maat: st.maat || "taken", schakel: st.schakel, start: v, status: "bezig" }));
+    V.wr = null; tril(6); teken(); toast("Aangepast experiment gestart.");
+    return;
+  }
   if (s.dataset.wr) {
     const st = V.wr, tekst = (st.tekst || (st.schakel && st.schakel !== "geen" ? WR_SCHAKELS.find(x => x.id === st.schakel).tip : "")).trim();
-    await zetInst("wrReviews", wrReviews().concat({ week: w, datum: v, schakel: st.schakel, aanpassing: tekst, belasting: st.belasting, feiten: wrFeiten(wrData(), w, v), ts: new Date().toISOString() }).slice(-104));
+    await zetInst("wrReviews", wrReviews().concat({ week: w, datum: v, schakel: st.schakel, aanpassing: tekst, belasting: st.belasting, feiten: wrFeiten(wrData(), doel.van, doel.tot), ts: new Date().toISOString() }).slice(-104));
     if (s.dataset.wr === "klaar" && st.schakel && st.schakel !== "geen" && !wrActief() && tekst)
       await zetInst("wrExperimenten", wrExps().concat({ id: uid(), aanpassing: tekst, maat: st.maat || "taken", schakel: st.schakel, start: v, status: "bezig" }));
     V.wr = null; tril(6); teken();
@@ -177,9 +217,9 @@ document.addEventListener("click", async e => {
     const act = wrActief(); if (!act) return;
     const status = { behouden: "behouden", aanpassen: "aanpassen", vallen: "vallen", stoppen: "gestopt" }[s.dataset.wrExp];
     await zetInst("wrExperimenten", wrExps().map(e => e.id === act.id ? Object.assign({}, e, { status, klaarOp: v }) : e));
-    if (status === "aanpassen") { V.wr = { schakel: act.schakel, tekst: act.aanpassing, maat: act.maat, belasting: null }; }
+    if (status === "aanpassen") V.wr = { week: w, schakel: act.schakel, tekst: act.aanpassing, maat: act.maat, belasting: null, aanpassen: true };
     teken();
-    toast(status === "behouden" ? "Behouden. Dit hoort nu bij jouw aanpak." : status === "vallen" ? "Losgelaten. Ook dat is een uitkomst." : status === "aanpassen" ? "Pas hem aan en start opnieuw." : "Gestopt.");
+    toast(status === "behouden" ? "Behouden. Dit hoort nu bij jouw aanpak." : status === "vallen" ? "Losgelaten. Ook dat is een uitkomst." : status === "aanpassen" ? "Pas het aan en start opnieuw." : "Gestopt.");
   }
 }, true);
 

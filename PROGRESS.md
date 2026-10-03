@@ -228,3 +228,16 @@ Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vra
 - Drie feiten zonder oordeel (taken afgerond, afspraken gehaald, schattingen of "Ik loop vast"), één schakel uit de keten van negen, één aanpassing (voorgevuld met een tip), ervaren belasting 0–10.
 - Experiment van twee weken met één maat (taken, afspraken gehaald, vast → stap, belasting); stand "2 weken ervoor" tegenover "tijdens"; daarna behouden, aanpassen of laten vallen. Eén experiment tegelijk. Opslag `wrReviews`, `wrExperimenten`.
 - `duur-review.css`. Tests: `tests/duur-review.test.mjs`, `tests/duur-review.e2e.cjs` (26 checks).
+
+## Review stap 16–17 (verwerkt)
+
+1. Loopt de timer op de taak bij afronden, dan stopt de app hem eerst en meet die tijd mee (was: niet gemeten, timer liep door).
+2. "Aanpassen" na een experiment toont het formulier, ook als de week al teruggekeken is; "Start opnieuw, twee weken".
+3. Belasting: de review op de startdag telt als "ervoor", die van dag 14 als "tijdens".
+4. Maandag t/m donderdag kijk je terug op de vorige week als die nog open staat.
+5. Lokale datum voor afOp en ts (UTC), dus ook na middernacht klopt "vandaag" en de week.
+6. Ongedaan of opnieuw afronden: oude meting vervalt; voorstellen gebruiken alleen taken die nog af zijn.
+7. Aantallen in een lopend experiment: even lange periodes vergelijken ("Even lang ervoor").
+8. Keuzes in de weekreview horen bij één week; een nieuwe week begint leeg.
+9. Tikken op het schuifje zonder te bewegen telt ook.
+10. Na de reistijdvraag gaat de focus naar de volgende kaart.
