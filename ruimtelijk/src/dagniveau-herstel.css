@@ -1,0 +1,26 @@
+/* === Dagniveau (V5) en herstel (V8) === */
+.dn-blok { margin-bottom: 12px; }
+.dn-intentie { margin: 0 0 10px; font-size: calc(16px * var(--t)); font-weight: 600; }
+.dn-intentie .labeltekst { margin-right: 6px; }
+.dn-kop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.dn-kop small { color: var(--muted); }
+.dn-keuzes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0 6px; padding: 4px; background: var(--bg2, rgba(127,127,127,.1)); border-radius: 14px; }
+.dn-keuze { position: relative; min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: inherit; font: inherit; font-weight: 600; cursor: pointer; }
+.dn-keuze[aria-checked="true"] { background: var(--card, #fff); color: var(--accent); box-shadow: 0 1px 4px rgba(15,23,42,.15); }
+.dn-voorstel { position: absolute; top: 4px; right: 8px; color: var(--accent); font-size: 18px; line-height: 1; }
+.dn-hint { margin: 4px 0; font-weight: 600; }
+.dn-uitleg { margin: 4px 0 0; }
+.dn-landen { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.dn-geparkeerd { margin: 10px 0 0; color: var(--muted); font-size: calc(14px * var(--t)); }
+.hs-kaart { display: block; margin-bottom: 12px; border-left: 4px solid var(--accent); }
+.dn-blok { display: block; }
+.hs-vraag { margin: 6px 0 10px; font-size: calc(16px * var(--t)); }
+.hs-knoppen { display: flex; gap: 8px; }
+.hs-knoppen .knop { flex: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.hs-zin { font-size: calc(17px * var(--t)); line-height: 1.4; margin: 0 0 8px; }
+.hs-stap { display: flex; align-items: center; gap: 8px; font-size: calc(16px * var(--t)); margin: 16px 0 8px; }
+.hs-stap span { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; }
+.hs-bericht { width: 100%; min-height: 130px; margin-bottom: 8px; }
+.hs-schakels { display: flex; flex-wrap: wrap; gap: 8px; }
+.hs-schakels .keuze { min-height: 44px; text-align: left; }
+.hs-tip { margin: 10px 0 8px; font-weight: 600; }

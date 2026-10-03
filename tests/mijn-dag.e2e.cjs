@@ -46,7 +46,8 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---------- Mijn dag ---------- */
   check("titel Mijn dag", (await p.locator("#titel").textContent()).trim() === "Mijn dag");
-  check("Dagring bovenaan", await p.evaluate(() => { const s = document.querySelector("#scherm"); const ring = s.querySelector(".fm-dagring"); return !!ring && [...s.children].indexOf(ring) <= 1; }));
+  // Sinds V5 staat het dagniveau erboven (en eventueel de back-upbanner): de ring is het eerste grote blok.
+  check("Dagring bovenaan", await p.evaluate(() => { const s = document.querySelector("#scherm"); const ring = s.querySelector(".fm-dagring"); const i = [...s.children].indexOf(ring); return !!ring && i <= 3 && [...s.children].slice(0, i).every(x => x.matches(".dn-blok, .hs-kaart, .banner, .backup-banner") || x.className.includes("banner")); }));
   check("één Dagring", await p.locator(".fm-dagring").count() === 1);
   check("klokje op de vertrektijd (alleen bij reistijd)", await p.locator(".fm-dr-klok").count() === 1);
   check("buffer zichtbaar", await p.locator(".fm-dr-buffer").count() === 1);

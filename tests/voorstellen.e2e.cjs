@@ -47,7 +47,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.screenshot({ path: path.join(UIT, "v7-01-oorzaken.png") });
   await p.click('[data-iv-oorzaak="onduidelijk"]'); await wacht(350);
   check("V7: vraag naar de eerste handeling", (await p.locator('label[for="iv-stap"]').textContent()).includes("eerste handeling"));
-  check("V7: waarom met bewijsniveau", (await p.locator(".iv-waarom p").textContent()).includes("Praktisch"));
+  check("V7: waarom met bewijsniveau", (await p.locator("#blad .iv-waarom p").textContent()).includes("Praktisch"));
   await p.click('[data-iv-vb="Bestand openen"]');
   await p.screenshot({ path: path.join(UIT, "v7-02-eerste-handeling.png") });
   await p.click("#iv-doe"); await wacht(500);

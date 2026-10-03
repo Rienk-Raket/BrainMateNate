@@ -151,3 +151,16 @@ Tests: `tests/aanpak.test.mjs` (kern V2 en V4), `tests/structuur.e2e.cjs` (31 ch
 10. Nacht (0–6 uur) apart: rust en dagboek.
 11. Waarom-teksten hooguit twee zinnen.
 12. Samenvoegen vergelijkt op de sleutel uit `WINKELS`.
+
+## Stap 13: V5 Dagniveau (Minimum, Standaard, Extra)
+
+- `ruimtelijk/src/dagniveau.js` (sectie 95). Blok bovenaan Mijn dag: intentie van de dagstart als kopregel, energie van de check-in, drie niveaus. Nate stelt voor (stip + zin bij weinig of veel energie), jij kiest; keuze geldt voor vandaag (`dnNiveau`).
+- Minimum: Nu-kaart toont het kleinste ding (kortste duur); de rest wacht ("er gaat niets weg"); knop Even landen. Extra: vier dingen bij "daarna". Standaard: ongewijzigd.
+- Nog niet: minimumversie van klussen in Huishouden.
+
+## Stap 14: V8 Herstel na een gemiste afspraak
+
+- `ruimtelijk/src/herstel.js` (sectie 96). Na een afspraak zonder uitkomst (vandaag na de eindtijd, of gisteren) vraagt Mijn dag één keer "Hoe ging het?": Geweest of Gemist (`hsStatus`).
+- Gemist: herstelzin (feit, menselijkheid, verantwoordelijkheid), kant-en-klaar bericht om te kopiëren (met naam als die er is), opnieuw plannen (afspraakblad ingevuld), één schakel kiezen met één voorstel: alarmen instellen, buffer +5 min (`mdBuffer`), stopmoment 5 min eerder (`tpAlarmen.afronden`). Gelogd als "Gemist en opgepakt".
+- `dagniveau-herstel.css`. Tests: `tests/niveau-herstel.test.mjs`, `tests/niveau-herstel.e2e.cjs` (24 checks).
+- Ook: Opdrachten-instellingen bewaren voortaan de rest van `tpAlarmen` (afronden ging anders verloren).

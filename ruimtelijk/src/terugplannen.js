@@ -152,7 +152,7 @@ function tpUitleg(id) {
     <button class="knop breed rand" id="tp-test">Test: herinnering over 2 minuten</button>
     <p class="klein">Er gaat niets via internet. De app geeft de tijden als tekst door aan Opdrachten.</p>`,
     `<button class="knop breed primair" id="tp-klaar">Opdracht staat klaar</button>`);
-  const leesInst = () => ({ naam: $("#tp-naam").value.trim() || TP_STD.naam, wekker: $("#tp-wekker").getAttribute("aria-pressed") === "true" });
+  const leesInst = () => Object.assign({}, inst("tpAlarmen", {}) || {}, { naam: $("#tp-naam").value.trim() || TP_STD.naam, wekker: $("#tp-wekker").getAttribute("aria-pressed") === "true" });
   $("#tp-wekker").onclick = e => { const b = e.currentTarget, aan = String(b.getAttribute("aria-pressed") !== "true"); b.setAttribute("aria-pressed", aan); b.querySelector(".toggle").setAttribute("aria-pressed", aan); };
   $("#tp-test").onclick = () => {
     const o = leesInst(), d = new Date(Date.now() + 2 * 60000), hhmm = pad(d.getHours()) + ":" + pad(d.getMinutes());
