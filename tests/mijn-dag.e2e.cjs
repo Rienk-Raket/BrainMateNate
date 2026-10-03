@@ -122,10 +122,12 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.screenshot({ path: path.join(UIT, "nv-02-planning-390.png") });
   check("Planning: tikvlakken ≥ 44 px", (await tikvlakken(p)).length === 0, JSON.stringify(await tikvlakken(p)));
   await p.click('#tabs [data-tab="ruimtes"]'); await wacht(400);
-  check("Ruimtes: kamers", await p.evaluate(() => V.view === "ruimtes" && document.querySelectorAll(".nv-kamer").length >= 12));
+  // Sinds V4: drie ruimtes "voor jou, nu" en vijf clusters (ingeklapt).
+  check("Ruimtes: voor jou en clusters", await p.evaluate(() => V.view === "ruimtes" && document.querySelectorAll(".rv-nu-lijst .nv-kamer").length === 3 && document.querySelectorAll(".rv-kop").length === 5));
   await p.screenshot({ path: path.join(UIT, "nv-03-ruimtes-390.png"), fullPage: true });
   check("Ruimtes: tikvlakken ≥ 44 px", (await tikvlakken(p)).length === 0, JSON.stringify(await tikvlakken(p)));
-  await p.locator('.nv-kamer[data-view="huishouden"]').click(); await wacht(400);
+  await p.click('[data-rv="thuis"]'); await wacht(300);
+  await p.locator('.rv-cluster.open .nv-kamer[data-view="huishouden"]').click(); await wacht(400);
   check("kamer opent de module", await p.evaluate(() => V.view === "huishouden"));
   // Elk bestaand scherm bereikbaar: alle views uit de tekenkaart bestaan nog en tekenen zonder fout.
   const views = await p.evaluate(async () => {

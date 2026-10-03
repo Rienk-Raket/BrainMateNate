@@ -117,3 +117,22 @@ Open (letterlijk gelaten): de vijf compensatievragen hebben `scoring_role: resou
 10. Meting werkt: subtaken krijgen `afOp` bij afvinken; na 3× gebruik toont het oorzakenblad "x van de y keer kwam er binnen een dag een stap af".
 Kleiner: dubbel opslaan voorkomen, Enter tijdens IME, eerlijke toast als de stap er al stond.
 Bekend (niet van deze stappen): `keuzemachine.e2e.cjs` faalt nu op 6 punten, ook op main (e914d31); de zesde ("versnelde band") is timing.
+
+## Stap 11: V2 Mijn aanpak (oude profiel vervalt)
+
+- `ruimtelijk/src/mijn-aanpak.js/.css` (sectie 93). Profiel-service `aanpak()`: patronen uit de kennismaking → richting voor de bestaande modules (`apRichting`: P1/P2 → adhd, P3 → autisme, beide → audhd, P7 → energie of energievlag). `pfRichting` en `ndAanpak` lezen voortaan hieruit; de tien oude vragen en het energievinkje tellen niet meer (besluit 2).
+- Scherm "Mijn aanpak" (view `aanpak`, via Meer → Profiel): patronen met metafoor, "Wat Nate al afstemt" (blokken, pauzes, afkoeltijd), zes aanpassingen met schakelaar, label "Nate stelt voor", "Waarom zeg je dit?" en bewijsniveau. Niets gaat vanzelf aan. Aanpassingen gebruiken bestaande instellingen (`ndDichtheid`, `beweging`, `nateEnergie`, `tpAlarmen.wekker`) plus nieuw `vasteIndeling` en `ivNu`.
+- Profiel: het oude blok "Aanpak die bij je past" (tien vragen) is weg; bovenaan staat de ingang naar Mijn aanpak.
+
+## Stap 12: V4 Ruimtes in vijf clusters, Meer in vijf regels, export/import
+
+- `ruimtelijk/src/ruimtes-clusters.js/.css` (sectie 94). Ruimtes: "Voor jou, nu" (drie ruimtes met live status, `rvVoorJou`: open dingen, patroon, dagdeel, lage energie), vijf clusters (Thuis en spullen, Lichaam en rust, Geld, Mensen en werk, Groeien en maken), één tegelijk open. Vaste indeling → vaste drie (Persoonlijk, Huishouden, Anker).
+- Meer: bovenaan "Je gegevens" met **Alles exporteren** (één JSON met alle 55 opslagplekken, inclusief bijlagen) en **Importeren** (samenvoegen of alles vervangen; ook oude FutureMe-back-ups). Daaronder de vijf regels; "Alle schermen" ingeklapt.
+- `bouw.py` stap 12: bestandsnaam `brainmatenate-gegevens-…json`; samenvoegen vergelijkt op de echte sleutel (`id` of `sleutel`).
+- Bekend: samenvoegen van twee verschillende installaties geeft dubbele starttaken (andere id's). Bewust zo gelaten: er gaat niets verloren.
+
+## Quick win 1: leesbare kopjes (besluit 4)
+
+- `ruimtelijk/src/leesbaar.css`: titels, kopjes, labels en tabnamen in het systeemlettertype; het pixellettertype blijft alleen decoratie.
+
+Tests: `tests/aanpak.test.mjs` (kern V2 en V4), `tests/structuur.e2e.cjs` (31 checks, inclusief export → import in een lege app).

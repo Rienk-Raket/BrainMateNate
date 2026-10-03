@@ -1,0 +1,17 @@
+/* === Ruimtes in clusters en Meer (V4) === */
+.rv-nu { margin-bottom: 16px; }
+.rv-nu h2 { margin: 0 0 8px; }
+.rv-cluster { margin-bottom: 8px; }
+.rv-kop { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px; width: 100%; min-height: 56px; padding: 10px 14px;
+  background: var(--card, #fff); border: 1px solid var(--line, #d0d7e2); border-radius: 16px; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rv-kop b { font-size: calc(17px * var(--t)); }
+.rv-kop small { grid-column: 1; color: var(--muted); }
+.rv-kop svg { grid-column: 2; grid-row: 1 / span 2; transition: transform .2s; }
+.rv-cluster.open .rv-kop svg { transform: rotate(90deg); }
+.rv-cluster .nv-kamers { margin-top: 8px; }
+.rv-gegevens { margin-bottom: 12px; }
+.rv-gegevens-knoppen { display: flex; gap: 8px; margin: 10px 0 6px; }
+.rv-gegevens-knoppen .knop { flex: 1; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.rv-alle { margin-top: 12px; }
+.rv-alle summary { min-height: 44px; display: flex; align-items: center; color: var(--accent); cursor: pointer; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .rv-kop svg { transition: none; } }

@@ -4514,6 +4514,66 @@ body.kn-actief #nate { opacity: 0; pointer-events: none; }
 /* Het oude Aa-knopje (Snel typen) is overbodig: het veld doet hetzelfde. */
 .vi ~ .nwl-rail .nwl-snel { display: none; }
 
+
+/* === Mijn aanpak (V2) === */
+.ap-lijst { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.ap-lijst li { display: flex; flex-direction: column; }
+.ap-lijst b { font-size: calc(18px * var(--t)); }
+.ap-lijst small, .ap-rij small { color: var(--muted); }
+.ap-auto { margin: 0; padding-left: 20px; }
+.ap-uitleg { margin: -4px 0 8px; }
+.ap-aanpassingen { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.ap-rij { padding: 4px 14px 2px; }
+.ap-schakel { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; padding: 8px 0;
+  background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.ap-schakel .tekst { display: flex; flex-direction: column; gap: 2px; }
+.ap-schakel .toggle { flex: none; pointer-events: none; }
+.ap-voorstel { align-self: flex-start; font-size: calc(12px * var(--t)); font-weight: 700; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 1px 8px; }
+.ap-ingang { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; margin-bottom: 12px; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.ap-ingang .tekst { display: flex; flex-direction: column; }
+.ap-ingang small { color: var(--muted); }
+
+
+/* === Ruimtes in clusters en Meer (V4) === */
+.rv-nu { margin-bottom: 16px; }
+.rv-nu h2 { margin: 0 0 8px; }
+.rv-cluster { margin-bottom: 8px; }
+.rv-kop { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px; width: 100%; min-height: 56px; padding: 10px 14px;
+  background: var(--card, #fff); border: 1px solid var(--line, #d0d7e2); border-radius: 16px; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rv-kop b { font-size: calc(17px * var(--t)); }
+.rv-kop small { grid-column: 1; color: var(--muted); }
+.rv-kop svg { grid-column: 2; grid-row: 1 / span 2; transition: transform .2s; }
+.rv-cluster.open .rv-kop svg { transform: rotate(90deg); }
+.rv-cluster .nv-kamers { margin-top: 8px; }
+.rv-gegevens { margin-bottom: 12px; }
+.rv-gegevens-knoppen { display: flex; gap: 8px; margin: 10px 0 6px; }
+.rv-gegevens-knoppen .knop { flex: 1; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.rv-alle { margin-top: 12px; }
+.rv-alle summary { min-height: 44px; display: flex; align-items: center; color: var(--accent); cursor: pointer; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .rv-kop svg { transition: none; } }
+
+
+/* === Leesbare kopjes (besluit Kas 2 oktober, quick win 1) ===
+   Het pixellettertype blijft alleen voor decoratie (logo, illustraties). Titels,
+   kopjes, labels en tabnamen staan in het systeemlettertype, zodat niets afbreekt. */
+html[data-retro="1"] h1#titel{font-family:inherit;font-weight:800;font-size:calc(26px * var(--t));letter-spacing:-.02em;line-height:1.15;
+  text-shadow:none;overflow-wrap:normal;hyphens:manual}
+html[data-retro="1"] #ondertitel{font-family:inherit;font-size:calc(14px * var(--t));line-height:1.35;letter-spacing:0;color:var(--muted)}
+html[data-retro="1"] #ondertitel.is-datum{font-family:inherit;font-size:calc(17px * var(--t));font-weight:750;line-height:1.3;margin-top:4px;text-shadow:none;color:var(--text)}
+html[data-retro="1"] nav#tabs button span{font-family:inherit;font-size:calc(11px * var(--t));font-weight:600;letter-spacing:0;line-height:1.2}
+html[data-retro="1"] .sectie h2,
+html[data-retro="1"] .labeltekst,
+html[data-retro="1"] .veld>label{font-family:inherit;font-weight:700;font-size:calc(12px * var(--t));letter-spacing:.06em;text-transform:uppercase;line-height:1.4}
+html[data-retro="1"] .sectie .telling,
+html[data-retro="1"] .wl-label,
+html[data-retro="1"] .mx-som{font-family:inherit;font-weight:700;font-size:calc(12px * var(--t));line-height:1.4}
+html[data-retro="1"] .ib-hint,
+html[data-retro="1"] .nwo-kies span,
+html[data-retro="1"] .vg-tab span{font-family:inherit;font-weight:600;font-size:calc(11px * var(--t));letter-spacing:0;line-height:1.3}
+html[data-retro="1"] .nwo-statkop,
+html[data-retro="1"] .vg-sectie{font-family:inherit;font-weight:700;font-size:calc(12px * var(--t));letter-spacing:.06em;text-transform:uppercase;line-height:1.4}
+html[data-retro="1"] .vg-koptekst h1{font-family:inherit;font-weight:800;font-size:calc(20px * var(--t));line-height:1.2}
+
 </style>
 </head>
 <body>
@@ -5798,6 +5858,7 @@ function teken() {
     kennismaking: (typeof vwKennismaking === "function" ? vwKennismaking : vwStart),
     planning: (typeof vwPlanning === "function" ? vwPlanning : vwStart),
     ruimtes: (typeof vwRuimtes === "function" ? vwRuimtes : vwStart),
+    aanpak: (typeof vwAanpak === "function" ? vwAanpak : vwStart),
     keuzedilemma: (typeof vwKeuzeDilemma === "function" ? vwKeuzeDilemma : vwStart),
     keuzetheorie: (typeof vwKeuzeTheorie === "function" ? vwKeuzeTheorie : vwStart),
     ontwerp: (typeof vwOntwerp === "function" ? vwOntwerp : vwStart)
@@ -8143,7 +8204,7 @@ async function exportJSON(metBijlagen) {
         : [];
     } else data.data[w] = S[w];
   }
-  const naam = `futureme-backup-${vandaagISO()}${metBijlagen ? "-compleet" : ""}.json`;
+  const naam = `brainmatenate-gegevens-${vandaagISO()}${metBijlagen ? "-compleet" : ""}.json`;
   await deelOfDownload(naam, JSON.stringify(data), "application/json");
   await zetInst("laatsteBackup", new Date().toISOString());
   teken();
@@ -8153,7 +8214,7 @@ async function importJSON(bestand, modus) {
   let data;
   try { data = JSON.parse(await bestand.text()); }
   catch (e) { toast("Dit is geen geldig back-upbestand"); return; }
-  if (!data || !data.data) { toast("Dit is geen FutureMe-back-up"); return; }
+  if (!data || !data.data) { toast("Dit is geen exportbestand van Brain-Mate Nate"); return; }
   if (data.dbVersie && data.dbVersie > DB_VERSIE) { toast("Deze back-up komt uit een nieuwere versie."); return; }
   if (modus === "vervangen") for (const w of Object.keys(WINKELS)) { await idbLeeg(w); S[w] = w === "instellingen" ? {} : []; }
   let aantal = 0;
@@ -8168,7 +8229,8 @@ async function importJSON(bestand, modus) {
         await bewaar("bijlagen", { id: rij.id, naam: rij.naam, type: rij.type, ts: rij.ts, blob });
         aantal++; continue;
       }
-      if (modus !== "vervangen" && S[w].some(x => x.id === rij.id)) continue;
+      const sl = rij.id !== undefined ? "id" : "sleutel";
+      if (modus !== "vervangen" && S[w].some(x => x[sl] === rij[sl])) continue;
       await bewaar(w, rij);
       aantal++;
     }
@@ -31793,7 +31855,7 @@ function mdNuHTML() {
     ${typeof ivEersteStap === "function" && ivEersteStap(een) ? `<p class="md-eerste"><span class="labeltekst">Eerste handeling</span> ${esc(ivEersteStap(een))}</p>` : ""}
     <div class="md-nu-acties"><button class="knop primair" data-act="vink" data-id="${esc(een.id)}">${ico("check")} Klaar</button>
       <button class="knop rand" data-act="open-taak" data-id="${esc(een.id)}">Openen</button></div>
-    ${typeof ivKnop === "function" ? ivKnop(een.id, "iv-nu") : ""}
+    ${typeof ivKnop === "function" && inst("ivNu", true) !== false ? ivKnop(een.id, "iv-nu") : ""}
     ${twee.length ? `<p class="md-daarna"><span class="labeltekst">${MD_TEKST.daarna}</span> ${twee.map(t => esc(t.titel)).join(" · ")}${rest ? ` <span class="md-rest">${MD_TEKST.rest(rest)}</span>` : ""}</p>` : ""}
   </div>`;
 }
@@ -32777,6 +32839,296 @@ document.addEventListener("click", e => {
   nateSluit(); V.nwPad = []; ga("start");
   setTimeout(() => { const v = $("#vi-veld"); if (v) { v.focus(); v.setSelectionRange(v.value.length, v.value.length); } }, 300);
 }, true);
+
+</script>
+<script>
+"use strict";
+// === SECTIE 93: MIJN AANPAK — ÉÉN PROFIEL DAT DE APP AANPAST (V2) ===
+/* ==========================================================================
+   Conceptvoorstel V2, besluit Kas 2 oktober 2026: het oude profiel (tien
+   vragen, sectie 76) vervalt. Vanaf nu stuurt het profiel uit de
+   kennismaking (96 vragen, sectie 85/86) de hele app.
+
+   - aanpak(): de profiel-service. Leest de patronen (hooguit drie) en geeft
+     de richting door aan ndAanpak(), ndTip() en ndDichtheid(), die de
+     modules al gebruiken (Huishouden, Anker, Lijstjes, Wishlist …).
+   - Scherm "Mijn aanpak" (Meer → Profiel): de patronen, wat Nate al afstemt,
+     en aanpassingen met een schakelaar, een "Waarom zeg je dit?" en het
+     bewijsniveau. Niets gaat vanzelf aan: Nate stelt voor, jij tikt.
+   - Vaste indeling: dan verschuift er niets vanzelf (V4, Ruimtes).
+
+   De kern (NATE-AANPAK-BEGIN/EINDE) is puur en wordt getest in tests/aanpak.test.mjs.
+   ========================================================================== */
+
+/* NATE-AANPAK-BEGIN */
+/** Van patronen naar de richting die de bestaande modules kennen (adhd, autisme, audhd, energie, geen). */
+function apRichting(top) {
+  const ids = (top || []).map(c => c.id || c);
+  const A = ids.includes("P1") || ids.includes("P2"), S = ids.includes("P3"), E = ids.includes("P7");
+  return { richting: A && S ? "audhd" : A ? "adhd" : S ? "autisme" : E ? "energie" : "geen", energie: E };
+}
+
+const AP_BEWIJS = { direct: "Direct: bij ADHD onderzocht.", indirect: "Indirect: onderzocht, maar niet specifiek bij ADHD.", praktisch: "Praktisch: logisch en laag risico, nog een experiment. Kijk of het bij jou werkt." };
+
+/* Aanpassingen. "patronen" = voor wie Nate het voorstelt (bijlage A van het conceptvoorstel). */
+const AP_AANPASSINGEN = [
+  { id: "vast", label: "Vaste indeling", uitleg: "Niets verschuift vanzelf. Nate stelt alleen voor.", patronen: ["P3"],
+    waarom: "Een scherm dat steeds hetzelfde is, kost minder energie om te lezen en geeft rust.", bewijs: "indirect" },
+  { id: "rustig", label: "Rustig scherm", uitleg: "Weinig tegelijk, één voorstel.", patronen: ["P1", "P7"],
+    waarom: "Minder keuzes op één scherm maakt kiezen makkelijker en sneller.", bewijs: "indirect" },
+  { id: "beweging", label: "Minder beweging", uitleg: "Geen schuivende of stuiterende onderdelen.", patronen: ["P3", "P4"],
+    waarom: "Beweging trekt aandacht; minder beweging geeft minder prikkels tijdens het lezen.", bewijs: "praktisch" },
+  { id: "zacht", label: "Zachte toon van Nate", uitleg: "Nate praat rustiger en korter.", patronen: ["P5", "P7"],
+    waarom: "Een vriendelijke toon na een lastig moment helpt om weer op te pakken in plaats van te vermijden.", bewijs: "praktisch" },
+  { id: "vast-knop", label: "Ik loop vast op de Nu-kaart", uitleg: "Eén tik naar een eerste handeling.", patronen: ["P1", "P2", "P5"],
+    waarom: "Op het moment dat je vastzit, helpt één kleine stap meer dan een plan.", bewijs: "praktisch" },
+  { id: "wekker", label: "Wekker voor vertrekken", uitleg: "Bij afspraken van vandaag, via Opdrachten.", patronen: ["P1", "P2"],
+    waarom: "Een alarm op het vertrekmoment helpt beter dan een lijst die je zelf nakijkt.", bewijs: "indirect" }
+];
+
+/** Welke aanpassingen stelt Nate voor bij deze patronen? */
+function apVoorgesteld(top) {
+  const ids = (top || []).map(c => c.id || c);
+  return AP_AANPASSINGEN.filter(a => a.patronen.some(p => ids.includes(p))).map(a => a.id);
+}
+/* NATE-AANPAK-EINDE */
+
+/* ---------- 93.1 De profiel-service ---------- */
+function aanpak() {
+  let top = [], disclaimer = "", klaar = false;
+  try {
+    const d = knData(), p = knProfiel(d);
+    top = p.top || []; disclaimer = p.disclaimer || ""; klaar = !!p.kernKlaar;
+  } catch (e) { /* geen kennismaking: algemene aanpak */ }
+  const r = apRichting(top);
+  return { top, klaar, disclaimer, richting: r.richting, energie: r.energie, voorgesteld: apVoorgesteld(top) };
+}
+// Opnieuw rekenen alleen als de kennismaking veranderd is (knZet en import zetten een nieuw object).
+let apCache = null, apBron;
+function apNu() { const bron = inst("nate_km", null); if (!apCache || bron !== apBron) { apCache = aanpak(); apBron = bron; } return apCache; }
+
+// Het oude profiel vervalt: de richting komt voortaan uit Mijn aanpak.
+pfRichting = function () { return apNu().richting; };
+ndAanpak = function () {
+  const r = pfRichting(), a = Object.assign({ richting: r }, ND_AANPAK[r] || ND_AANPAK.geen), ev = FM_KENNIS.energieVlag;
+  // Het oude energievinkje telt niet meer; de Batterij (P7) wel.
+  if (r !== "energie" && apNu().energie) Object.assign(a, { pauzeElke: Math.min(a.pauzeElke, ev.pauzeElkeMax), pauzeMin: Math.max(a.pauzeMin, ev.pauzeMinMin), maxSessie: ev.maxSessie, extraEnergie: true });
+  return a;
+};
+
+/* ---------- 93.2 Aanpassingen lezen en zetten (bestaande instellingen) ---------- */
+const AP_LEES = {
+  vast: () => !!inst("vasteIndeling", false),
+  rustig: () => (typeof ndDichtheid === "function" ? ndDichtheid() : inst("ndDichtheid", "normaal")) === "rustig",
+  beweging: () => inst("beweging", "vol") === "rustig",
+  zacht: () => inst("nateEnergie", "normaal") === "zacht",
+  "vast-knop": () => inst("ivNu", true) !== false,
+  wekker: () => (inst("tpAlarmen", {}) || {}).wekker !== false
+};
+const AP_ZET = {
+  vast: aan => zetInst("vasteIndeling", aan),
+  rustig: aan => zetInst("ndDichtheid", aan ? "rustig" : "normaal"),
+  beweging: async aan => { await zetInst("beweging", aan ? "rustig" : "vol"); document.documentElement.dataset.beweging = aan ? "rustig" : "vol"; },
+  zacht: aan => zetInst("nateEnergie", aan ? "zacht" : "normaal"),
+  "vast-knop": aan => zetInst("ivNu", aan),
+  wekker: aan => zetInst("tpAlarmen", Object.assign({}, inst("tpAlarmen", {}) || {}, { wekker: aan }))
+};
+
+/* ---------- 93.3 Het scherm Mijn aanpak ---------- */
+function apAutoHTML() {
+  const a = ndAanpak(), regels = [];
+  if (a.blokMax) regels.push(`Klussen in blokken van hooguit ${a.blokMax} minuten`);
+  if (a.pauzeElke) regels.push(`Na ${a.pauzeElke} minuten een pauze van ${a.pauzeMin} minuten`);
+  if (a.afkoelUur) regels.push(`Bij aankopen boven € 50 eerst ${a.afkoelUur} uur afkoelen`);
+  if (a.extraEnergie || a.richting === "energie") regels.push("Kortere sessies, want energie is kostbaar");
+  return regels.length ? `<ul class="ap-auto">${regels.map(r => `<li>${esc(r)}</li>`).join("")}</ul>` : "";
+}
+function vwAanpak() {
+  const ap = aanpak();
+  let h = "";
+  h += `<div class="card card-pad ap-patronen"><span class="labeltekst">Jouw patronen</span>`;
+  if (!ap.klaar) h += `<p>Nog geen patronen. Na de kennismaking kan Nate de app op je afstemmen.</p><button class="knop breed primair" data-act="ga" data-view="kennismaking">Kennismaken met Nate</button>`;
+  else if (!ap.top.length) h += `<p>In je antwoorden zie ik weinig gemelde behoefte. Je krijgt de standaardaanpak; alles hieronder kun je zelf aanzetten.</p>`;
+  else h += `<ul class="ap-lijst">${ap.top.map(c => `<li><b>${esc(c.metafoor)}</b><small>${esc(c.naam)}</small></li>`).join("")}</ul>${ap.top.length > 1 ? `<p class="klein">Meerdere patronen tegelijk is heel gewoon. Er is geen winnaar.</p>` : ""}`;
+  h += `</div>`;
+  const auto = apAutoHTML();
+  if (auto) h += sectie("Wat Nate al afstemt") + `<div class="card card-pad">${auto}<details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Korte blokken met pauzes en een afkoeltijd bij aankopen sluiten aan bij je patronen. ${esc(AP_BEWIJS.praktisch)}</p></details></div>`;
+  h += sectie("Aanpassingen") + `<p class="klein ap-uitleg">Niets gaat vanzelf aan. Bij een voorstel van Nate staat een label; jij beslist.</p>`;
+  h += `<ul class="ap-aanpassingen">${AP_AANPASSINGEN.map(a => {
+    const aan = AP_LEES[a.id](), voor = ap.voorgesteld.includes(a.id);
+    return `<li class="card ap-rij"><button type="button" class="ap-schakel" data-ap="${a.id}" aria-pressed="${aan}">
+        <span class="tekst"><b>${esc(a.label)}</b>${voor ? `<span class="ap-voorstel">Nate stelt voor</span>` : ""}<small>${esc(a.uitleg)}</small></span>
+        <span class="toggle" aria-hidden="true" aria-pressed="${aan}"></span></button>
+      <details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>${esc(a.waarom)} ${esc(AP_BEWIJS[a.bewijs])}</p></details></li>`;
+  }).join("")}</ul>`;
+  h += `<p class="kn-disclaimer">${esc(ap.disclaimer || "Dit is geen diagnose. Het profiel helpt alleen om de app op je af te stemmen.")}</p>`;
+  if (ap.klaar) h += `<button class="knop breed rand" data-act="ga" data-view="kennismaking">Antwoorden bekijken of wijzigen</button>`;
+  return h;
+}
+Object.defineProperty(KOPPEN, "aanpak", { get: () => ["Mijn aanpak", () => "Hoe Nate de app afstemt"], configurable: true, enumerable: true });
+
+document.addEventListener("click", async e => {
+  const b = e.target.closest && e.target.closest("[data-ap]"); if (!b) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const aan = b.getAttribute("aria-pressed") !== "true";
+  await AP_ZET[b.dataset.ap](aan);
+  apCache = null; tril(6); teken();
+}, true);
+
+/* ---------- 93.4 Profiel: het oude aanpakblok wordt Mijn aanpak ---------- */
+{
+  const _pf = vwProfiel;
+  vwProfiel = function () {
+    let h = _pf.apply(this, arguments);
+    const ap = aanpak();
+    const kaart = `<button class="card card-pad ap-ingang" data-act="ga" data-view="aanpak"><span class="tekst"><b>Mijn aanpak</b><small>${ap.top.length ? esc(ap.top.map(c => c.metafoor).join(" · ")) : "Hoe Nate de app op je afstemt"}</small></span>${ico("pijlr", "width:16px;height:16px;color:var(--line2)")}</button>`;
+    // Het oude blok met de tien vragen eruit.
+    const i = h.indexOf('<details class="pf-sectie" data-pf="aanpak"');
+    if (i >= 0) { const j = h.indexOf("</details>", i); h = h.slice(0, i) + h.slice(j + 10); }
+    return kaart + h;
+  };
+}
+
+</script>
+<script>
+"use strict";
+// === SECTIE 94: RUIMTES IN VIJF CLUSTERS, MEER IN VIJF REGELS (V4) ===
+/* ==========================================================================
+   Conceptvoorstel V4, besluit Kas 2 oktober 2026.
+   - Ruimtes: bovenaan "Voor jou, nu" (drie ruimtes met live status, gekozen
+     op patronen, energie en tijdstip), daaronder vijf clusters, één
+     tegelijk open. Met Vaste indeling (Mijn aanpak) verschuift er niets:
+     dan staan er vaste drie bovenaan.
+   - Meer: vijf regels (Voortgang, Profiel, Instellingen, Gegevens, Help),
+     met bovenaan direct exporteren en importeren van alle gegevens (vraag
+     Kas 3 oktober). De rest staat onder "Alle schermen" (ingeklapt), zodat
+     elk scherm bereikbaar blijft.
+
+   De kern (NATE-RUIMTES-BEGIN/EINDE) is puur en wordt getest in tests/ruimtes.test.mjs.
+   ========================================================================== */
+
+/* NATE-RUIMTES-BEGIN */
+const RV_CLUSTERS = [
+  { id: "thuis", naam: "Thuis en spullen", ruimtes: ["huishouden", "lijstjes", "wishlist"] },
+  { id: "lichaam", naam: "Lichaam en rust", ruimtes: ["anker", "gezondheid", "gewoontes", "dagboek", "roken"] },
+  { id: "geld", naam: "Geld", ruimtes: ["financieel"] },
+  { id: "mensen", naam: "Mensen en werk", ruimtes: ["persoonlijk", "werk", "personen"] },
+  { id: "groeien", naam: "Groeien en maken", ruimtes: ["sidehustles", "hobbyskills", "keuze", "tijd"] }
+];
+const RV_VAST = ["persoonlijk", "huishouden", "anker"];
+// Welke ruimtes passen bij een patroon (bijlage A van het conceptvoorstel).
+const RV_PATROON = { P1: ["persoonlijk", "werk"], P2: ["sidehustles", "hobbyskills"], P3: ["anker", "dagboek"], P4: ["lijstjes"],
+  P5: ["anker", "dagboek"], P6: ["huishouden", "gewoontes"], P7: ["anker", "gezondheid"] };
+const RV_DAGDEEL = { ochtend: ["persoonlijk", "werk", "gewoontes"], middag: ["huishouden", "financieel", "werk"], avond: ["dagboek", "lijstjes", "anker"] };
+
+/**
+ * Drie ruimtes voor nu. ctx: { open: {ruimte: aantal open dingen}, patronen: ["P1",…], energie: 1–5 of null, dagdeel, vast }.
+ * Punten: open dingen (max 3), patroon +2, dagdeel +1, lage energie +3 voor rust. Gelijke stand: vaste volgorde.
+ */
+function rvVoorJou(alle, ctx) {
+  const c = ctx || {};
+  if (c.vast) return RV_VAST.filter(r => alle.includes(r));
+  const pat = new Set((c.patronen || []).flatMap(p => RV_PATROON[p] || []));
+  const dd = new Set(RV_DAGDEEL[c.dagdeel] || []), laag = c.energie != null && c.energie <= 2;
+  const punten = r => Math.min(3, (c.open || {})[r] || 0) + (pat.has(r) ? 2 : 0) + (dd.has(r) ? 1 : 0) + (laag && ["anker", "dagboek"].includes(r) ? 3 : 0);
+  return alle.map((r, i) => ({ r, p: punten(r), i })).sort((a, b) => b.p - a.p || a.i - b.i).slice(0, 3).map(x => x.r);
+}
+/* NATE-RUIMTES-EINDE */
+
+/* ---------- 94.1 Live status per ruimte ---------- */
+const rvVeilig = f => { try { return f(); } catch (e) { return null; } };
+function rvStatus(view) {
+  const v = vandaagISO();
+  switch (view) {
+    case "persoonlijk": { const n = fmVandaagTaken().open.length; return n ? [n, `${n} ${n === 1 ? "taak" : "taken"} vandaag`] : [0, "Niets open vandaag"]; }
+    case "werk": { const n = +werkTelling() || 0; return [n, n ? `${n} vandaag` : ""]; }
+    case "gewoontes": { const g = gewoontesVoor(v), af = g.filter(x => gewoonteAf(x.id, v)).length; return g.length ? [g.length - af, `${af} van ${g.length} vandaag`] : [0, ""]; }
+    case "dagboek": return S.dagboek.some(d => d.datum === v) ? [0, "Vandaag geschreven"] : [1, "Nog niets vandaag"];
+    case "wishlist": { const n = wlAlle("actief").length; return [0, n ? `${n} op je lijst` : ""]; }
+    case "financieel": return geldTelling() === "!" ? [2, "Let op je dagbudget"] : [0, ""];
+    case "hobbyskills": { const n = +hsTelling() || 0; return [n, n ? `${n} bezig` : ""]; }
+    case "sidehustles": { const t = shTelling(); return [t ? 1 : 0, t ? String(t) : ""]; }
+    case "gezondheid": { const t = vsTelling(); return [t ? 1 : 0, t ? String(t) : ""]; }
+    case "anker": return [0, "Eén minuut landen"];
+  }
+  return [0, ""];
+}
+function rvDagdeel() { const u = new Date().getHours(); return u < 12 ? "ochtend" : u < 18 ? "middag" : "avond"; }
+
+/* ---------- 94.2 Het scherm Ruimtes ---------- */
+function rvKamerHTML(r, groot) {
+  const st = rvVeilig(() => rvStatus(r.view)) || [0, ""], tel = rvVeilig(() => r.telling ? r.telling() : "");
+  return `<button class="card nv-kamer${groot ? " rv-groot" : ""}" data-act="ga" data-view="${r.view}">
+    <span class="nv-kamer-ico" aria-hidden="true">${ico(r.ico)}</span><span class="nv-kamer-tekst"><b>${esc(r.naam)}</b><small>${esc(st[1] || r.uitleg)}</small></span>${!st[1] && tel ? `<span class="nv-telling">${esc(String(tel))}</span>` : ""}</button>`;
+}
+vwRuimtes = function () {
+  const per = Object.fromEntries(NV_RUIMTES.map(r => [r.view, r])), alle = NV_RUIMTES.map(r => r.view);
+  const ap = typeof apNu === "function" ? apNu() : { top: [] }, vast = !!inst("vasteIndeling", false);
+  const open = {}; for (const v of alle) open[v] = (rvVeilig(() => rvStatus(v)) || [0])[0];
+  const nu = rvVoorJou(alle, { open, patronen: ap.top.map(c => c.id), energie: rvVeilig(() => dcEnergie()), dagdeel: rvDagdeel(), vast });
+  const gekozen = V.rvOpen === undefined ? null : V.rvOpen;
+  let h = `<section class="rv-nu" aria-label="Voor jou, nu"><h2 class="labeltekst">${vast ? "Vast bovenaan" : "Voor jou, nu"}</h2>
+    <div class="nv-kamers rv-nu-lijst">${nu.map(v => rvKamerHTML(per[v], true)).join("")}</div>
+    ${vast ? "" : `<details class="iv-waarom"><summary>Waarom deze drie?</summary><p>Nate kijkt naar wat er open staat, je patronen, je energie van vanochtend en het tijdstip. Wil je dat niets verschuift, zet dan Vaste indeling aan in Mijn aanpak. Praktisch: nog een experiment.</p></details>`}</section>`;
+  h += RV_CLUSTERS.map(c => {
+    const kamers = c.ruimtes.filter(v => per[v]), isOpen = gekozen === c.id;
+    return `<section class="rv-cluster${isOpen ? " open" : ""}">
+      <button type="button" class="rv-kop" data-rv="${c.id}" aria-expanded="${isOpen}"><b>${esc(c.naam)}</b><small>${kamers.map(v => esc(per[v].naam)).join(" · ")}</small>${ico("pijlr", "width:16px;height:16px")}</button>
+      ${isOpen ? `<div class="nv-kamers">${kamers.map(v => rvKamerHTML(per[v])).join("")}</div>` : ""}</section>`;
+  }).join("");
+  return h;
+};
+document.addEventListener("click", e => {
+  const k = e.target.closest && e.target.closest("[data-rv]"); if (!k) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  V.rvOpen = V.rvOpen === k.dataset.rv ? null : k.dataset.rv;   // één cluster tegelijk open
+  teken();
+  const doel = document.querySelector(`[data-rv="${k.dataset.rv}"]`); if (doel) doel.focus({ preventScroll: true });
+}, true);
+
+/* ---------- 94.3 Meer: vijf regels, met gegevens bovenaan ---------- */
+function rvGegevensHTML() {
+  const l = inst("laatsteBackup", null), d = l ? new Date(l) : null;
+  return `<section class="card card-pad rv-gegevens" aria-label="Je gegevens">
+    <span class="labeltekst">Je gegevens</span>
+    <p class="klein">Alles staat alleen op dit toestel. Laatste export: ${d ? `${esc(datumLabel(dISO(d)).toLowerCase())} om ${pad(d.getHours())}:${pad(d.getMinutes())}` : "nog nooit"}.</p>
+    <div class="rv-gegevens-knoppen">
+      <button class="knop primair" data-act="backup-json" data-bijlagen="1">${ico("download")} Alles exporteren</button>
+      <button class="knop rand" data-rvg="import">${ico("upload")} Importeren</button>
+    </div>
+    <p class="klein">Exporteren maakt één bestand met al je gegevens, inclusief foto's en bijlagen. Bewaar het in Bestanden of iCloud.</p>
+  </section>`;
+}
+function rvImportBlad() {
+  bladOpen("Gegevens importeren", `<p>Kies een exportbestand van Brain-Mate Nate (of een oude FutureMe-back-up).</p>
+    <div class="card">
+      <button class="rijknop" data-act="backup-import" data-modus="samenvoegen">${ico("upload", "width:20px;height:20px;color:var(--accent)")}
+        <span class="nm">Samenvoegen<span class="klein" style="display:block">Voegt toe wat ontbreekt en houdt wat er al is</span></span></button>
+      <button class="rijknop" data-act="backup-import" data-modus="vervangen">${ico("upload", "width:20px;height:20px;color:var(--red)")}
+        <span class="nm">Alles vervangen<span class="klein" style="display:block">Wist wat er nu staat en zet het bestand terug</span></span></button>
+    </div>
+    <p class="klein">Twijfel je? Kies Samenvoegen; dan gaat er niets verloren.</p>`);
+}
+document.addEventListener("click", e => {
+  const k = e.target.closest && e.target.closest("[data-rvg]"); if (!k) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  rvImportBlad();
+}, true);
+// Na de keuze in het blad sluit het blad (de bestandskiezer opent via de bestaande actie).
+document.addEventListener("click", e => {
+  const k = e.target.closest && e.target.closest('#blad [data-act="backup-import"]');
+  if (k) setTimeout(() => bladSluit(), 0);
+});
+
+{
+  const hoofd = NV_MEER[0][1], ook = NV_MEER[1][1];
+  vwMeer = function () {
+    const rij = ([v, n, i, u]) => `<button class="rijknop nv-rij" ${v === "vg" ? 'data-act="vg-open"' : `data-act="ga" data-view="${v}"`}>
+      ${ico(i, "width:20px;height:20px;color:var(--accent)")}<span class="nm"><b>${esc(n)}</b><small>${esc(u)}</small></span>${ico("pijlr", "width:16px;height:16px;color:var(--line2)")}</button>`;
+    return rvGegevensHTML() + `<div class="card">${hoofd.map(rij).join("")}</div>
+      <details class="rv-alle"><summary>Alle schermen</summary><div class="card">${ook.map(rij).join("")}</div></details>`;
+  };
+}
 
 </script>
 <script>
