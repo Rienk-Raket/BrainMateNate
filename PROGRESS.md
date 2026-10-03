@@ -204,3 +204,14 @@ Bekend: "Alarmen instellen" in het herstelblad vervangt het blad door de uitleg 
 | 15 | Eén naamgeving: Vandaag → Mijn dag, Back-up → Gegevens, Uitleg → Help, Toolbox → Hulpmiddelen; zichtbare "FutureMe" → Brain-Mate Nate (`bouw.py` stap 14) | gedaan |
 
 Niet gedaan: streaks als hoofdgetal in Gewoontes (FutureMe-scherm; vraagt een eigen keuze). Tests: `tests/klein.test.mjs`, `tests/klein.e2e.cjs` (19 checks).
+
+## Review stap 15 (verwerkt)
+
+1. Hernoemen aan de bron (`nwlBoom`): alleen de vaste knopen Toolbox → Hulpmiddelen en Vandaag (Mijn dag). "Vandaag" in Gezondheid en Financieel en eigen namen blijven staan.
+2. Daardoor kloppen kruimelpad, paneel en aria-label met wat je ziet.
+3. Naam in de strook op een donkere band, zodat hij leesbaar is boven de illustratie.
+4. Microstap: eerst filteren dan de eerste drie; modules zonder scherm blijven als tekst ("Ook: …").
+5. Back-upherinnering telt ook het dagboek mee, en zegt dat alles alleen op dit toestel staat.
+6. Tests scherper (echte bestemming, geen ontsnapping bij ontbrekende strook, Vandaag-knopen).
+7. Rustplek-knoppen 44 px.
+Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vraag 2" toen vijf browsers tegelijk draaiden; los draaien slaagt (2×). Timing, niet deze stap.

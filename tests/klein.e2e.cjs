@@ -35,17 +35,22 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
 
   check("2: geen back-upbanner op Mijn dag", await p.locator("#scherm .banner").count() === 0);
   check("2: back-up als bericht van Nate, naar Meer", await p.evaluate(() => meldingenSignalen().some(s => s.titel === "Tijd voor een back-up" && s.actieView === "meer")));
+  check("2: ook als je vooral in het dagboek schrijft", await p.evaluate(async () => { for (const t of S.taken.slice()) await verwijder("taken", t.id); for (let i = 0; i < 5; i++) await bewaar("dagboek", { id: uid(), datum: plusDagen(vandaagISO(), -i), tekst: "x" }); const ok = meldingenSignalen().filter(s => s.titel === "Tijd voor een back-up").length === 1; for (let i = 0; i < 6; i++) await maakTaakUitTekst("Taak " + i + " vandaag"); return ok; }));
   check("5: geen 'Verder naar' op tabschermen", await p.locator("#scherm .verwant").count() === 0);
   await p.evaluate(() => ga("instellingen")); await wacht(400);
-  check("15: 'Verder naar' gebruikt de namen van Meer", await p.evaluate(() => { const v = document.querySelector("#scherm .verwant"); return !v || (!/Back-up|Uitleg/.test(v.textContent)); }));
+  check("15: 'Verder naar' gebruikt de namen van Meer", await p.evaluate(() => { const v = document.querySelector("#scherm .verwant"); return !!v && /Gegevens/.test(v.textContent) && !/Back-up|Uitleg/.test(v.textContent); }));
 
   await p.evaluate(() => { V.nwPad = []; ga("start"); }); await wacht(600);
   check("3: namen bij ingeklapte blokken in Vastleggen", await p.evaluate(() => { const n = [...document.querySelectorAll(".kv-strooknaam")]; return n.length >= 4 && n.every(x => x.textContent.trim() && getComputedStyle(x).opacity > 0.5); }));
-  check("15: Toolbox heet Hulpmiddelen", await p.evaluate(() => !document.querySelector("#scherm").textContent.includes("Toolbox") && document.querySelector("#scherm").textContent.includes("Hulpmiddelen")));
+  check("15: Toolbox heet Hulpmiddelen, ook voor schermlezers", await p.evaluate(() => { const s = document.querySelector("#scherm"); return !s.textContent.includes("Toolbox") && s.textContent.includes("Hulpmiddelen") && ![...s.querySelectorAll("[aria-label]")].some(x => /Toolbox/.test(x.getAttribute("aria-label"))); }));
+  // Alleen de vaste knoop "Vandaag" (Mijn dag) wordt hernoemd; Vandaag in Gezondheid en Financieel blijft.
+  check("15: Vandaag in Gezondheid en Financieel blijft Vandaag", await p.evaluate(() => { const vind = (l, f) => { for (const k of l) { if (f(k)) return k; const r = k.kids && vind(k.kids, f); if (r) return r; } return null; }; const b = nwlBoom();
+    return vind(b, k => k.view === "vandaag" && !k.kids).naam === "Mijn dag" && vind(b, k => k.view === "gezondheid" && k.modus && k.modus[1] === "vandaag").naam === "Vandaag" && vind(b, k => k.id === "vandaag").naam === "Vandaag"; }));
   await p.screenshot({ path: path.join(UIT, "klein-01-vastleggen.png") });
 
   await p.evaluate(() => ga("instellingen")); await wacht(400);
   check("7: keuze voor Nate's rustplek in Instellingen", await p.locator("[data-kv-rust]").count() === 3);
+  check("7: tikvlakken ≥ 44 px", await p.evaluate(() => [...document.querySelectorAll("[data-kv-rust]")].every(b => b.offsetHeight >= 44)));
   await p.click('[data-kv-rust="links"]'); await wacht(300);
   check("7: Nate links", await p.evaluate(() => document.documentElement.dataset.nateRust === "links" && document.querySelector("#nate").getBoundingClientRect().left < 50));
   await p.click('[data-kv-rust="uit"]'); await wacht(300);
@@ -83,8 +88,9 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await wacht(500);
   check("10: microstap met knoppen naar de module", await p.evaluate(() => document.querySelectorAll(".kv-module").length >= 1 && !/Past bij:/.test(document.querySelector("#scherm").textContent)));
   check("tikvlakken ≥ 44 px (profiel)", (await tikvlakken(p, ".kv-modules")).length === 0, JSON.stringify(await tikvlakken(p, ".kv-modules")));
+  const doel = await p.evaluate(() => document.querySelector(".kv-module").dataset.view);
   await p.click(".kv-module"); await wacht(400);
-  check("10: knop opent de module", await p.evaluate(() => V.view !== "profiel"));
+  check("10: knop opent de module", await p.evaluate(d => V.view === d, doel), doel);
 
   check("geen consolefouten", fouten.length === 0, fouten.slice(0, 3).join(" | "));
   check("nul externe verzoeken", extern.length === 0, extern.slice(0, 3).join(" | "));

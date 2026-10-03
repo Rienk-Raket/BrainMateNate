@@ -24,7 +24,7 @@ function kvHervat(dagen, vandaag, venster) {
   return { aantal, laatste };
 }
 /* Eén naamgeving: dezelfde woorden als de tabs en Meer. */
-const KV_NAMEN = { "Vandaag": "Mijn dag", "Back-up": "Gegevens", "Uitleg": "Help", "Toolbox": "Hulpmiddelen" };
+const KV_NAMEN = { "Vandaag": "Mijn dag", "Back-up": "Gegevens", "Uitleg": "Help" };   // alleen voor de vaste "Verder naar"-chips
 /* Vragenbank-modules → schermen in de app (profielrapport, microstap). */
 const KV_MODULE_VIEW = { calendar: "afspraken", planning: "planning", tasks: "persoonlijk", time: "tijd", focus: "focus", memory: "mindmap", energy: "anker",
   emotions: "anker", structure: "planning", household: "huishouden", routines: "gewoontes", context: "aanpak", experiments: "vg", finance: "financieel" };
@@ -34,17 +34,30 @@ const KV_MODULE_VIEW = { calendar: "afspraken", planning: "planning", tasks: "pe
    Nate's berichten tonen al "Tijd voor een back-up" (na 14 dagen); die gaat nu naar Meer, waar exporteren bovenaan staat. */
 {
   const _sig = meldingenSignalen;
+  const tekst = "Je gegevens staan alleen op dit toestel. Eén tik in Meer en je hebt een export.";
   meldingenSignalen = function () {
-    return _sig.apply(this, arguments).map(s => s.titel === "Tijd voor een back-up" ? Object.assign({}, s, { tekst: "Al even geen export gemaakt. Eén tik in Meer.", actieView: "meer" }) : s);
+    const uit = _sig.apply(this, arguments).map(s => s.titel === "Tijd voor een back-up" ? Object.assign({}, s, { tekst, actieView: "meer" }) : s);
+    // Ook wie vooral in het dagboek schrijft, krijgt de herinnering (zoals de oude banner).
+    const l = inst("laatsteBackup", null), dagen = l ? Math.floor((Date.now() - new Date(l)) / 86400000) : null;
+    if (!uit.some(s => s.titel === "Tijd voor een back-up") && S.taken.length + S.afspraken.length + S.dagboek.length >= 5 && (dagen === null || dagen >= 14))
+      uit.push({ soort: "systeem", onderwerp: "Back-up", kleur: "", titel: "Tijd voor een back-up", tekst, actieView: "meer" });
+    return uit;
   };
 }
 
-/* ---------- 3. Namen bij de blokken in Vastleggen, ook ingeklapt ---------- */
+/* ---------- 3 en 15. Namen in Vastleggen: hernoemd aan de bron (dus ook in kruimelpad, paneel en aria-label),
+   en zichtbaar in de strook van een ingeklapt blok. Alleen de vaste knopen, nooit wat je zelf een naam gaf. ---------- */
 {
+  const _boom = nwlBoom;
+  const hernoem = lijst => (lijst || []).forEach(k => {
+    if (k.id === "toolbox") k.naam = "Hulpmiddelen";
+    else if (k.view === "vandaag" && !k.modus && !k.kids) k.naam = "Mijn dag";
+    if (k.kids) hernoem(k.kids);
+  });
+  nwlBoom = function () { const b = _boom.apply(this, arguments); hernoem(b); return b; };
   const _kaart = nwlKaartHTML;
   nwlKaartHTML = function (k) {
-    const h = _kaart.apply(this, arguments), naam = KV_NAMEN[k.naam] || k.naam;
-    return h.replace(/<\/button>\s*$/, `<span class="kv-strooknaam" aria-hidden="true">${esc(naam)}</span></button>`).replace(`>${esc(k.naam)}<`, `>${esc(naam)}<`);
+    return _kaart.apply(this, arguments).replace(/<\/button>\s*$/, `<span class="kv-strooknaam" aria-hidden="true">${esc(k.naam)}</span></button>`);
   };
 }
 
@@ -95,7 +108,6 @@ kvNateRust();
 {
   const ook = NV_MEER[1][1], i = ook.findIndex(r => r[0] === "welkom");
   if (i >= 0) ook.splice(i, 1);
-  const ov = ook.find(r => r[0] === "overzicht"); if (ov) ov[3] = "Week, maand en vooruitblik";
 }
 
 /* ---------- 10. Profielrapport: microstap met knoppen naar de module ---------- */
@@ -105,10 +117,11 @@ kvNateRust();
     let h = _ms.apply(this, arguments);
     if (!dim) return h;
     const q1 = knVraag(dim.id + ".Q1");
-    const knoppen = (q1.app_module_ids || []).slice(0, 3).filter(m => KV_MODULE_VIEW[m] && NATE_VRAGENBANK.modules[m])
-      .map(m => KV_MODULE_VIEW[m] === "vg" ? `<button class="knop rand kv-module" data-act="vg-open">${esc(NATE_VRAGENBANK.modules[m])}</button>`
-        : `<button class="knop rand kv-module" data-act="ga" data-view="${KV_MODULE_VIEW[m]}">${esc(NATE_VRAGENBANK.modules[m])}</button>`);
-    if (knoppen.length) h = h.replace(/<p class="klein">Past bij: [^<]*<\/p>/, `<div class="kv-modules"><span class="klein">Probeer het in:</span>${knoppen.join("")}</div>`);
+    const ids = (q1.app_module_ids || []).filter(m => NATE_VRAGENBANK.modules[m]);
+    const met = ids.filter(m => KV_MODULE_VIEW[m]).slice(0, 3), zonder = ids.filter(m => !KV_MODULE_VIEW[m]).slice(0, Math.max(0, 3 - met.length));
+    const knoppen = met.map(m => KV_MODULE_VIEW[m] === "vg" ? `<button class="knop rand kv-module" data-act="vg-open">${esc(NATE_VRAGENBANK.modules[m])}</button>`
+      : `<button class="knop rand kv-module" data-act="ga" data-view="${KV_MODULE_VIEW[m]}">${esc(NATE_VRAGENBANK.modules[m])}</button>`);
+    if (knoppen.length) h = h.replace(/<p class="klein">Past bij: [^<]*<\/p>/, `<div class="kv-modules"><span class="klein">Probeer het in:</span>${knoppen.join("")}${zonder.length ? `<span class="klein">Ook: ${esc(zonder.map(m => NATE_VRAGENBANK.modules[m]).join(", "))}</span>` : ""}</div>`);
     return h;
   };
 }
@@ -126,12 +139,4 @@ function kvHervatHTML() {
 {
   const _ov = vgOverzicht;
   vgOverzicht = function () { return kvHervatHTML() + _ov.apply(this, arguments); };
-}
-
-/* ---------- 15. Eén naamgeving in Vastleggen (Toolbox → Hulpmiddelen) ---------- */
-{
-  const _stapel = nwlStapelHTML;
-  nwlStapelHTML = function () { return _stapel.apply(this, arguments).split(">Toolbox<").join(">Hulpmiddelen<"); };
-  const _paneel = nwlPaneelHTML;
-  nwlPaneelHTML = function () { return _paneel.apply(this, arguments).split("<b>Toolbox</b>").join("<b>Hulpmiddelen</b>").split("Statistieken · Toolbox").join("Statistieken · Hulpmiddelen"); };
 }

@@ -6,6 +6,10 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; box-sizing: border-box;
   opacity: calc(1 - var(--nw-p, 0)); transition: opacity .3s; }
 .nw-rail:not(.open) .nwl-kaart .ill3d.nwl-ico { top: 40%; }
+/* Ingeklapt: illustratie iets kleiner en hoger, zodat de naam eronder vrij staat; naam op een donkere band. */
+.nw-rail:not(.open) .nwl-kaart .ill3d:not(.nwl-ico) { transform: translateY(-9px) scale(.82); transform-origin: center top; }
+.kv-strooknaam { background: rgba(0,0,0,.28); border-radius: 6px; bottom: 4px; padding: 1px 4px; }
+.segment button[data-kv-rust] { min-height: 44px; }
 /* 7. Nate's rustplek. */
 html[data-nate-rust="links"] #nate { right: auto; left: calc(-26px + var(--safe-l, 0px)); }
 html[data-nate-rust="links"] #nate img { transform: scaleX(-1); }
