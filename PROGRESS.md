@@ -267,3 +267,12 @@ Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vra
 7. Na een Keuzemachine-besluit geen extra afkoeltijd.
 8. Reeksen: eerste handeling en "gevraagd" voor alle open keren.
 9. Suggesties op hele woorden ("Huiswerk" is geen huis).
+
+## Stap 20: V1 fase 1 — gedeelde lijst van wat open staat
+
+- `ruimtelijk/src/items.js` (sectie 102). Alleen-lezen adapters bovenop de bestaande opslag: SCRUM-kaarten met deadline (`idxVanSh`), huishoudlijsten die aan de beurt zijn (`idxVanHh`, ritme), plus open checklist-items en HobbySkills-mijlpalen (zonder datum, alleen in `idxAlles()`). Geen nieuwe opslag of databaseversie.
+- `mijn-dag.js`: nieuwe functie `mdLijst()` (de hele geordende lijst); `mdNu` en het dagniveau (V5) lezen daaruit, zodat ze niet meer elk hun eigen lijst bouwen. `items.js` voegt de dingen van buiten toe: tijd die komt → over de deadline → taken zonder tijd → deadline vandaag → voorbij.
+- Nu-kaart voor iets van buiten: herkomst ("Webshop · deadline gisteren"), Klaar (kaart naar de klaar-kolom) of Start (huishoudsessie), en Openen.
+- Zelf kiezen: Mijn dag → Widgets kiezen → "Ook op Mijn dag" (beide standaard aan; `idxBronnen`).
+- Nog niet (fase 2/3): Dagring-teller, zoeken en chat lezen nog niet uit de gedeelde lijst; gebeurtenisbus.
+- Tests: `tests/items.test.mjs`, `tests/items.e2e.cjs` (15 checks).

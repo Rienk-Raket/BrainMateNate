@@ -54,13 +54,9 @@ const dnGekozen = () => { const k = inst("dnNiveau", null); return !!(k && k.dat
   mdNu = function () {
     const nu = _nu.apply(this, arguments), n = dnNiveau();
     if (n === "standaard") return Object.assign({ geparkeerd: 0 }, nu);
-    const alle = [nu.een].concat(nu.twee).filter(Boolean);
-    // De volledige lijst opnieuw opbouwen (mdNu geeft er maar drie terug).
-    const { open } = fmVandaagTaken(), nuMin = new Date().getHours() * 60 + new Date().getMinutes();
-    const metTijd = open.filter(t => fmMin(t.tijd) != null).sort((a, b) => fmMin(a.tijd) - fmMin(b.tijd));
-    const komend = metTijd.filter(t => fmMin(t.tijd) >= nuMin - 15), voorbij = metTijd.filter(t => !komend.includes(t));
-    const lijst = komend.concat(open.filter(t => fmMin(t.tijd) == null).sort(sorteerTaken), voorbij);
-    return dnNu(nu, lijst.length ? lijst : alle, n, nuMin);
+    // De volledige lijst (mdNu geeft er maar drie terug), inclusief wat andere modules bijdragen (V1).
+    const nuMin = new Date().getHours() * 60 + new Date().getMinutes();
+    return dnNu(nu, mdLijst(), n, nuMin);
   };
   const _html = mdNuHTML;
   mdNuHTML = function () {

@@ -101,12 +101,16 @@ function mdTijdlijnHTML() {
 /* ---------- 87.4 Nu-kaart: 1–2–rest ----------
    Eén ding nu, twee daarna, en de rest als getal. Eerst taken met een tijd die
    nog komt, dan taken zonder tijd op prioriteit, dan wat al voorbij is. */
-function mdNu() {
+/** De hele geordende lijst voor vandaag (taken; V1 fase 1 voegt er dingen uit andere modules aan toe). */
+function mdLijst() {
   const { open } = fmVandaagTaken(), nuMin = new Date().getHours() * 60 + new Date().getMinutes();
   const metTijd = open.filter(t => fmMin(t.tijd) != null).sort((a, b) => fmMin(a.tijd) - fmMin(b.tijd));
   const komend = metTijd.filter(t => fmMin(t.tijd) >= nuMin - 15), voorbij = metTijd.filter(t => !komend.includes(t));
   const zonder = open.filter(t => fmMin(t.tijd) == null).sort(sorteerTaken);
-  const lijst = komend.concat(zonder, voorbij);
+  return komend.concat(zonder, voorbij);
+}
+function mdNu() {
+  const lijst = mdLijst();
   return { een: lijst[0] || null, twee: lijst.slice(1, 3), rest: Math.max(0, lijst.length - 3) };
 }
 function mdNuHTML() {
@@ -116,9 +120,9 @@ function mdNuHTML() {
     <h2>${een.tijd ? `<time>${esc(een.tijd)}</time> ` : ""}${esc(een.titel)}</h2>
     ${een.duur ? `<p class="klein">± ${een.duur} min</p>` : ""}
     ${typeof ivEersteStap === "function" && ivEersteStap(een) ? `<p class="md-eerste"><span class="labeltekst">Eerste handeling</span> ${esc(ivEersteStap(een))}</p>` : ""}
-    <div class="md-nu-acties"><button class="knop primair" data-act="vink" data-id="${esc(een.id)}">${ico("check")} Klaar</button>
+    ${een.extern && typeof idxNuHTML === "function" ? idxNuHTML(een) : `<div class="md-nu-acties"><button class="knop primair" data-act="vink" data-id="${esc(een.id)}">${ico("check")} Klaar</button>
       <button class="knop rand" data-act="open-taak" data-id="${esc(een.id)}">Openen</button></div>
-    ${typeof ivKnop === "function" && inst("ivNu", true) !== false ? ivKnop(een.id, "iv-nu") : ""}
+    ${typeof ivKnop === "function" && inst("ivNu", true) !== false ? ivKnop(een.id, "iv-nu") : ""}`}
     ${twee.length ? `<p class="md-daarna"><span class="labeltekst">${MD_TEKST.daarna}</span> ${twee.map(t => esc(t.titel)).join(" · ")}${rest ? ` <span class="md-rest">${MD_TEKST.rest(rest)}</span>` : ""}</p>` : ""}
   </div>`;
 }

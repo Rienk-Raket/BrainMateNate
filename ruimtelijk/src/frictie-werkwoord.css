@@ -17,3 +17,5 @@
 .ww-knoppen .knop { flex: 1; min-height: 44px; }
 .ww-nu { margin: 4px 0 0; }
 .ww-knop { display: block; margin-top: 4px; }
+.idx-bron { margin: 2px 0 0; color: var(--muted); }
+.idx-kop { display: block; margin: 18px 0 4px; }

@@ -127,7 +127,7 @@ document.addEventListener("keydown", e => {
   mdNuHTML = function () {
     let h = _html.apply(this, arguments);
     const een = mdNu().een;
-    if (een && wwVragen(een) && !(typeof ivEersteStap === "function" && ivEersteStap(een)))
+    if (een && !een.extern && wwVragen(een) && !(typeof ivEersteStap === "function" && ivEersteStap(een)))
       h = h.replace('<div class="md-nu-acties">', `<p class="ww-nu"><button type="button" class="dk-neem" data-ww-blad="${esc(een.id)}">Nog vaag? Eerste handeling kiezen</button></p><div class="md-nu-acties">`);
     return h;
   };
