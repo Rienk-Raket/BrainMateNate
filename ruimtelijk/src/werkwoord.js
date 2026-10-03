@@ -14,15 +14,17 @@
    ========================================================================== */
 
 /* NATE-WERKWOORD-BEGIN */
-const WW_VAAG = ["regelen", "doen", "fixen", "uitzoeken", "oppakken", "afhandelen", "organiseren", "iets", "dingen", "zaken", "gedoe", "spullen", "kijken", "nadenken"];
+const WW_VAAG = ["regelen", "fixen", "uitzoeken", "oppakken", "afhandelen", "organiseren", "iets", "dingen", "zaken", "gedoe", "spullen", "nadenken"];
+// Losse -en-woorden die wél een handeling zijn ("Sporten"); andere losse -en-woorden zijn meestal meervouden ("Rekeningen").
+const WW_EN_WERKWOORD = ["sporten", "koken", "fietsen", "strijken", "stofzuigen", "wassen", "zwemmen", "hardlopen", "lezen", "schrijven", "tekenen", "mediteren", "wandelen", "opruimen", "schoonmaken", "studeren", "oefenen", "bellen", "mailen", "dweilen", "afwassen", "tanken", "stretchen"];
 const WW_GEBIEDEND = ["bel", "mail", "app", "koop", "schrijf", "maak", "stuur", "betaal", "plan", "lees", "zoek", "pak", "leg", "zet", "breng", "haal", "check", "vul", "print", "open", "was", "ruim", "boek", "vraag", "zeg", "geef", "teken", "scan", "upload", "download", "bestel"];
 const WW_SUGGESTIES = [
-  [/belasting|aangifte|toeslag/, ["Inlogpagina openen", "Map met papieren pakken", "DigiD-app klaarzetten"]],
-  [/tandarts|huisarts|dokter|kapper|afspraak/, ["Telefoonnummer opzoeken", "Agenda openen voor een datum", "Bellen tijdens openingstijd"]],
-  [/administratie|post|papieren|brief/, ["Stapel op tafel leggen", "Bovenste brief openen", "Prullenbak ernaast zetten"]],
-  [/verjaardag|cadeau/, ["Datum in de agenda zetten", "Drie ideeën opschrijven", "Budget kiezen"]],
-  [/opruimen|schoonmaken|huis|kamer|keuken|zolder/, ["Eén vuilniszak pakken", "Timer op 5 minuten", "Alles van één plank pakken"]],
-  [/verzekering|abonnement|contract/, ["Polis of contract opzoeken", "Website openen", "Klantnummer opschrijven"]]
+  [/\b(belasting\w*|aangifte|toeslag\w*)\b/, ["Inlogpagina openen", "Map met papieren pakken", "DigiD-app klaarzetten"]],
+  [/\b(tandarts|huisarts|dokter|kapper|afspraak)\b/, ["Telefoonnummer opzoeken", "Agenda openen voor een datum", "Bellen tijdens openingstijd"]],
+  [/\b(administratie|post|papieren|brieven|brief|rekeningen|facturen|formulieren)\b/, ["Stapel op tafel leggen", "Bovenste brief openen", "Prullenbak ernaast zetten"]],
+  [/\b(verjaardag\w*|cadeau\w*|kerstkaarten)\b/, ["Datum in de agenda zetten", "Drie ideeën opschrijven", "Budget kiezen"]],
+  [/\b(opruimen|schoonmaken|huis|kamer|keuken|zolder|schuur|kast)\b/, ["Eén vuilniszak pakken", "Timer op 5 minuten", "Alles van één plank pakken"]],
+  [/\b(verzekering\w*|abonnement\w*|contract\w*)\b/, ["Polis of contract opzoeken", "Website openen", "Klantnummer opschrijven"]]
 ];
 const WW_STANDAARD = ["Bestand openen", "Telefoon pakken", "Spullen klaarleggen", "Eén zin opschrijven"];
 
@@ -33,7 +35,8 @@ function wwVaag(titel) {
   if (!w.length) return false;
   if (w.some(x => WW_VAAG.includes(x))) return true;
   if (w.some(x => WW_GEBIEDEND.includes(x))) return false;
-  const werkwoord = w.some(x => x.length >= 5 && /(en|eren|elen)$/.test(x) && !["keuken", "toeslagen", "papieren", "spullen", "zaken", "dingen", "kinderen", "boodschappen"].includes(x));
+  if (w.length === 1) return !WW_EN_WERKWOORD.includes(w[0]);   // één woord: alleen een bekende handeling is concreet
+  const werkwoord = w.some(x => ["doen", "gaan", "zien"].includes(x) || (x.length >= 5 && /(en|eren|elen)$/.test(x) && !["keuken", "toeslagen", "papieren", "spullen", "zaken", "dingen", "kinderen", "boodschappen", "rekeningen", "facturen", "formulieren", "kerstkaarten", "medicijnen"].includes(x)));
   return !werkwoord && w.length <= 4;
 }
 /** Drie suggesties voor de eerste handeling, passend bij de titel. */
@@ -61,9 +64,19 @@ function wwVraagHTML(t, klasse) {
 }
 async function wwBewaar(id, tekst) {
   const t = vind("taken", id); if (!t) return;
-  t.wwGevraagd = true;
-  if (tekst && tekst.trim()) t.subtaken = normaliseerSubtaken(ivMetStap(t.subtaken, tekst.trim()));
-  await bewaar("taken", t);
+  // Bij een reeks: alle open keren tegelijk (anders vraagt elke volgende keer opnieuw).
+  const alle = t.reeksId ? S.taken.filter(x => x.reeksId === t.reeksId && !x.af) : [t];
+  for (const x of alle.includes(t) ? alle : alle.concat(t)) {
+    x.wwGevraagd = true;
+    if (tekst && tekst.trim()) x.subtaken = normaliseerSubtaken(ivMetStap(x.subtaken, tekst.trim()));
+    await bewaar("taken", x);
+  }
+}
+/** Het vraagblok in een eigen blad (Nu-kaart, taakblad): eigen suggesties, geen timer, geen telling als "Ik loop vast". */
+function wwBlad(id) {
+  const t = vind("taken", id); if (!t) return;
+  bladOpen("Eerste handeling", wwVraagHTML(t, "ww-blad"));
+  setTimeout(() => { const v = $("#bladinhoud .ww-veld"); if (v) v.focus(); }, 260);
 }
 document.addEventListener("click", async e => {
   const vb = e.target.closest && e.target.closest("[data-ww-vb]");
@@ -73,7 +86,8 @@ document.addEventListener("click", async e => {
   const blok = b.closest(".ww-vraag"), id = blok.dataset.wwTaak, tekst = b.dataset.ww === "op" ? blok.querySelector(".ww-veld").value : "";
   if (b.dataset.ww === "op" && !tekst.trim()) { toast("Schrijf eerst één handeling op, of sla over"); return; }
   await wwBewaar(id, tekst);
-  if (blok.classList.contains("ww-vi")) { blok.remove(); }
+  if (blok.classList.contains("ww-vi")) blok.remove();
+  if (blok.classList.contains("ww-blad")) bladSluit();
   tril(6); teken();
   if (tekst) toast("Eerste handeling staat bovenaan.");
 }, true);
@@ -103,7 +117,7 @@ document.addEventListener("keydown", e => {
   openTaakBlad = function (id) {
     const r = _open.apply(this, arguments), t = id && vind("taken", id), titel = $("#f-titel");
     if (t && titel && wwVragen(t) && !$("#ww-knop"))
-      titel.closest(".veld").insertAdjacentHTML("beforeend", `<button type="button" class="dk-neem ww-knop" id="ww-knop" data-iv-route="${esc(t.id)}">Nog vaag? Eerste handeling kiezen</button>`);
+      titel.closest(".veld").insertAdjacentHTML("beforeend", `<button type="button" class="dk-neem ww-knop" id="ww-knop" data-ww-blad="${esc(t.id)}" data-ww-eerst-opslaan="1">Nog vaag? Eerste handeling kiezen</button>`);
     return r;
   };
 }
@@ -114,15 +128,15 @@ document.addEventListener("keydown", e => {
     let h = _html.apply(this, arguments);
     const een = mdNu().een;
     if (een && wwVragen(een) && !(typeof ivEersteStap === "function" && ivEersteStap(een)))
-      h = h.replace('<div class="md-nu-acties">', `<p class="ww-nu"><button type="button" class="dk-neem" data-iv-route="${esc(een.id)}">Nog vaag? Eerste handeling kiezen</button></p><div class="md-nu-acties">`);
+      h = h.replace('<div class="md-nu-acties">', `<p class="ww-nu"><button type="button" class="dk-neem" data-ww-blad="${esc(een.id)}">Nog vaag? Eerste handeling kiezen</button></p><div class="md-nu-acties">`);
     return h;
   };
 }
-// Beide knoppen openen de route "Onduidelijk" van Ik loop vast (V7): één plek voor de eerste handeling.
+// Beide knoppen openen het vraagblok in een eigen blad. Vanuit het taakblad eerst opslaan, zodat wijzigingen niet verloren gaan.
+// "Gevraagd" telt pas bij Opslaan of Overslaan; sluiten zonder keuze laat de vraag staan.
 document.addEventListener("click", async e => {
-  const b = e.target.closest && e.target.closest("[data-iv-route]"); if (!b) return;
+  const b = e.target.closest && e.target.closest("[data-ww-blad]"); if (!b) return;
   e.preventDefault(); e.stopImmediatePropagation();
-  const t = vind("taken", b.dataset.ivRoute); if (!t) return;
-  t.wwGevraagd = true; await bewaar("taken", t);
-  ivRoute(t, ivOorzaak("onduidelijk"));
+  const id = b.dataset.wwBlad, op = b.dataset.wwEerstOpslaan && $("#taak-opslaan");
+  if (op) { op.click(); setTimeout(() => wwBlad(id), 380); } else wwBlad(id);
 }, true);

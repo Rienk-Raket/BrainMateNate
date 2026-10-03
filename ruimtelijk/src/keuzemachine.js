@@ -742,7 +742,7 @@ async function kmBesluit(d, keuze, verwacht) {
   const bron = d.bron;
   if (bron && bron.module === "wishlist" && typeof wlZet === "function" && vind("wl_items", bron.id)) {
     const s = keuze === "A" ? "gekocht" : "niet";
-    toast(`+${kmXpVoorBesluit(binnen)} XP`, keuze === "A" ? "Zet op gekocht" : "Zet op niet gekocht", () => wlZet(bron.id, s), 7000);
+    toast(`+${kmXpVoorBesluit(binnen)} XP`, keuze === "A" ? "Zet op gekocht" : "Zet op niet gekocht", () => { V.plToch = bron.id; wlZet(bron.id, s); }, 7000);   // na een besluit geen extra afkoeltijd (V11)
   } else toast(badges.length ? `Badge: ${badges[0][1]}` : `+${kmXpVoorBesluit(binnen)} XP${binnen ? " · binnen je budget" : ""}`);
 }
 function kmParkeerBlad(d) {

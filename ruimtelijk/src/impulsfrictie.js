@@ -40,6 +40,9 @@ function plPatronen(log, waar) {
     .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).slice(0, 3).map(([naam, aantal]) => ({ naam, aantal }));
   return { n: l.length, triggers: tel("trigger"), opbrengst: tel("opbrengst") };
 }
+/* Signalen van controleverlies of schade (naast de noodwoorden van de chat). */
+const PL_NOOD = ["gokken", "gok", "gokte", "casino", "kon niet stoppen", "niet meer stoppen", "controle kwijt", "geen controle", "verslaafd", "verslaving", "schulden", "mezelf pijn"];
+function plNood(tekst) { const t = " " + String(tekst || "").toLowerCase() + " "; return PL_NOOD.some(w => t.includes(w)); }
 /** Uitglijders tellen, zonder de teller te raken. */
 function plUitglijders(log, waar) { return (log || []).filter(r => r.waar === waar && r.soort === "uitglijder").length; }
 /* NATE-FRICTIE-EINDE */
@@ -81,12 +84,14 @@ function plBlad(waar, soort, naam) {
     b.setAttribute("aria-pressed", String(aan));
     st[g] = aan ? st[g].concat(w) : st[g].filter(x => x !== w);
   });
-  $("#pl-gedrag").addEventListener("change", e => {
-    // Klinkt het naar gevaar of controleverlies? Dan eerst de verwijzing.
-    const r = typeof ncBegrijp === "function" ? ncBegrijp(e.target.value, NATE_INTENTIES) : null;
-    $("#pl-hulp").innerHTML = r && r.uitkomst === "nood" ? `<p class="kn-hulp">${esc(NATE_INTENTIES.nood.antwoord)}</p>` : "";
-  });
+  // Klinkt het naar gevaar of controleverlies? Dan eerst de verwijzing, tijdens het typen.
+  const nood = () => { const v = $("#pl-gedrag").value, r = typeof ncBegrijp === "function" ? ncBegrijp(v, NATE_INTENTIES) : null; return plNood(v) || (r && r.uitkomst === "nood"); };
+  const toonHulp = () => { $("#pl-hulp").innerHTML = nood() ? `<p class="kn-hulp">${esc(NATE_INTENTIES.nood.antwoord)}</p><div class="pl-knoppen"><a class="knop primair" href="tel:08000113">Bel 113</a><a class="knop rand" href="tel:112">Bel 112</a></div>` : ""; };
+  $("#pl-gedrag").addEventListener("input", toonHulp);
+  let hulpGezien = false;
   $("#pl-op").onclick = async () => {
+    // Eerste keer met zo'n signaal: blad blijft open, zodat je de verwijzing echt ziet.
+    if (nood() && !hulpGezien) { toonHulp(); hulpGezien = true; $("#pl-hulp").scrollIntoView({ block: "center" }); $("#pl-op").textContent = "Toch bewaren"; return; }
     await zetInst("plLog", plLog().concat({ id: uid(), ts: new Date().toISOString(), waar, soort, trigger: st.trigger, opbrengst: st.opbrengst, gedrag: $("#pl-gedrag").value.trim() }).slice(-500));
     if (soort === "uitglijder") await logGebeurtenis("notitie", `Uitglijder bij ${naam}; de teller loopt door`).catch(() => {});
     bladSluit(); teken(); toast(soort === "uitglijder" ? "Genoteerd. De teller loopt gewoon door." : "Moment bewaard.");

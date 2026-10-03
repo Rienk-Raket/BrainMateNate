@@ -9,7 +9,7 @@ const html = readFileSync(fileURLToPath(new URL("../index.html", import.meta.url
 const knip = (a, b) => { const i = html.indexOf(a), j = html.indexOf(b); assert.ok(i > 0 && j > i, a); return html.slice(i, j); };
 const ctx = vm.createContext({});
 vm.runInContext(knip("/* NATE-FRICTIE-BEGIN */", "/* NATE-FRICTIE-EINDE */") + knip("/* NATE-WERKWOORD-BEGIN */", "/* NATE-WERKWOORD-EINDE */")
-  + ";globalThis.F = { PL_OPBRENGST, plAfkoelen, plPatronen, plUitglijders, wwVaag, wwSuggesties, wwVragen };", ctx);
+  + ";globalThis.F = { PL_OPBRENGST, plAfkoelen, plPatronen, plUitglijders, plNood, wwVaag, wwSuggesties, wwVragen };", ctx);
 const F = ctx.F, kaal = x => JSON.parse(JSON.stringify(x));
 const zinnen = t => (t.match(/[.?!](\s|$)/g) || []).length;
 
@@ -32,14 +32,20 @@ test("patronen pas na drie momenten; vaakste trigger en opbrengst eerst", () => 
   assert.equal(F.plUitglijders(log, "roken"), 1);
 });
 
+test("signalen van controleverlies", () => {
+  for (const t of ["kon niet stoppen", "weer gokken", "Ik ben de controle kwijt", "schulden door kopen"]) assert.equal(F.plNood(t), true, t);
+  for (const t of ["trek bij de koffie", "even pauze"]) assert.equal(F.plNood(t), false, t);
+});
+
 test("vervangingsgedrag: kort en zonder 'moet'", () => {
   for (const o of F.PL_OPBRENGST) { assert.ok(zinnen(o.anders) <= 2); assert.doesNotMatch(o.anders, /\bmoet/); }
 });
 
 test("vaag of concreet", () => {
   for (const t of ["Belasting", "tandarts", "Administratie regelen", "verjaardag Sam", "iets met de auto", "Toeslagen"]) assert.equal(F.wwVaag(t), true, t);
-  for (const t of ["Kapper bellen", "Was ophangen", "Mail Sam", "Formulier invullen vrijdag", "Bel de huisarts", "Boodschappen doen"].slice(0, 5)) assert.equal(F.wwVaag(t), false, t);
-  assert.equal(F.wwVaag("Boodschappen doen"), true);   // "doen" is vaag: wat is de eerste handeling?
+  for (const t of ["Kapper bellen", "Was ophangen", "Mail Sam", "Formulier invullen vrijdag", "Bel de huisarts", "Boodschappen doen", "Was doen", "Film kijken", "Sporten", "Rijbewijs verlengen", "Huur betalen"]) assert.equal(F.wwVaag(t), false, t);
+  // Losse meervouden zijn juist vaag.
+  for (const t of ["Rekeningen", "Facturen", "Kerstkaarten", "Medicijnen", "Wasmachine"]) assert.equal(F.wwVaag(t), true, t);
   assert.equal(F.wwVaag(""), false);
 });
 
@@ -47,6 +53,9 @@ test("suggesties passen bij de titel", () => {
   assert.ok(F.wwSuggesties("Belasting").includes("Inlogpagina openen"));
   assert.ok(F.wwSuggesties("tandarts").includes("Telefoonnummer opzoeken"));
   assert.equal(F.wwSuggesties("Iets anders vaags").length, 3);
+  // Woordgrenzen: "Huiswerk" is geen huis, "postcode" geen post.
+  assert.ok(!F.wwSuggesties("Huiswerk").includes("Eén vuilniszak pakken"));
+  assert.ok(!F.wwSuggesties("postcode zoeken").includes("Stapel op tafel leggen"));
 });
 
 test("één keer vragen: niet bij af, gevraagd of met een open stap", () => {

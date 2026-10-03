@@ -255,3 +255,15 @@ Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vra
 - Vastleggen: na het opslaan van een vage taak meteen "Wat is de eerste handeling?" onder het veld (opslaan of overslaan). Taakblad en Nu-kaart: "Nog vaag? Eerste handeling kiezen" opent de route Onduidelijk van V7. Per taak hooguit één keer (`wwGevraagd`).
 - Ook: voorbeeldknoppen in Ik loop vast 44 px.
 - `frictie-werkwoord.css`. Tests: `tests/frictie-werkwoord.test.mjs`, `tests/frictie-werkwoord.e2e.cjs` (22 checks).
+
+## Review stap 18–19 (verwerkt)
+
+1. Patroonlogger: verwijzing (huisarts, 113, met belknoppen) al tijdens het typen; eigen lijst voor controleverlies en gokken; bij zo'n signaal blijft het blad eerst open ("Toch bewaren").
+2. "Nog vaag?" opent een eigen blad met passende suggesties: geen timer, geen telling als "Ik loop vast".
+3. "Boodschappen doen", "Was doen", "Film kijken" zijn niet meer vaag.
+4. Losse meervouden ("Rekeningen", "Kerstkaarten") wel; losse bekende handelingen ("Sporten") niet.
+5. "Gevraagd" telt pas bij Opslaan of Overslaan; sluiten zonder keuze laat de vraag staan.
+6. Vanuit het taakblad eerst opslaan, dan het vraagblok (wijzigingen gaan niet verloren).
+7. Na een Keuzemachine-besluit geen extra afkoeltijd.
+8. Reeksen: eerste handeling en "gevraagd" voor alle open keren.
+9. Suggesties op hele woorden ("Huiswerk" is geen huis).
