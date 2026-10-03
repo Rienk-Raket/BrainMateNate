@@ -317,7 +317,17 @@ vervang('const naam = `futureme-backup-${vandaagISO()}${metBijlagen ? "-compleet
 vervang('if (!data || !data.data) { toast("Dit is geen FutureMe-back-up"); return; }',
         'if (!data || !data.data) { toast("Dit is geen exportbestand van Brain-Mate Nate"); return; }')
 vervang('      if (modus !== "vervangen" && S[w].some(x => x.id === rij.id)) continue;',
-        '      const sl = rij.id !== undefined ? "id" : "sleutel";\n      if (modus !== "vervangen" && S[w].some(x => x[sl] === rij[sl])) continue;')
+        '      const sl = WINKELS[w] || "id";\n'
+        '      if (modus !== "vervangen" && S[w].some(x => x[sl] === rij[sl])) continue;\n'
+        '      // Samenvoegen: dezelfde open taak (titel en datum) niet nog eens, bv. de starttaken van een nieuwe installatie.\n'
+        '      if (modus !== "vervangen" && w === "taken" && !rij.af && S.taken.some(x => !x.af && x.titel === rij.titel && (x.datum || null) === (rij.datum || null))) continue;')
+# Samenvoegen houdt bestaande instellingen (een afgeronde kennismaking blijft staan); vervangen zet alles terug. Daarna instellingen toepassen.
+vervang('      if (w === "instellingen") { S.instellingen[rij.sleutel] = rij.waarde; await idbZet(w, rij); aantal++; continue; }',
+        '      if (w === "instellingen") { const nu = S.instellingen[rij.sleutel]; if (modus !== "vervangen" && nu !== undefined && !(rij.sleutel === "nate_km" && !(nu || {}).klaar)) continue; S.instellingen[rij.sleutel] = rij.waarde; await idbZet(w, rij); aantal++; continue; }')
+vervang('''  teken();
+  toast(`${aantal} onderdelen teruggezet`, null, null, 5000);''', '''  if (typeof pasInstellingenToe === "function") pasInstellingenToe();
+  teken();
+  toast(`${aantal} onderdelen teruggezet`, null, null, 5000);''')
 
 begin = html.index("async function kmAiVerrijk(d, p, lokaal) {")
 eind = html.index("function kmAiAanBlad() {", begin)

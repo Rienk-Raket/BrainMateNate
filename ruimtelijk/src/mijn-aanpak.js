@@ -10,7 +10,7 @@
      modules al gebruiken (Huishouden, Anker, Lijstjes, Wishlist …).
    - Scherm "Mijn aanpak" (Meer → Profiel): de patronen, wat Nate al afstemt,
      en aanpassingen met een schakelaar, een "Waarom zeg je dit?" en het
-     bewijsniveau. Niets gaat vanzelf aan: Nate stelt voor, jij tikt.
+     bewijsniveau. Nate zet niets nieuws aan: hij stelt voor, jij tikt.
    - Vaste indeling: dan verschuift er niets vanzelf (V4, Ruimtes).
 
    De kern (NATE-AANPAK-BEGIN/EINDE) is puur en wordt getest in tests/aanpak.test.mjs.
@@ -24,7 +24,7 @@ function apRichting(top) {
   return { richting: A && S ? "audhd" : A ? "adhd" : S ? "autisme" : E ? "energie" : "geen", energie: E };
 }
 
-const AP_BEWIJS = { direct: "Direct: bij ADHD onderzocht.", indirect: "Indirect: onderzocht, maar niet specifiek bij ADHD.", praktisch: "Praktisch: logisch en laag risico, nog een experiment. Kijk of het bij jou werkt." };
+const AP_BEWIJS = { direct: "Direct: bij ADHD onderzocht.", indirect: "Indirect: onderzocht, maar niet specifiek bij ADHD.", praktisch: "Praktisch: laag risico en nog een experiment, dus kijk of het bij jou werkt." };
 
 /* Aanpassingen. "patronen" = voor wie Nate het voorstelt (bijlage A van het conceptvoorstel). */
 const AP_AANPASSINGEN = [
@@ -54,14 +54,25 @@ function aanpak() {
   let top = [], disclaimer = "", klaar = false;
   try {
     const d = knData(), p = knProfiel(d);
-    top = p.top || []; disclaimer = p.disclaimer || ""; klaar = !!p.kernKlaar;
+    klaar = !!p.kernKlaar; disclaimer = p.disclaimer || "";
+    top = klaar ? (p.top || []) : [];   // pas patronen na de zestien kernvragen (zoals de tips)
   } catch (e) { /* geen kennismaking: algemene aanpak */ }
   const r = apRichting(top);
-  return { top, klaar, disclaimer, richting: r.richting, energie: r.energie, voorgesteld: apVoorgesteld(top) };
+  // Zonder kennismaking telt een eerder zelf gekozen richting nog (niet de tien vragen).
+  const hand = !klaar && typeof pfProfiel === "function" ? pfProfiel().nd.handmatig : null;
+  return { top, klaar, disclaimer, richting: hand || r.richting, energie: r.energie, voorgesteld: apVoorgesteld(top) };
 }
 // Opnieuw rekenen alleen als de kennismaking veranderd is (knZet en import zetten een nieuw object).
 let apCache = null, apBron;
-function apNu() { const bron = inst("nate_km", null); if (!apCache || bron !== apBron) { apCache = aanpak(); apBron = bron; } return apCache; }
+function apNu() {
+  const bron = inst("nate_km", null);
+  if (!apCache || bron !== apBron) {
+    apCache = aanpak(); apBron = bron;
+    // Anker krijgt een passend profiel (alleen als daar nog niets gekozen is).
+    if (apCache.klaar && typeof pfSyncAnker === "function") setTimeout(() => pfSyncAnker().catch(() => {}), 0);
+  }
+  return apCache;
+}
 
 // Het oude profiel vervalt: de richting komt voortaan uit Mijn aanpak.
 pfRichting = function () { return apNu().richting; };
@@ -72,20 +83,26 @@ ndAanpak = function () {
   return a;
 };
 
+// Rustig scherm gaat niet meer vanzelf aan bij een richting: Nate stelt het voor in Mijn aanpak.
+ndDichtheidStandaard = function () { return "normaal"; };
+
 /* ---------- 93.2 Aanpassingen lezen en zetten (bestaande instellingen) ---------- */
 const AP_LEES = {
   vast: () => !!inst("vasteIndeling", false),
   rustig: () => (typeof ndDichtheid === "function" ? ndDichtheid() : inst("ndDichtheid", "normaal")) === "rustig",
   beweging: () => inst("beweging", "vol") === "rustig",
-  zacht: () => inst("nateEnergie", "normaal") === "zacht",
+  zacht: () => (typeof nateStand === "function" ? nateStand() : inst("nateEnergie", "normaal")) === "zacht",
   "vast-knop": () => inst("ivNu", true) !== false,
   wekker: () => (inst("tpAlarmen", {}) || {}).wekker !== false
 };
 const AP_ZET = {
   vast: aan => zetInst("vasteIndeling", aan),
-  rustig: aan => zetInst("ndDichtheid", aan ? "rustig" : "normaal"),
+  rustig: async aan => { if (aan) await zetInst("apVorigDicht", inst("ndDichtheid", null)); await zetInst("ndDichtheid", aan ? "rustig" : (inst("apVorigDicht", null) && inst("apVorigDicht") !== "rustig" ? inst("apVorigDicht") : "normaal")); },
   beweging: async aan => { await zetInst("beweging", aan ? "rustig" : "vol"); document.documentElement.dataset.beweging = aan ? "rustig" : "vol"; },
-  zacht: aan => zetInst("nateEnergie", aan ? "zacht" : "normaal"),
+  zacht: async aan => {
+    if (aan) { if (inst("nateEnergie", "normaal") !== "zacht") await zetInst("apVorigeToon", inst("nateEnergie", "normaal")); await zetInst("nateEnergie", "zacht"); }
+    else await zetInst("nateEnergie", inst("apVorigeToon", "normaal") === "zacht" ? "normaal" : inst("apVorigeToon", "normaal"));
+  },
   "vast-knop": aan => zetInst("ivNu", aan),
   wekker: aan => zetInst("tpAlarmen", Object.assign({}, inst("tpAlarmen", {}) || {}, { wekker: aan }))
 };
@@ -109,11 +126,12 @@ function vwAanpak() {
   h += `</div>`;
   const auto = apAutoHTML();
   if (auto) h += sectie("Wat Nate al afstemt") + `<div class="card card-pad">${auto}<details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Korte blokken met pauzes en een afkoeltijd bij aankopen sluiten aan bij je patronen. ${esc(AP_BEWIJS.praktisch)}</p></details></div>`;
-  h += sectie("Aanpassingen") + `<p class="klein ap-uitleg">Niets gaat vanzelf aan. Bij een voorstel van Nate staat een label; jij beslist.</p>`;
+  h += sectie("Aanpassingen") + `<p class="klein ap-uitleg">Bij een voorstel van Nate staat een label. Jij beslist wat aan staat.</p>`;
   h += `<ul class="ap-aanpassingen">${AP_AANPASSINGEN.map(a => {
     const aan = AP_LEES[a.id](), voor = ap.voorgesteld.includes(a.id);
-    return `<li class="card ap-rij"><button type="button" class="ap-schakel" data-ap="${a.id}" aria-pressed="${aan}">
-        <span class="tekst"><b>${esc(a.label)}</b>${voor ? `<span class="ap-voorstel">Nate stelt voor</span>` : ""}<small>${esc(a.uitleg)}</small></span>
+    const vanzelf = a.id === "zacht" && aan && inst("nateEnergie", "normaal") !== "zacht";
+    return `<li class="card ap-rij"><button type="button" class="ap-schakel" data-ap="${a.id}" aria-pressed="${aan}"${vanzelf ? " disabled" : ""}>
+        <span class="tekst"><b>${esc(a.label)}</b>${voor ? `<span class="ap-voorstel">Nate stelt voor</span>` : ""}<small>${esc(vanzelf ? "Staat vanzelf aan bij een rustig scherm of weinig energie." : a.uitleg)}</small></span>
         <span class="toggle" aria-hidden="true" aria-pressed="${aan}"></span></button>
       <details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>${esc(a.waarom)} ${esc(AP_BEWIJS[a.bewijs])}</p></details></li>`;
   }).join("")}</ul>`;
@@ -142,5 +160,35 @@ document.addEventListener("click", async e => {
     const i = h.indexOf('<details class="pf-sectie" data-pf="aanpak"');
     if (i >= 0) { const j = h.indexOf("</details>", i); h = h.slice(0, i) + h.slice(j + 10); }
     return kaart + h;
+  };
+}
+
+/* ---------- 93.5 Geen labels: metaforen in de kop van Profiel en Instellingen ---------- */
+function apKort() { const ap = apNu(); return ap.top.length ? ap.top.map(c => c.metafoor).join(" · ") : "Algemene aanpak"; }
+{
+  const _tip = ndTipKaart;
+  ndTipKaart = function () { return _tip.apply(this, arguments).replace('data-view="profiel" aria-label="Aanpak aanpassen in je profiel"', 'data-view="aanpak" aria-label="Mijn aanpak"'); };
+  const _inst = vwInstellingen;
+  vwInstellingen = function () {
+    const r = pfRichting(), rr = PF_RICHTINGEN[r] || PF_RICHTINGEN.geen;
+    return _inst.apply(this, arguments).replace(pfIco(r) + " " + esc(rr.naam), esc(apKort()));
+  };
+  const _pf = vwProfiel;
+  vwProfiel = function () {
+    const r = pfRichting(), rr = PF_RICHTINGEN[r];
+    const h = _pf.apply(this, arguments);
+    return rr ? h.replace(pfIco(r) + " " + esc(rr.kort), esc(apKort())) : h;
+  };
+}
+
+/* ---------- 93.6 Minder beweging overal (niet alleen in de ruimtelijke laag) ----------
+   Modules kijken naar prefers-reduced-motion; met "Minder beweging" aan antwoordt
+   die vraag ook "ja". De CSS hieronder stopt de rest van de animaties. */
+{
+  const _mm = window.matchMedia && window.matchMedia.bind(window);
+  if (_mm) window.matchMedia = function (q) {
+    const m = _mm(q);
+    if (!/prefers-reduced-motion:\s*reduce/.test(q) || inst("beweging", "vol") !== "rustig") return m;
+    return new Proxy(m, { get: (t, k) => k === "matches" ? true : (typeof t[k] === "function" ? t[k].bind(t) : t[k]) });
   };
 }

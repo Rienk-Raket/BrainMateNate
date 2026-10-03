@@ -33,6 +33,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---------- V2 zonder profiel ---------- */
   check("V2: zonder kennismaking richting 'geen'", await p.evaluate(() => pfRichting() === "geen"));
+  check("V2: half ingevuld (kern niet klaar) = nog geen patronen", await p.evaluate(async () => { await knZet({ antwoorden: { "A4.4.Q1": "very_often", "A4.4.Q2": "very_often", "A3.3.Q1": "very_often", "A3.3.Q2": "very_often" }, later: true }); return aanpak().top.length === 0 && pfRichting() === "geen"; }));
   // Het oude profiel telt niet meer: ook een oude 'adhd'-uitslag verandert niets.
   await p.evaluate(async () => { await zetInst("profiel", { nd: { antwoorden: [4,4,4,4,4,4,4,4,4,4], richting: "adhd", handmatig: null, energie: true } }); });
   check("V2: oud profiel (10 vragen) vervalt", await p.evaluate(() => pfRichting() === "geen" && !ndAanpak().extraEnergie));
@@ -61,6 +62,9 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.screenshot({ path: path.join(UIT, "v2-01-mijn-aanpak.png"), fullPage: true });
   await p.click('[data-ap="vast"]'); await wacht(300);
   check("V2: Vaste indeling aan na één tik", await p.evaluate(() => inst("vasteIndeling") === true && document.querySelector('[data-ap="vast"]').getAttribute("aria-pressed") === "true"));
+  await p.click('[data-ap="beweging"]'); await wacht(200);
+  check("V2: minder beweging geldt ook voor modules", await p.evaluate(() => document.documentElement.dataset.beweging === "rustig" && matchMedia("(prefers-reduced-motion: reduce)").matches && kmStil()));
+  await p.click('[data-ap="beweging"]'); await wacht(200);
   await p.click('[data-ap="vast-knop"]'); await wacht(200);
   await p.evaluate(async () => { await maakTaakUitTekst("Iets kleins vandaag"); ga("vandaag"); }); await wacht(300);
   check("V2: Ik loop vast uit = niet op de Nu-kaart", await p.locator(".md-nu [data-iv]").count() === 0);
@@ -109,6 +113,11 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
     await kiezer.setFiles(tmp); await wacht(1500);
     const st = await p2.evaluate(() => ({ taken: S.taken.map(t => t.titel), klaar: (inst("nate_km") || {}).klaar, r: pfRichting(), toast: (document.querySelector("#toast") || {}).textContent }));
     check("Meer: import zet taken en profiel terug", st.taken.includes("Iets kleins") && st.klaar && st.r === "autisme", JSON.stringify(st));
+    check("Meer: samenvoegen geeft geen dubbele starttaken", new Set(st.taken).size === st.taken.length, JSON.stringify(st.taken));
+    await p2.evaluate(async () => { await zetInst("thema", "donker"); });
+    const [k2] = await Promise.all([p2.waitForEvent("filechooser"), (async () => { await p2.click('[data-rvg="import"]'); await wacht(350); await p2.click('#blad [data-act="backup-import"][data-modus="samenvoegen"]'); })()]);
+    await k2.setFiles(tmp); await wacht(1200);
+    check("Meer: samenvoegen houdt bestaande instellingen", await p2.evaluate(() => inst("thema") === "donker"));
     await c2.close();
   }
 

@@ -15,3 +15,7 @@
 .ap-ingang { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; margin-bottom: 12px; text-align: left; font: inherit; color: inherit; cursor: pointer; }
 .ap-ingang .tekst { display: flex; flex-direction: column; }
 .ap-ingang small { color: var(--muted); }
+.ap-schakel:disabled { opacity: .75; cursor: default; }
+/* Minder beweging (Mijn aanpak): ook animaties die alleen naar prefers-reduced-motion keken. */
+html[data-beweging="rustig"] *, html[data-beweging="rustig"] *::before, html[data-beweging="rustig"] *::after {
+  animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

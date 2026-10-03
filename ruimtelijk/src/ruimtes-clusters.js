@@ -11,7 +11,7 @@
      Kas 3 oktober). De rest staat onder "Alle schermen" (ingeklapt), zodat
      elk scherm bereikbaar blijft.
 
-   De kern (NATE-RUIMTES-BEGIN/EINDE) is puur en wordt getest in tests/ruimtes.test.mjs.
+   De kern (NATE-RUIMTES-BEGIN/EINDE) is puur en wordt getest in tests/aanpak.test.mjs.
    ========================================================================== */
 
 /* NATE-RUIMTES-BEGIN */
@@ -26,7 +26,7 @@ const RV_VAST = ["persoonlijk", "huishouden", "anker"];
 // Welke ruimtes passen bij een patroon (bijlage A van het conceptvoorstel).
 const RV_PATROON = { P1: ["persoonlijk", "werk"], P2: ["sidehustles", "hobbyskills"], P3: ["anker", "dagboek"], P4: ["lijstjes"],
   P5: ["anker", "dagboek"], P6: ["huishouden", "gewoontes"], P7: ["anker", "gezondheid"] };
-const RV_DAGDEEL = { ochtend: ["persoonlijk", "werk", "gewoontes"], middag: ["huishouden", "financieel", "werk"], avond: ["dagboek", "lijstjes", "anker"] };
+const RV_DAGDEEL = { ochtend: ["persoonlijk", "werk", "gewoontes"], middag: ["huishouden", "financieel", "werk"], avond: ["dagboek", "lijstjes", "anker"], nacht: ["anker", "dagboek"] };
 
 /**
  * Drie ruimtes voor nu. ctx: { open: {ruimte: aantal open dingen}, patronen: ["P1",…], energie: 1–5 of null, dagdeel, vast }.
@@ -54,13 +54,13 @@ function rvStatus(view) {
     case "wishlist": { const n = wlAlle("actief").length; return [0, n ? `${n} op je lijst` : ""]; }
     case "financieel": return geldTelling() === "!" ? [2, "Let op je dagbudget"] : [0, ""];
     case "hobbyskills": { const n = +hsTelling() || 0; return [n, n ? `${n} bezig` : ""]; }
-    case "sidehustles": { const t = shTelling(); return [t ? 1 : 0, t ? String(t) : ""]; }
-    case "gezondheid": { const t = vsTelling(); return [t ? 1 : 0, t ? String(t) : ""]; }
+    case "sidehustles": return [shTelling() ? 1 : 0, ""];   // getal staat als badge
+    case "gezondheid": return [vsTelling() ? 1 : 0, ""];
     case "anker": return [0, "Eén minuut landen"];
   }
   return [0, ""];
 }
-function rvDagdeel() { const u = new Date().getHours(); return u < 12 ? "ochtend" : u < 18 ? "middag" : "avond"; }
+function rvDagdeel() { const u = new Date().getHours(); return u < 6 ? "nacht" : u < 12 ? "ochtend" : u < 18 ? "middag" : "avond"; }
 
 /* ---------- 94.2 Het scherm Ruimtes ---------- */
 function rvKamerHTML(r, groot) {
@@ -76,7 +76,7 @@ vwRuimtes = function () {
   const gekozen = V.rvOpen === undefined ? null : V.rvOpen;
   let h = `<section class="rv-nu" aria-label="Voor jou, nu"><h2 class="labeltekst">${vast ? "Vast bovenaan" : "Voor jou, nu"}</h2>
     <div class="nv-kamers rv-nu-lijst">${nu.map(v => rvKamerHTML(per[v], true)).join("")}</div>
-    ${vast ? "" : `<details class="iv-waarom"><summary>Waarom deze drie?</summary><p>Nate kijkt naar wat er open staat, je patronen, je energie van vanochtend en het tijdstip. Wil je dat niets verschuift, zet dan Vaste indeling aan in Mijn aanpak. Praktisch: nog een experiment.</p></details>`}</section>`;
+    ${vast ? "" : `<details class="iv-waarom"><summary>Waarom deze drie?</summary><p>Nate kijkt naar wat er open staat, je patronen, je energie en het tijdstip (praktisch: nog een experiment). Wil je dat niets verschuift, zet dan Vaste indeling aan in Mijn aanpak.</p></details>`}</section>`;
   h += RV_CLUSTERS.map(c => {
     const kamers = c.ruimtes.filter(v => per[v]), isOpen = gekozen === c.id;
     return `<section class="rv-cluster${isOpen ? " open" : ""}">
@@ -114,7 +114,7 @@ function rvImportBlad() {
       <button class="rijknop" data-act="backup-import" data-modus="vervangen">${ico("upload", "width:20px;height:20px;color:var(--red)")}
         <span class="nm">Alles vervangen<span class="klein" style="display:block">Wist wat er nu staat en zet het bestand terug</span></span></button>
     </div>
-    <p class="klein">Twijfel je? Kies Samenvoegen; dan gaat er niets verloren.</p>`);
+    <p class="klein">Twijfel je? Kies Samenvoegen: wat er al staat, blijft staan.</p>`);
 }
 document.addEventListener("click", e => {
   const k = e.target.closest && e.target.closest("[data-rvg]"); if (!k) return;

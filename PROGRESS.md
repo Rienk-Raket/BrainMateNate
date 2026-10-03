@@ -136,3 +136,18 @@ Bekend (niet van deze stappen): `keuzemachine.e2e.cjs` faalt nu op 6 punten, ook
 - `ruimtelijk/src/leesbaar.css`: titels, kopjes, labels en tabnamen in het systeemlettertype; het pixellettertype blijft alleen decoratie.
 
 Tests: `tests/aanpak.test.mjs` (kern V2 en V4), `tests/structuur.e2e.cjs` (31 checks, inclusief export → import in een lege app).
+
+## Review stap 11–12 (verwerkt)
+
+1. Patronen pas na de zestien kernvragen (zoals de tips); daarvoor algemene aanpak.
+2. Samenvoegen houdt bestaande instellingen (een afgeronde kennismaking blijft staan; een niet-afgeronde wordt aangevuld), slaat dubbele open taken (zelfde titel en datum) over en past instellingen meteen toe.
+3. Zachte toon: schakelaar toont de echte stand; staat hij vanzelf aan (rustig scherm of weinig energie), dan staat dat erbij. Uitzetten zet je vorige keuze terug (ook bij Rustig scherm).
+4. Rustig scherm gaat niet meer vanzelf aan bij een richting (`ndDichtheidStandaard` = normaal); Nate stelt het voor. Tekst aangepast: "Jij beslist wat aan staat."
+5. Minder beweging geldt overal: `prefers-reduced-motion` antwoordt "ja" als het aan staat, plus een CSS-stop op animaties.
+6. Ruimtes: geen kaal getal als ondertitel; het getal staat als badge.
+7. Anker krijgt een passend profiel zodra de kennismaking klaar is.
+8. Tipkaart wijst naar Mijn aanpak.
+9. Geen labels als "Autisme-kenmerken" in Profiel en Instellingen: de metaforen. Een eerder zelf gekozen richting telt nog zolang er geen kennismaking is.
+10. Nacht (0–6 uur) apart: rust en dagboek.
+11. Waarom-teksten hooguit twee zinnen.
+12. Samenvoegen vergelijkt op de sleutel uit `WINKELS`.
