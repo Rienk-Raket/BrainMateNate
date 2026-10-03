@@ -365,22 +365,7 @@ function vwTussenstand(view) {
   } catch (e) { return ""; }
   return "";
 }
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s.apply(this, arguments);
-    // Huishouden ook vanaf Nieuw (na Persoonlijk).
-    if (!h.includes('data-view="huishouden"')) {
-      const tegel = catKnop({ view: "huishouden", ill: "huishouden", naam: "Huishouden", uitleg: "Eén klus tegelijk", kleur: MODULES.huishouden.kleur });
-      const i = h.indexOf('data-view="persoonlijk"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-      if (j >= 0) h = h.slice(0, j + 9) + tegel + h.slice(j + 9);
-    }
-    // Tussenstanden in de uitlegregel van elke tegel.
-    return h.replace(/(<button class="knop3d breed[^"]*"[^>]*data-view="([a-z]+)"[^>]*>[\s\S]*?<span class="ds3d"[^>]*>)([\s\S]*?)(<\/span>)/g, (m, voor, view, uitleg, na) => {
-      const t = vwTussenstand(view); return t ? voor + esc(t) + na : m;
-    });
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 
 /* ---------- 80.9 Voortgang is leidend ----------
    De andere overzichten (Nieuw, Anker, Huishouden, Terugblik) verwijzen naar

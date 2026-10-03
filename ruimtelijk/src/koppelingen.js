@@ -113,15 +113,7 @@ vwMeer = function () {
 };
 
 /* ---------- Startscherm (Nieuw): tegel HobbySkills naast Side Hustle ---------- */
-{
-  const _s = vwStart;
-  vwStart = function () {
-    const h = _s();
-    const i = h.indexOf('data-view="sidehustles"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    const tegel = catKnop({ view: "hobbyskills", ill: "hobby", naam: "HobbySkills", uitleg: "Hobby's en skills die je wilt ontwikkelen", kleur: "#0ea5a4", telling: hsTelling() });
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 
 /* ---------- Persoonlijk: strook naar HobbySkills ---------- */
 if (typeof vwPersoonlijk === "function") {

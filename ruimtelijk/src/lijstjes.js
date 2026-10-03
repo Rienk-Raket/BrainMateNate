@@ -917,16 +917,7 @@ function ljTussenstand() {
   const bz = S.lj_items.filter(x => x.status === "bezig").length, af = S.lj_items.filter(x => x.status === "klaar" && (x.afgerond || "").startsWith(ljJaar())).length;
   return [bz ? `${bz} bezig` : "", af ? `${af} afgerond dit jaar` : ""].filter(Boolean).join(" · ") || "Films, series, boeken en meer";
 }
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s.apply(this, arguments);
-    if (h.includes('data-view="lijstjes"')) return h;
-    const tegel = catKnop({ view: "lijstjes", ill: "lijstjes", naam: "Lijstjes", uitleg: ljTussenstand(), kleur: LJ_KLEUR, telling: S.lj_items.filter(x => x.status === "bezig").length || "" });
-    const i = h.indexOf('data-view="hobbyskills"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 if (typeof vwPersoonlijk === "function") {
   const _p = vwPersoonlijk;
   vwPersoonlijk = function () {

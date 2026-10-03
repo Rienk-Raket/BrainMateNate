@@ -158,7 +158,8 @@ function mdWidgetsKiezen() {
 /* ---------- 87.6 Het scherm ---------- */
 function mdHTML() {
   const d = dcVandaag();
-  let h = backupBanner() + fmDagringHTML();
+  // Geen back-upbanner meer hier: Nate meldt het in zijn berichten (kleine verbetering 2).
+  let h = fmDagringHTML();
   h += `${sectie(MD_TEKST.tijdlijn)}<div class="card card-pad md-tijdlijnkaart">${mdTijdlijnHTML()}</div>`;
   // Klasse vw-hart: verweven.js voegt anders zijn eigen blok (check-in, sessie …) toe.
   h += `<div class="vw-hart md-hart">${mdNuHTML()}`;

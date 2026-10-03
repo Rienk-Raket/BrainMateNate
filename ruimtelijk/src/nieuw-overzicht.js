@@ -184,15 +184,7 @@ function nwoStatistieken() {
 }
 
 /* ---------- In de rail zetten ---------- */
-{
-  const _s = vwStart;
-  vwStart = function () {
-    const h = _s(), merk = /<div class="nw-rail[^"]*"[^>]*>/, m = merk.exec(h);
-    if (!m) return h;
-    const paneel = `<div class="nw-paneel" aria-hidden="${!!V.nwOpen}">${nwoDiagram()}${nwoStatistieken()}</div>`;
-    return h.slice(0, m.index + m[0].length) + paneel + h.slice(m.index + m[0].length);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 /* De knoppen zijn samen precies even hoog als het ingeklapte overzicht ernaast
    (ringdiagram + alle statistieken dicht). Staat er een statistiek open, dan
    telt die uitklap niet mee: de knoppen blijven dan gewoon staan. */

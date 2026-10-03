@@ -13,20 +13,7 @@
    ========================================================================== */
 
 /* ---------- 72.1 Starttegel ---------- */
-{
-  const _start = vwStart;
-  vwStart = function () {
-    const h = _start();
-    const n = mfWeekMomenten();
-    const tegel = catKnop({ view: "anker", ill: "anker", naam: "Anker", uitleg: `Deze week: ${n} ${n === 1 ? "moment" : "momenten"}`, kleur: "#3a7ca5" })
-      .replace('class="knop3d breed"', 'class="knop3d breed mf-tegel" aria-description="Houd ingedrukt om meteen 1 minuut rustig te ademen"');
-    // Direct na Gezondheid; lukt dat niet, dan achteraan in het raster.
-    const i = h.indexOf('data-view="gezondheid"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    if (j >= 0) return h.slice(0, j + 9) + tegel + h.slice(j + 9);
-    const k = h.indexOf('<div class="startgrid">');
-    return k < 0 ? h : h.slice(0, k + 23) + tegel + h.slice(k + 23);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 /* Lang indrukken (500 ms) = direct starten, zonder vragen. */
 {
   let timer = 0, start = null, gestart = 0;

@@ -596,17 +596,7 @@ document.addEventListener("pointerover", e => { if (e.pointerType !== "mouse") r
    Een tegel op Nieuw (direct na Snel typen), een kaart in Meer en een
    logboeksoort. De tegel opent de omgeving, niet een gewone view. */
 {
-  const _start = vwStart;
-  vwStart = function () {
-    const h = _start();
-    const n = vgActieveDoelen().length;
-    const tegel = catKnop({ view: "voortgang", ill: "voortgang", naam: "Voortgang", uitleg: n ? `${vgMv(n, "actief doel", "actieve doelen")}` : "Al je vooruitgang op één plek", kleur: "#4f46e5" })
-      .replace('data-act="ga" data-view="voortgang"', 'data-act="vg-open"');
-    const i = h.indexOf('<div class="startgrid">');
-    if (i < 0) return h;
-    const j = h.indexOf("</button>", i);   // na de eerste tegel (Snel typen)
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
+  // (Dode omwikkeling van vwStart verwijderd, kleine verbetering 6.)
   const _meer = vwMeer;
   vwMeer = function () {
     const h = _meer();

@@ -4606,6 +4606,28 @@ html[data-retro="1"] .vg-koptekst h1{font-family:inherit;font-weight:800;font-si
 .hs-schakels .keuze { min-height: 44px; text-align: left; }
 .hs-tip { margin: 10px 0 8px; font-weight: 600; }
 
+
+/* === Kleine verbeteringen (sectie 97) === */
+/* 3. Naam in de zichtbare strook van een ingeklapt blok in Vastleggen. */
+.nwl-kaart { position: relative; }
+.kv-strooknaam { position: absolute; right: 0; bottom: 5px; width: var(--nw-strook, 92px); text-align: center; pointer-events: none;
+  font-size: calc(11px * var(--t)); font-weight: 700; line-height: 1.1; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.45);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; box-sizing: border-box;
+  opacity: calc(1 - var(--nw-p, 0)); transition: opacity .3s; }
+.nw-rail:not(.open) .nwl-kaart .ill3d.nwl-ico { top: 40%; }
+/* 7. Nate's rustplek. */
+html[data-nate-rust="links"] #nate { right: auto; left: calc(-26px + var(--safe-l, 0px)); }
+html[data-nate-rust="links"] #nate img { transform: scaleX(-1); }
+html[data-nate-rust="links"] #nate::before { inset: -6px -14px -6px -6px; }
+html[data-nate-rust="links"] #nate:hover, html[data-nate-rust="links"] #nate:focus-visible { transform: translateX(22px); }
+html[data-nate-rust="uit"] #nate { display: none; }
+/* 10. Knoppen naar de module in het profielrapport. */
+.kv-modules { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 6px 0 10px; }
+.kv-module { min-height: 44px; }
+/* 13. Weer opgepakt. */
+.kv-hervat { border-left: 4px solid var(--green, #15803d); }
+.kv-hervat p { margin: 6px 0 0; }
+
 </style>
 </head>
 <body>
@@ -14522,7 +14544,7 @@ function mmAgendaBlad() {
   const gedateerd = Array.from(E.nodes.values()).filter(n => mmHeeftDatum(n) && !n.voorbeeld);
   const opTl = gedateerd.filter(n => !n.koppeling).length;
   bladOpen("Agenda & planning", `
-    <p class="klein" style="margin-top:2px">Laat <b>${esc(mm.naam)}</b> meedoen met de rest van FutureMe — of haal juist dingen uit FutureMe binnen.</p>
+    <p class="klein" style="margin-top:2px">Laat <b>${esc(mm.naam)}</b> meedoen met de rest van de app, of haal juist dingen uit de app binnen.</p>
     <div class="schakel"><span class="tekst"><b style="font-size:calc(15px * var(--t));font-weight:600">Op je tijdlijn tonen</b>
       <small>Nodes met een datum verschijnen op Vandaag en in de tijdlijn (nu ${opTl}). Tik erop om hier terug te komen.</small></span>
       <button class="toggle" id="mma-tijdlijn" aria-pressed="${mm.opTijdlijn !== false}" aria-label="Op je tijdlijn tonen"></button></div>
@@ -15169,7 +15191,7 @@ function mmHelpBlad() {
     ${r("Mindmappen en mappen beheren", "📚 Mindmappen")}
     ${r("Ongedaan maken / opnieuw", "↶ ↷ · Ctrl+Z / Ctrl+Shift+Z")}
     </div>
-    <p class="klein" style="margin-top:14px">Alles wordt bewaard in de opslag van FutureMe (IndexedDB) en gaat mee in je back-up.</p>`,
+    <p class="klein" style="margin-top:14px">Alles wordt bewaard in de opslag van de app (IndexedDB) en gaat mee in je back-up.</p>`,
     `<button class="knop breed primair" id="mmh-ok">Begrepen</button>`);
   $("#mmh-ok").onclick = bladSluit;
 }
@@ -21653,15 +21675,7 @@ vwMeer = function () {
 };
 
 /* ---------- Startscherm (Nieuw): tegel HobbySkills naast Side Hustle ---------- */
-{
-  const _s = vwStart;
-  vwStart = function () {
-    const h = _s();
-    const i = h.indexOf('data-view="sidehustles"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    const tegel = catKnop({ view: "hobbyskills", ill: "hobby", naam: "HobbySkills", uitleg: "Hobby's en skills die je wilt ontwikkelen", kleur: "#0ea5a4", telling: hsTelling() });
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 
 /* ---------- Persoonlijk: strook naar HobbySkills ---------- */
 if (typeof vwPersoonlijk === "function") {
@@ -23213,7 +23227,7 @@ const MF_TEKST = {
   ],
   zoWerktHet: "1–10 minuten, één zin per stap. Anker stelt voor, jij beslist. Stoppen mag altijd. Met schermlezer krijg je precies dezelfde oefeningen.",
   bewijs: "Korte mindfulness helpt volwassenen met ADHD of autisme gemiddeld bij stress en piekeren — ongeveer even goed als andere hulp, niet bij iedereen. Voor energieziekten is weinig onderzoek.",
-  gratis: "FutureMe is een persoonlijk project. Er is geen reclame, geen abonnement en er komt geen upgrade. Er valt aan jou niets te verdienen.",
+  gratis: "Brain-Mate Nate is een persoonlijk project. Er is geen reclame, geen abonnement en er komt geen upgrade. Er valt aan jou niets te verdienen.",
   voetregel: "Geen behandeling. Houden klachten aan? Praat met je huisarts of behandelaar."
 };
 const MF_PROFIELNAAM = { volhoofd: "vol hoofd", anders: "mijn brein werkt anders", energie: "weinig energie" };
@@ -23603,7 +23617,7 @@ async function mfNaOpslaan(overslaan) {
 /* ---------- 70.7 Delen: alleen een vaste tekst, nooit persoonlijke gegevens ---------- */
 async function mfDeel(oefId) {
   const o = oefId ? mfOef(oefId) : null;
-  let tekst = "Anker is een onderdeel van FutureMe: korte adem- en aandachtsoefeningen voor een vol hoofd. Gratis, zonder reclame, niets verlaat je telefoon.";
+  let tekst = "Anker is een onderdeel van Brain-Mate Nate: korte adem- en aandachtsoefeningen voor een vol hoofd. Gratis, zonder reclame, niets verlaat je telefoon.";
   if (o) tekst += `\n\n${o.naam} (${mfDuurTekst(o)}):\n` + (o.type === "adem" && o.ritme === "instellingen" ? ["Adem 4 tellen in.", "Adem 6 tellen uit.", "Herhaal rustig."] : o.stappen).map((s, i) => `${i + 1}. ${s}`).join("\n");
   try {
     if (navigator.share) { await navigator.share({ title: "Anker", text: tekst }); return; }
@@ -24012,20 +24026,7 @@ document.addEventListener("click", async e => {
    ========================================================================== */
 
 /* ---------- 72.1 Starttegel ---------- */
-{
-  const _start = vwStart;
-  vwStart = function () {
-    const h = _start();
-    const n = mfWeekMomenten();
-    const tegel = catKnop({ view: "anker", ill: "anker", naam: "Anker", uitleg: `Deze week: ${n} ${n === 1 ? "moment" : "momenten"}`, kleur: "#3a7ca5" })
-      .replace('class="knop3d breed"', 'class="knop3d breed mf-tegel" aria-description="Houd ingedrukt om meteen 1 minuut rustig te ademen"');
-    // Direct na Gezondheid; lukt dat niet, dan achteraan in het raster.
-    const i = h.indexOf('data-view="gezondheid"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    if (j >= 0) return h.slice(0, j + 9) + tegel + h.slice(j + 9);
-    const k = h.indexOf('<div class="startgrid">');
-    return k < 0 ? h : h.slice(0, k + 23) + tegel + h.slice(k + 23);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 /* Lang indrukken (500 ms) = direct starten, zonder vragen. */
 {
   let timer = 0, start = null, gestart = 0;
@@ -24116,7 +24117,7 @@ async function mfHerinneringMaak(tijd, dagen) {
   const herhaal = !dagen.length || dagen.length === 7 ? { soort: "dag", elke: 1 } : { soort: "week", elke: 1, dagen: dagen.slice().sort() };
   const a = {
     id: uid(), soort: "gesprek", titel: "Anker: even landen", datum: eersteHerhaalDatum(herhaal), totDatum: "", tijd, eindTijd: "", deadline: "",
-    plek: "", personen: [], voorbereiding: "Een kort moment voor jezelf. Open FutureMe en kies Anker.", notities: "", uitkomst: "",
+    plek: "", personen: [], voorbereiding: "Een kort moment voor jezelf. Open Nate en kies Anker.", notities: "", uitkomst: "",
     gemaakt: new Date().toISOString(), herhaal, mfHerinnering: id
   };
   await bewaar("afspraken", a);
@@ -24567,7 +24568,7 @@ function vgOverzicht() {
   let h = "";
   if (!S.vg_doelen.length && !S.vg_meters.length) h += `<section class="vg-kaart vg-welkom">
       <b>Zo werkt Voortgang</b>
-      <p>Alles wat je in FutureMe bijhoudt, komt hier samen: taken, omzet, uren, sport, gewicht, rookvrij, gewoontes, Anker en meer. Zet er doelen op, voeg eigen meters toe en kijk per week of maand terug.</p>
+      <p>Alles wat je in de app bijhoudt, komt hier samen: taken, omzet, uren, sport, gewicht, rookvrij, gewoontes, Anker en meer. Zet er doelen op, voeg eigen meters toe en kijk per week of maand terug.</p>
       <div class="vg-knoppen"><button class="vg-knop hoofd" data-vg="vg-doel-nieuw">${ico("doel")} Eerste doel</button><button class="vg-knop" data-vg="vg-meter-nieuw">${ico("plus")} Eigen meter</button></div>
     </section>`;
   h += `<section class="vg-held">
@@ -25035,17 +25036,7 @@ document.addEventListener("pointerover", e => { if (e.pointerType !== "mouse") r
    Een tegel op Nieuw (direct na Snel typen), een kaart in Meer en een
    logboeksoort. De tegel opent de omgeving, niet een gewone view. */
 {
-  const _start = vwStart;
-  vwStart = function () {
-    const h = _start();
-    const n = vgActieveDoelen().length;
-    const tegel = catKnop({ view: "voortgang", ill: "voortgang", naam: "Voortgang", uitleg: n ? `${vgMv(n, "actief doel", "actieve doelen")}` : "Al je vooruitgang op één plek", kleur: "#4f46e5" })
-      .replace('data-act="ga" data-view="voortgang"', 'data-act="vg-open"');
-    const i = h.indexOf('<div class="startgrid">');
-    if (i < 0) return h;
-    const j = h.indexOf("</button>", i);   // na de eerste tegel (Snel typen)
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
+  // (Dode omwikkeling van vwStart verwijderd, kleine verbetering 6.)
   const _meer = vwMeer;
   vwMeer = function () {
     const h = _meer();
@@ -26638,22 +26629,7 @@ function vwTussenstand(view) {
   } catch (e) { return ""; }
   return "";
 }
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s.apply(this, arguments);
-    // Huishouden ook vanaf Nieuw (na Persoonlijk).
-    if (!h.includes('data-view="huishouden"')) {
-      const tegel = catKnop({ view: "huishouden", ill: "huishouden", naam: "Huishouden", uitleg: "Eén klus tegelijk", kleur: MODULES.huishouden.kleur });
-      const i = h.indexOf('data-view="persoonlijk"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-      if (j >= 0) h = h.slice(0, j + 9) + tegel + h.slice(j + 9);
-    }
-    // Tussenstanden in de uitlegregel van elke tegel.
-    return h.replace(/(<button class="knop3d breed[^"]*"[^>]*data-view="([a-z]+)"[^>]*>[\s\S]*?<span class="ds3d"[^>]*>)([\s\S]*?)(<\/span>)/g, (m, voor, view, uitleg, na) => {
-      const t = vwTussenstand(view); return t ? voor + esc(t) + na : m;
-    });
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 
 /* ---------- 80.9 Voortgang is leidend ----------
    De andere overzichten (Nieuw, Anker, Huishouden, Terugblik) verwijzen naar
@@ -27615,16 +27591,7 @@ function ljTussenstand() {
   const bz = S.lj_items.filter(x => x.status === "bezig").length, af = S.lj_items.filter(x => x.status === "klaar" && (x.afgerond || "").startsWith(ljJaar())).length;
   return [bz ? `${bz} bezig` : "", af ? `${af} afgerond dit jaar` : ""].filter(Boolean).join(" · ") || "Films, series, boeken en meer";
 }
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s.apply(this, arguments);
-    if (h.includes('data-view="lijstjes"')) return h;
-    const tegel = catKnop({ view: "lijstjes", ill: "lijstjes", naam: "Lijstjes", uitleg: ljTussenstand(), kleur: LJ_KLEUR, telling: S.lj_items.filter(x => x.status === "bezig").length || "" });
-    const i = h.indexOf('data-view="hobbyskills"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 if (typeof vwPersoonlijk === "function") {
   const _p = vwPersoonlijk;
   vwPersoonlijk = function () {
@@ -28579,17 +28546,7 @@ function kmTussenstand() {
   const n = kmWeekBesluiten(), o = kmOpen().length;
   return [n ? `${n} ${n === 1 ? "besluit" : "besluiten"} deze week` : "", o ? `${o} open` : ""].filter(Boolean).join(" · ") || "Een A/B-keuze in minuten";
 }
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s.apply(this, arguments);
-    if (h.includes('data-view="keuze"')) return h;
-    const tegel = catKnop({ view: "keuze", ill: "keuze", naam: "Keuzemachine", uitleg: kmTussenstand(), kleur: KM_KLEUR, telling: kmOpen().length || "" });
-    let i = h.indexOf('data-view="lijstjes"'); if (i < 0) i = h.indexOf('data-view="hobbyskills"');
-    const j = i < 0 ? -1 : h.indexOf("</button>", i);
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 /* Voortgang: besluiten en binnen budget. */
 if (typeof vgAutoBronnen === "function") {
   const _vg = vgAutoBronnen;
@@ -28739,27 +28696,7 @@ const NW_STROOK = 92;           // zichtbare breedte (px) van een ingeklapte kno
 V.nwOpen = V.nwOpen || false;
 let nwGepiept = false;
 
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s();
-    const wl = catKnop({ view: "wishlist", ill: "wishlist", naam: "Wishlist", uitleg: "Wat je wilt kopen, met koopcheck", kleur: "#db2777",
-      telling: typeof wlAlle === "function" ? (wlAlle("actief").length || "") : "" });
-    const i = h.indexOf('data-view="financieel"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    if (j >= 0) h = h.slice(0, j + 9) + wl + h.slice(j + 9);
-    const merk = '<div class="startgrid">', a = h.indexOf(merk);
-    if (a < 0) return h;
-    const b = h.indexOf("</div>", a);
-    const knoppen = h.slice(a + merk.length, b).split(/(?=<button class="knop3d)/).map(s => s.trim()).filter(s => s.startsWith("<button"));
-    const open = V.nwOpen;
-    // Laatst gemeten knophoogte meteen meegeven, dan springt er niets bij het tekenen (zie nwoHoogte).
-    const kh = V.nwKnopH ? `;--nw-kh:${V.nwKnopH}px` : "";
-    const rail = `<div class="nw-rail${open ? " open" : ""}${V.nwKnopH && V.nwKnopH < 84 ? " nw-laag" : ""}" style="--nw-p:${open ? 1 : 0}${kh}">
-      ${knoppen.map((k, n) => `<div class="nw-slot" style="--i:${n}">${k.replace('class="knop3d"', 'class="knop3d breed"')}</div>`).join("")}
-    </div>`;
-    return h.slice(0, a) + rail + h.slice(b + 6);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 
 function nwZet(open, rail) {
   const was = V.nwOpen;
@@ -29015,15 +28952,7 @@ function nwoStatistieken() {
 }
 
 /* ---------- In de rail zetten ---------- */
-{
-  const _s = vwStart;
-  vwStart = function () {
-    const h = _s(), merk = /<div class="nw-rail[^"]*"[^>]*>/, m = merk.exec(h);
-    if (!m) return h;
-    const paneel = `<div class="nw-paneel" aria-hidden="${!!V.nwOpen}">${nwoDiagram()}${nwoStatistieken()}</div>`;
-    return h.slice(0, m.index + m[0].length) + paneel + h.slice(m.index + m[0].length);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 /* De knoppen zijn samen precies even hoog als het ingeklapte overzicht ernaast
    (ringdiagram + alle statistieken dicht). Staat er een statistiek open, dan
    telt die uitklap niet mee: de knoppen blijven dan gewoon staan. */
@@ -30403,7 +30332,7 @@ function vwOntwerp() {
     <section class="card card-pad ow-intro">
       <div class="ow-badge">Spatial Experience v${FM_RUIMTE.versie}</div>
       <h2>Eén samenhangende ruimte</h2>
-      <p>FutureMe voelt als één digitale ruimte in plaats van losse schermen. Hieronder zie je de bouwstenen, live uit de app zelf. De volledige specificatie staat in <code>docs/spatial/</code>.</p>
+      <p>Brain-Mate Nate voelt als één digitale ruimte in plaats van losse schermen. Hieronder zie je de bouwstenen, live uit de app zelf. De volledige specificatie staat in <code>docs/spatial/</code>.</p>
     </section>
 
     ${sectie("Principes")}
@@ -31930,7 +31859,8 @@ function mdWidgetsKiezen() {
 /* ---------- 87.6 Het scherm ---------- */
 function mdHTML() {
   const d = dcVandaag();
-  let h = backupBanner() + fmDagringHTML();
+  // Geen back-upbanner meer hier: Nate meldt het in zijn berichten (kleine verbetering 2).
+  let h = fmDagringHTML();
   h += `${sectie(MD_TEKST.tijdlijn)}<div class="card card-pad md-tijdlijnkaart">${mdTijdlijnHTML()}</div>`;
   // Klasse vw-hart: verweven.js voegt anders zijn eigen blok (check-in, sessie …) toe.
   h += `<div class="vw-hart md-hart">${mdNuHTML()}`;
@@ -33471,6 +33401,146 @@ document.addEventListener("click", async e => {
     const volgende = document.querySelector("[data-hs]") || document.querySelector('[data-dn][aria-checked="true"]'); if (volgende) volgende.focus({ preventScroll: true });
   } else { await hsBewaar(a); teken(); hsRoute(a); }
 }, true);
+
+</script>
+<script>
+"use strict";
+// === SECTIE 97: KLEINE VERBETERINGEN (conceptvoorstel, niveau 5) ===
+/* ==========================================================================
+   Snelle verbeteringen uit het conceptvoorstel. Elk punt staat apart.
+   Al eerder gedaan: 1 (leesbare kopjes), 4 (intentie, V5), 11 (alarmsoorten,
+   V6), 12 (live status, V4), 14 (minder beweging voorstellen, V2).
+   Hier: 2 back-upbanner, 3 namen in Vastleggen, 5 "Verder naar" op tabs,
+   7 Nate's rustplek, 8 toasts, 9 Meer korter, 10 profielrapport met knoppen,
+   13 "weer opgepakt" in Voortgang, 15 één naamgeving.
+
+   De kern (NATE-KLEIN-BEGIN/EINDE) is puur en wordt getest in tests/klein.test.mjs.
+   ========================================================================== */
+
+/* NATE-KLEIN-BEGIN */
+/** Weer opgepakt na een pauze: dagen (ISO, uniek of niet) met activiteit → hoe vaak na ≥ 2 lege dagen, en de laatste keer. */
+function kvHervat(dagen, vandaag, venster) {
+  const dag = d => Math.round(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) / 86400000);
+  const v = dag(vandaag), lijst = [...new Set(dagen || [])].map(dag).filter(x => x <= v).sort((a, b) => a - b);
+  let aantal = 0, laatste = null;
+  for (let i = 1; i < lijst.length; i++) {
+    const pauze = lijst[i] - lijst[i - 1] - 1;
+    if (pauze >= 2) { if (v - lijst[i] <= (venster || 90)) aantal++; laatste = { na: pauze, dagenGeleden: v - lijst[i] }; }
+  }
+  return { aantal, laatste };
+}
+/* Eén naamgeving: dezelfde woorden als de tabs en Meer. */
+const KV_NAMEN = { "Vandaag": "Mijn dag", "Back-up": "Gegevens", "Uitleg": "Help", "Toolbox": "Hulpmiddelen" };
+/* Vragenbank-modules → schermen in de app (profielrapport, microstap). */
+const KV_MODULE_VIEW = { calendar: "afspraken", planning: "planning", tasks: "persoonlijk", time: "tijd", focus: "focus", memory: "mindmap", energy: "anker",
+  emotions: "anker", structure: "planning", household: "huishouden", routines: "gewoontes", context: "aanpak", experiments: "vg", finance: "financieel" };
+/* NATE-KLEIN-EINDE */
+
+/* ---------- 2. Back-upbanner niet meer op Mijn dag ----------
+   Nate's berichten tonen al "Tijd voor een back-up" (na 14 dagen); die gaat nu naar Meer, waar exporteren bovenaan staat. */
+{
+  const _sig = meldingenSignalen;
+  meldingenSignalen = function () {
+    return _sig.apply(this, arguments).map(s => s.titel === "Tijd voor een back-up" ? Object.assign({}, s, { tekst: "Al even geen export gemaakt. Eén tik in Meer.", actieView: "meer" }) : s);
+  };
+}
+
+/* ---------- 3. Namen bij de blokken in Vastleggen, ook ingeklapt ---------- */
+{
+  const _kaart = nwlKaartHTML;
+  nwlKaartHTML = function (k) {
+    const h = _kaart.apply(this, arguments), naam = KV_NAMEN[k.naam] || k.naam;
+    return h.replace(/<\/button>\s*$/, `<span class="kv-strooknaam" aria-hidden="true">${esc(naam)}</span></button>`).replace(`>${esc(k.naam)}<`, `>${esc(naam)}<`);
+  };
+}
+
+/* ---------- 5 en 15. "Verder naar": niet op de tabschermen; dezelfde woorden als de tabs ---------- */
+{
+  const _verwant = verwantHTML;
+  verwantHTML = function () {
+    if (TABS.includes(V.view) || V.view === "meer") return "";
+    let h = _verwant.apply(this, arguments);
+    for (const [oud, nieuw] of Object.entries(KV_NAMEN)) h = h.split(`</svg>${oud}</button>`).join(`</svg>${nieuw}</button>`);
+    return h;
+  };
+}
+
+/* ---------- 7. Nate's rustplek: rechts, links of verborgen ---------- */
+function kvNateRust() {
+  const w = inst("nateRust", "rechts");
+  document.documentElement.dataset.nateRust = ["rechts", "links", "uit"].includes(w) ? w : "rechts";
+}
+{
+  const _pas = pasInstellingenToe;
+  pasInstellingenToe = function () { const r = _pas.apply(this, arguments); kvNateRust(); return r; };
+  const _inst = vwInstellingen;
+  vwInstellingen = function () {
+    const w = inst("nateRust", "rechts");
+    const blok = `<div class="veld"><span class="labeltekst">Nate in ruststand</span>
+      <div class="segment" role="group" aria-label="Nate in ruststand">${[["rechts", "Rechts"], ["links", "Links"], ["uit", "Verborgen"]].map(([k, n]) => `<button data-kv-rust="${k}" aria-pressed="${w === k}">${n}</button>`).join("")}</div>
+      <p class="klein">Verborgen: je opent Nate via het berichtenknopje bovenin.</p></div>`;
+    return _inst.apply(this, arguments).replace('<ul class="schakels"><li class="schakel"><span class="tekst"><b>Klein idee voor vandaag', blok + '<ul class="schakels"><li class="schakel"><span class="tekst"><b>Klein idee voor vandaag');
+  };
+}
+document.addEventListener("click", async e => {
+  const b = e.target.closest && e.target.closest("[data-kv-rust]"); if (!b) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  await zetInst("nateRust", b.dataset.kvRust); kvNateRust(); teken();
+}, true);
+kvNateRust();
+
+/* ---------- 8. Toasts: tik om weg te halen; met een knop langer zichtbaar ---------- */
+{
+  const _toast = toast;
+  toast = function (tekst, actieLabel, actieFn, ms) { return _toast.call(this, tekst, actieLabel, actieFn, ms || (actieLabel ? 7000 : 2800)); };
+  const el = document.getElementById("toast");
+  if (el) el.addEventListener("click", e => { if (!e.target.closest("button")) el.classList.remove("zicht"); });
+}
+
+/* ---------- 9. Meer: Dagoverzicht valt weg (Mijn dag is je dag in één oogopslag) ---------- */
+{
+  const ook = NV_MEER[1][1], i = ook.findIndex(r => r[0] === "welkom");
+  if (i >= 0) ook.splice(i, 1);
+  const ov = ook.find(r => r[0] === "overzicht"); if (ov) ov[3] = "Week, maand en vooruitblik";
+}
+
+/* ---------- 10. Profielrapport: microstap met knoppen naar de module ---------- */
+{
+  const _ms = knMicrostapHTML;
+  knMicrostapHTML = function (d, dim) {
+    let h = _ms.apply(this, arguments);
+    if (!dim) return h;
+    const q1 = knVraag(dim.id + ".Q1");
+    const knoppen = (q1.app_module_ids || []).slice(0, 3).filter(m => KV_MODULE_VIEW[m] && NATE_VRAGENBANK.modules[m])
+      .map(m => KV_MODULE_VIEW[m] === "vg" ? `<button class="knop rand kv-module" data-act="vg-open">${esc(NATE_VRAGENBANK.modules[m])}</button>`
+        : `<button class="knop rand kv-module" data-act="ga" data-view="${KV_MODULE_VIEW[m]}">${esc(NATE_VRAGENBANK.modules[m])}</button>`);
+    if (knoppen.length) h = h.replace(/<p class="klein">Past bij: [^<]*<\/p>/, `<div class="kv-modules"><span class="klein">Probeer het in:</span>${knoppen.join("")}</div>`);
+    return h;
+  };
+}
+
+/* ---------- 13. Voortgang: "weer opgepakt" bovenaan (geen streak als hoofdgetal) ---------- */
+function kvHervatHTML() {
+  const dagen = S.gebeurtenissen.map(g => g.datum || (g.ts || "").slice(0, 10)).filter(Boolean);
+  const h = kvHervat(dagen, vandaagISO(), 90);
+  if (!h.laatste) return "";
+  const wanneer = h.laatste.dagenGeleden === 0 ? "vandaag" : h.laatste.dagenGeleden === 1 ? "gisteren" : `${h.laatste.dagenGeleden} dagen geleden`;
+  return `<section class="vg-kaart kv-hervat"><b>Weer opgepakt</b>
+    <p>${h.aantal ? `${h.aantal} ${h.aantal === 1 ? "keer" : "keer"} in de laatste 90 dagen. ` : ""}Laatst ${wanneer}, na ${h.laatste.na} dagen pauze.</p>
+    <p class="klein">Na een pauze weer beginnen telt zwaarder dan een reeks zonder gaten.</p></section>`;
+}
+{
+  const _ov = vgOverzicht;
+  vgOverzicht = function () { return kvHervatHTML() + _ov.apply(this, arguments); };
+}
+
+/* ---------- 15. Eén naamgeving in Vastleggen (Toolbox → Hulpmiddelen) ---------- */
+{
+  const _stapel = nwlStapelHTML;
+  nwlStapelHTML = function () { return _stapel.apply(this, arguments).split(">Toolbox<").join(">Hulpmiddelen<"); };
+  const _paneel = nwlPaneelHTML;
+  nwlPaneelHTML = function () { return _paneel.apply(this, arguments).split("<b>Toolbox</b>").join("<b>Hulpmiddelen</b>").split("Statistieken · Toolbox").join("Statistieken · Hulpmiddelen"); };
+}
 
 </script>
 <script>

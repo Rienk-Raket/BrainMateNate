@@ -180,3 +180,27 @@ Tests: `tests/aanpak.test.mjs` (kern V2 en V4), `tests/structuur.e2e.cjs` (31 ch
 11. Kopiëren: terugval met selecteren en execCommand.
 12. `bouw.py` stap 13: een nieuwe keer uit een reeks begint zonder hsStatus, hsOorzaak en tpGezet.
 Bekend: "Alarmen instellen" in het herstelblad vervangt het blad door de uitleg van Opdrachten (stap 1 en 2 zijn dan al gedaan).
+
+## Stap 15: kleine verbeteringen (niveau 5 van het conceptvoorstel)
+
+`ruimtelijk/src/kleine-verbeteringen.js/.css` (sectie 97) en een paar kleine ingrepen elders.
+
+| # | Verbetering | Stand |
+|---|---|---|
+| 1 | Leesbare kopjes | eerder (stap 12) |
+| 2 | Back-upbanner weg van Mijn dag; Nate's bericht "Tijd voor een back-up" wijst naar Meer (exporteren) | gedaan |
+| 3 | Namen bij de blokken in Vastleggen, ook ingeklapt | gedaan |
+| 4 | Intentie van de dagstart zichtbaar | eerder (V5) |
+| 5 | Geen "Verder naar" op de tabschermen en Meer | gedaan (de Nu-kaart en Nate doen het voorstel al) |
+| 6 | Dode omwikkelingen van `vwStart` verwijderd (8 blokken in koppelingen, anker-koppelingen, voortgang, verweven, lijstjes, keuzemachine, nieuw-rail, nieuw-overzicht) | gedaan; die in `basis/` blijft (basis wordt niet bewerkt) |
+| 7 | Nate's rustplek: rechts, links of verborgen (Instellingen → Nate) | gedaan |
+| 8 | Toasts: tik om weg te halen; met knop 7 s zichtbaar (was 5,2 s) | gedaan |
+| 9 | Meer: Dagoverzicht weg (Mijn dag is het dagoverzicht) | gedaan |
+| 10 | Profielrapport: microstap met knoppen naar de module | gedaan |
+| 11 | Alarmsoorten met vaste betekenis | eerder (V6) |
+| 12 | Live status op Ruimtes | eerder (V4) |
+| 13 | Voortgang begint met "Weer opgepakt" (na ≥ 2 dagen pauze, laatste 90 dagen) | gedaan |
+| 14 | Minder beweging voorstellen bij de Vuurtoren | eerder (V2) |
+| 15 | Eén naamgeving: Vandaag → Mijn dag, Back-up → Gegevens, Uitleg → Help, Toolbox → Hulpmiddelen; zichtbare "FutureMe" → Brain-Mate Nate (`bouw.py` stap 14) | gedaan |
+
+Niet gedaan: streaks als hoofdgetal in Gewoontes (FutureMe-scherm; vraagt een eigen keuze). Tests: `tests/klein.test.mjs`, `tests/klein.e2e.cjs` (19 checks).

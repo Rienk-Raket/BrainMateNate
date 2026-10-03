@@ -1,0 +1,20 @@
+/* === Kleine verbeteringen (sectie 97) === */
+/* 3. Naam in de zichtbare strook van een ingeklapt blok in Vastleggen. */
+.nwl-kaart { position: relative; }
+.kv-strooknaam { position: absolute; right: 0; bottom: 5px; width: var(--nw-strook, 92px); text-align: center; pointer-events: none;
+  font-size: calc(11px * var(--t)); font-weight: 700; line-height: 1.1; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.45);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; box-sizing: border-box;
+  opacity: calc(1 - var(--nw-p, 0)); transition: opacity .3s; }
+.nw-rail:not(.open) .nwl-kaart .ill3d.nwl-ico { top: 40%; }
+/* 7. Nate's rustplek. */
+html[data-nate-rust="links"] #nate { right: auto; left: calc(-26px + var(--safe-l, 0px)); }
+html[data-nate-rust="links"] #nate img { transform: scaleX(-1); }
+html[data-nate-rust="links"] #nate::before { inset: -6px -14px -6px -6px; }
+html[data-nate-rust="links"] #nate:hover, html[data-nate-rust="links"] #nate:focus-visible { transform: translateX(22px); }
+html[data-nate-rust="uit"] #nate { display: none; }
+/* 10. Knoppen naar de module in het profielrapport. */
+.kv-modules { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 6px 0 10px; }
+.kv-module { min-height: 44px; }
+/* 13. Weer opgepakt. */
+.kv-hervat { border-left: 4px solid var(--green, #15803d); }
+.kv-hervat p { margin: 6px 0 0; }

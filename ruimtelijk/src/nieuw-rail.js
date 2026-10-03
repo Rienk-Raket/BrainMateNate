@@ -10,27 +10,7 @@ const NW_STROOK = 92;           // zichtbare breedte (px) van een ingeklapte kno
 V.nwOpen = V.nwOpen || false;
 let nwGepiept = false;
 
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s();
-    const wl = catKnop({ view: "wishlist", ill: "wishlist", naam: "Wishlist", uitleg: "Wat je wilt kopen, met koopcheck", kleur: "#db2777",
-      telling: typeof wlAlle === "function" ? (wlAlle("actief").length || "") : "" });
-    const i = h.indexOf('data-view="financieel"'), j = i < 0 ? -1 : h.indexOf("</button>", i);
-    if (j >= 0) h = h.slice(0, j + 9) + wl + h.slice(j + 9);
-    const merk = '<div class="startgrid">', a = h.indexOf(merk);
-    if (a < 0) return h;
-    const b = h.indexOf("</div>", a);
-    const knoppen = h.slice(a + merk.length, b).split(/(?=<button class="knop3d)/).map(s => s.trim()).filter(s => s.startsWith("<button"));
-    const open = V.nwOpen;
-    // Laatst gemeten knophoogte meteen meegeven, dan springt er niets bij het tekenen (zie nwoHoogte).
-    const kh = V.nwKnopH ? `;--nw-kh:${V.nwKnopH}px` : "";
-    const rail = `<div class="nw-rail${open ? " open" : ""}${V.nwKnopH && V.nwKnopH < 84 ? " nw-laag" : ""}" style="--nw-p:${open ? 1 : 0}${kh}">
-      ${knoppen.map((k, n) => `<div class="nw-slot" style="--i:${n}">${k.replace('class="knop3d"', 'class="knop3d breed"')}</div>`).join("")}
-    </div>`;
-    return h.slice(0, a) + rail + h.slice(b + 6);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 
 function nwZet(open, rail) {
   const was = V.nwOpen;

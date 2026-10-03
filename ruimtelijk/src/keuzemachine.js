@@ -911,17 +911,7 @@ function kmTussenstand() {
   const n = kmWeekBesluiten(), o = kmOpen().length;
   return [n ? `${n} ${n === 1 ? "besluit" : "besluiten"} deze week` : "", o ? `${o} open` : ""].filter(Boolean).join(" · ") || "Een A/B-keuze in minuten";
 }
-{
-  const _s = vwStart;
-  vwStart = function () {
-    let h = _s.apply(this, arguments);
-    if (h.includes('data-view="keuze"')) return h;
-    const tegel = catKnop({ view: "keuze", ill: "keuze", naam: "Keuzemachine", uitleg: kmTussenstand(), kleur: KM_KLEUR, telling: kmOpen().length || "" });
-    let i = h.indexOf('data-view="lijstjes"'); if (i < 0) i = h.indexOf('data-view="hobbyskills"');
-    const j = i < 0 ? -1 : h.indexOf("</button>", i);
-    return j < 0 ? h : h.slice(0, j + 9) + tegel + h.slice(j + 9);
-  };
-}
+/* (Dode omwikkeling van vwStart verwijderd: Vastleggen tekent sinds nieuw-lagen.js zijn eigen lagen. Kleine verbetering 6.) */
 /* Voortgang: besluiten en binnen budget. */
 if (typeof vgAutoBronnen === "function") {
   const _vg = vgAutoBronnen;
