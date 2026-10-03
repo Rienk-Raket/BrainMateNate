@@ -99,7 +99,7 @@ Open (letterlijk gelaten): de vijf compensatievragen hebben `scoring_role: resou
 
 - `ruimtelijk/src/een-invoer.js/.css` (sectie 92). Veld "Wat speelt er?" bovenaan Vastleggen (alleen op het hoogste niveau). Parser (parseNL) + intentieherkenning (ncBegrijp) samen: afspraak, taak, gedachte of een plek in de app; reistijd uit de tekst ("reistijd 25"). Zeker → één tik opslaan; twijfel → Kas kiest eerst (knop uit tot er een keuze is). Eén tik corrigeert het type. Nood gaat voor alles (113/112).
 - De chat in Nate's paneel biedt "Vastleggen" aan als de zin een datum of tijd heeft; Vastleggen opent met de tekst erin.
-- Het Aa-knopje (Snel typen) is verborgen naast het veld; "Gedachte naar de mindmap" (besluit 3, stap 5) blijft staan. **Vraag aan Kas:** samenvoegen met het nieuwe veld?
+- Het Aa-knopje (Snel typen) is verborgen naast het veld. "Gedachte naar de mindmap" (besluit 3, stap 5) is op Vastleggen opgegaan in het nieuwe veld (besluit Kas, 2 oktober); in de chat blijft "onthoud: …" werken.
 - Spraak: via de microfoon van het iOS-toetsenbord. De Web Speech API is bewust niet gebruikt (kan audio naar een server sturen).
 - Tests: `tests/een-invoer.test.mjs` (kern met de echte intentieherkenning), V3-deel van `tests/voorstellen.e2e.cjs`.
 

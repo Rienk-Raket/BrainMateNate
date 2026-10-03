@@ -32670,7 +32670,7 @@ function viBegrijp(tekst) {
 }
 
 function viVoorbeeldHTML(tekst) {
-  if (!tekst.trim()) return `<p class="vi-hint">Typ of spreek in (microfoon op je toetsenbord). Bijvoorbeeld: <i>tandarts morgen 14:00 reistijd 25</i>.</p>`;
+  if (!tekst.trim()) return `<p class="vi-hint">Typ of spreek in (microfoon op je toetsenbord). Bijvoorbeeld: <i>tandarts morgen 14:00 reistijd 25</i> of <i>idee: moestuin op het balkon</i>.</p>`;
   const b = viBegrijp(tekst), soort = b.soort;
   if (soort === "nood") return `<p class="vi-nate">${esc(NATE_INTENTIES.nood.antwoord)}</p><div class="vi-acties"><a class="knop primair" href="tel:08000113">Bel 113</a><a class="knop rand" href="tel:112">Bel 112</a></div>`;
   const chip = (k, v) => v ? `<span class="chip">${esc(k)} ${esc(v)}</span>` : "";
@@ -32735,7 +32735,10 @@ async function viOpslaanNu() {
   const _start = vwStart;
   vwStart = function () {
     const h = _start.apply(this, arguments);
-    return (V.nwPad && V.nwPad.length) ? h : viVeldHTML() + h;
+    if (V.nwPad && V.nwPad.length) return h;
+    // Besluit Kas 2 oktober: "Gedachte naar de mindmap" gaat op in dit veld (Gedachte is een van de soorten).
+    const oud = typeof nvGedachteHTML === "function" ? nvGedachteHTML() : "";
+    return viVeldHTML() + (oud ? h.replace(oud, "") : h);
   };
 }
 document.addEventListener("input", e => {
