@@ -94,7 +94,8 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   // Geweest-pad
   await p.evaluate(async () => { const a = S.afspraken.find(x => x.titel === "Kapper"); a.tijd = "08:00"; a.eindTijd = "08:30"; await bewaar("afspraken", a); teken(); }); await wacht(300);
   await p.click('[data-hs="geweest"]'); await wacht(300);
-  check("V8: geweest → geen herstel, gewoon genoteerd", await p.evaluate(() => S.afspraken.find(x => x.titel === "Kapper").hsStatus === "geweest" && !document.querySelector("#blad.open")));
+  // Met reistijd volgt alleen de vraag naar de echte reistijd (V9), geen herstel.
+  check("V8: geweest → geen herstel, gewoon genoteerd", await p.evaluate(() => S.afspraken.find(x => x.titel === "Kapper").hsStatus === "geweest" && !document.querySelector("#blad.open .hs-zin") && !!document.querySelector("#blad.open [data-dk-reis]")));
 
   check("geen consolefouten", fouten.length === 0, fouten.slice(0, 3).join(" | "));
   check("nul externe verzoeken", extern.length === 0, extern.slice(0, 3).join(" | "));

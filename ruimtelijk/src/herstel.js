@@ -136,7 +136,10 @@ document.addEventListener("click", async e => {
   const a = vind("afspraken", b.dataset.id); if (!a) return;
   if (b.dataset.hs === "geweest") {
     a.hsStatus = "geweest"; await bewaar("afspraken", a);
-    tril(6); teken(); toast("Fijn. Iets noteren kan in de afspraak.", "Openen", () => ga("afspraak", a.id));
+    tril(6); teken();
+    // Met reistijd: één vraag naar de echte reistijd (V9); anders de gewone bevestiging.
+    if (+a.reistijd > 0 && typeof dkReisVraag === "function") { dkReisVraag(a); return; }
+    toast("Fijn. Iets noteren kan in de afspraak.", "Openen", () => ga("afspraak", a.id));
     const volgende = document.querySelector("[data-hs]") || document.querySelector('[data-dn][aria-checked="true"]'); if (volgende) volgende.focus({ preventScroll: true });
   } else { await hsBewaar(a); teken(); hsRoute(a); }
 }, true);

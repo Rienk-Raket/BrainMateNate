@@ -215,3 +215,16 @@ Niet gedaan: streaks als hoofdgetal in Gewoontes (FutureMe-scherm; vraagt een ei
 6. Tests scherper (echte bestemming, geen ontsnapping bij ontbrekende strook, Vandaag-knopen).
 7. Rustplek-knoppen 44 px.
 Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vraag 2" toen vijf browsers tegelijk draaiden; los draaien slaagt (2×). Timing, niet deze stap.
+
+## Stap 16: V9 Duurkalibratie en gemeten reistijd
+
+- `ruimtelijk/src/duur.js` (sectie 98). Na afronden van een taak met een geschatte duur vraagt Mijn dag één keer "Hoe lang duurde het?" (korter ×0,6, ongeveer, langer ×1,5, veel langer ×2, of "weet ik niet"). Liep de timer op die taak (≥ 1 min), dan meet de app het zelf en vraagt niets. Logboek `dkLog`.
+- Taakblad: "Vergelijkbare taken duurden meestal ± N min (n×)" met "Neem over" (mediaan van taken die minstens de helft van de woorden delen).
+- Afspraken: na "Geweest" (V8) met reistijd één vraag naar de echte reistijd (`dkReis`). Afspraakblad stelt de gemeten tijd voor: eerst dezelfde plek (≥ 2 keer), anders de gewone verhouding (≥ 3 keer).
+
+## Stap 17: V10 Weekreview en persoonlijke experimenten
+
+- `ruimtelijk/src/weekreview.js` (sectie 99), view `weekreview` (Meer → Alle schermen; kaart op Mijn dag vrijdag vanaf 15 uur en in het weekend, "Niet deze week" haalt hem weg).
+- Drie feiten zonder oordeel (taken afgerond, afspraken gehaald, schattingen of "Ik loop vast"), één schakel uit de keten van negen, één aanpassing (voorgevuld met een tip), ervaren belasting 0–10.
+- Experiment van twee weken met één maat (taken, afspraken gehaald, vast → stap, belasting); stand "2 weken ervoor" tegenover "tijdens"; daarna behouden, aanpassen of laten vallen. Eén experiment tegelijk. Opslag `wrReviews`, `wrExperimenten`.
+- `duur-review.css`. Tests: `tests/duur-review.test.mjs`, `tests/duur-review.e2e.cjs` (26 checks).
