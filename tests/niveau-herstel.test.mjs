@@ -35,6 +35,13 @@ test("extra: meer zicht op daarna; standaard ongewijzigd", () => {
   assert.equal(s.twee.length, 2); assert.equal(s.rest, 4); assert.equal(s.geparkeerd, 0);
 });
 
+test("minimum: iets met een vaste tijd die nu bijna begint gaat voor", () => {
+  const lijst = [{ id: "kort", duur: 5 }, { id: "om10", tijd: "10:00", duur: 30 }, { id: "om14", tijd: "14:00", duur: 5 }];
+  assert.equal(N.dnKlein(lijst, 9 * 60 + 55).id, "om10");      // 09:55: begint over 5 minuten
+  assert.equal(N.dnKlein(lijst, 10 * 60 + 10).id, "om10");     // 10:10: 10 minuten geleden, nog in het venster
+  assert.equal(N.dnKlein(lijst, 8 * 60).id, "kort");           // 08:00: nog lang niet
+});
+
 test("lege lijst: geen fout", () => {
   assert.equal(N.dnNu({ een: null, twee: [], rest: 0 }, [], "minimum").een, null);
   assert.equal(N.dnKlein([]), null);
@@ -54,6 +61,16 @@ test("welke afspraken vragen om terugkijken", () => {
     { id: "zonderTijd", datum: v }
   ];
   assert.deepEqual(kaal(N.hsTeVragen(lijst, nu, v, g).map(a => a.id)), ["gisteren", "voorbij", "zonderEind"]);
+  // Toezeggingen niet; meerdaagse pas na de laatste dag; extra filter (werk verborgen).
+  const meer = [
+    { id: "toezegging", soort: "toezegging", datum: v, tijd: "08:30" },
+    { id: "congres", datum: g, totDatum: "2026-10-03", tijd: "09:00" },
+    { id: "congresKlaar", datum: "2026-09-30", totDatum: g, tijd: "09:00" },
+    { id: "congresVandaag", datum: g, totDatum: v, tijd: "09:00", eindTijd: "14:00" },
+    { id: "werk", datum: v, tijd: "08:00", eindTijd: "09:00", werk: true }
+  ];
+  assert.deepEqual(kaal(N.hsTeVragen(meer, nu, v, g).map(a => a.id).sort()), ["congresKlaar", "congresVandaag", "werk"]);
+  assert.ok(!N.hsTeVragen(meer, nu, v, g, a => !a.werk).some(a => a.id === "werk"));
 });
 
 test("bericht: erkennen, verantwoordelijkheid, nieuwe afspraak; met naam als die er is", () => {

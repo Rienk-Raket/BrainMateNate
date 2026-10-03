@@ -164,3 +164,19 @@ Tests: `tests/aanpak.test.mjs` (kern V2 en V4), `tests/structuur.e2e.cjs` (31 ch
 - Gemist: herstelzin (feit, menselijkheid, verantwoordelijkheid), kant-en-klaar bericht om te kopiëren (met naam als die er is), opnieuw plannen (afspraakblad ingevuld), één schakel kiezen met één voorstel: alarmen instellen, buffer +5 min (`mdBuffer`), stopmoment 5 min eerder (`tpAlarmen.afronden`). Gelogd als "Gemist en opgepakt".
 - `dagniveau-herstel.css`. Tests: `tests/niveau-herstel.test.mjs`, `tests/niveau-herstel.e2e.cjs` (24 checks).
 - Ook: Opdrachten-instellingen bewaren voortaan de rest van `tpAlarmen` (afronden ging anders verloren).
+
+## Review stap 13–14 (verwerkt)
+
+1. Opnieuw plannen: datum standaard morgen (anders werd het vandaag en kwam de vraag meteen terug); werk gaat mee.
+2. "Hoe ging het?" volgt het werkfilter.
+3. Minimum: iets met een vaste tijd die binnen 30 minuten begint (of tot 15 minuten geleden) gaat voor het kleinste ding; tekst "wachten even".
+4. Toezeggingen krijgen geen "Hoe ging het?".
+5. Meerdaagse afspraken pas na de laatste dag.
+6. Dagniveau is een echte radiogroep: één tabstop, pijltjes, Home en End; voorstel van Nate als verborgen tekst voor schermlezers.
+7. Buffer kan maar één keer per herstel omhoog; het nieuwe afspraakblad volgt dan de standaardbuffer.
+8. Gekozen oorzaak wordt meteen bewaard.
+9. Stopmoment 0 wordt 5 (niet 10).
+10. Focus na Gemist op de titel van het blad, na Geweest op de volgende vraag of het dagniveau.
+11. Kopiëren: terugval met selecteren en execCommand.
+12. `bouw.py` stap 13: een nieuwe keer uit een reeks begint zonder hsStatus, hsOorzaak en tpGezet.
+Bekend: "Alarmen instellen" in het herstelblad vervangt het blad door de uitleg van Opdrachten (stap 1 en 2 zijn dan al gedaan).

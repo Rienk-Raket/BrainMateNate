@@ -24,14 +24,21 @@ function dnVoorstel(energie) {
   if (energie == null) return null;
   return energie <= 2 ? "minimum" : energie >= 5 ? "extra" : "standaard";
 }
-/** Het kleinste open ding: korte duur eerst (zonder duur telt als 15 min), dan de volgorde van de lijst. */
-function dnKlein(lijst) {
-  return (lijst || []).map((t, i) => ({ t, i, d: +t.duur || 15 })).sort((a, b) => a.d - b.d || a.i - b.i).map(x => x.t)[0] || null;
+const dnMin = s => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); return m ? +m[1] * 60 + +m[2] : null; };
+/** Het kleinste open ding: korte duur eerst (zonder duur telt als 15 min), dan de volgorde van de lijst.
+    Maar iets met een vaste tijd die nu bijna begint (binnen 30 min, of tot 15 min geleden) gaat altijd voor. */
+function dnKlein(lijst, nuMin) {
+  const l = lijst || [];
+  if (nuMin != null) {
+    const nu = l.filter(t => dnMin(t.tijd) != null && dnMin(t.tijd) >= nuMin - 15 && dnMin(t.tijd) <= nuMin + 30).sort((a, b) => dnMin(a.tijd) - dnMin(b.tijd));
+    if (nu.length) return nu[0];
+  }
+  return l.map((t, i) => ({ t, i, d: +t.duur || 15 })).sort((a, b) => a.d - b.d || a.i - b.i).map(x => x.t)[0] || null;
 }
 /** De Nu-kaart per niveau. nu = { een, twee, rest }, alle = de geordende lijst open taken. */
-function dnNu(nu, alle, niveau) {
+function dnNu(nu, alle, niveau, nuMin) {
   const lijst = alle || [];
-  if (niveau === "minimum") { const k = dnKlein(lijst); return { een: k, twee: [], rest: 0, geparkeerd: Math.max(0, lijst.length - (k ? 1 : 0)) }; }
+  if (niveau === "minimum") { const k = dnKlein(lijst, nuMin); return { een: k, twee: [], rest: 0, geparkeerd: Math.max(0, lijst.length - (k ? 1 : 0)) }; }
   if (niveau === "extra") return { een: lijst[0] || null, twee: lijst.slice(1, 5), rest: Math.max(0, lijst.length - 5), geparkeerd: 0 };
   return Object.assign({ geparkeerd: 0 }, nu);
 }
@@ -53,13 +60,13 @@ const dnGekozen = () => { const k = inst("dnNiveau", null); return !!(k && k.dat
     const metTijd = open.filter(t => fmMin(t.tijd) != null).sort((a, b) => fmMin(a.tijd) - fmMin(b.tijd));
     const komend = metTijd.filter(t => fmMin(t.tijd) >= nuMin - 15), voorbij = metTijd.filter(t => !komend.includes(t));
     const lijst = komend.concat(open.filter(t => fmMin(t.tijd) == null).sort(sorteerTaken), voorbij);
-    return dnNu(nu, lijst.length ? lijst : alle, n);
+    return dnNu(nu, lijst.length ? lijst : alle, n, nuMin);
   };
   const _html = mdNuHTML;
   mdNuHTML = function () {
     let h = _html.apply(this, arguments);
     const g = mdNu().geparkeerd;
-    if (g) h = h.replace(/<\/div>\s*$/, `<p class="dn-geparkeerd">${g} ${g === 1 ? "ding wacht" : "dingen wachten"} tot een andere dag. Er gaat niets weg.</p></div>`);
+    if (g) h = h.replace(/<\/div>\s*$/, `<p class="dn-geparkeerd">${g} ${g === 1 ? "ding wacht" : "dingen wachten"} even. Er gaat niets weg.</p></div>`);
     return h;
   };
 }
@@ -73,7 +80,7 @@ function dnBlokHTML() {
   return `<section class="card card-pad dn-blok" aria-label="Dagniveau">
     ${d && d.intentie ? `<p class="dn-intentie"><span class="labeltekst">Vandaag</span> ${esc(d.intentie)}</p>` : ""}
     <div class="dn-kop"><span class="labeltekst">Dagniveau</span><small>${esc(energie)}</small></div>
-    <div class="dn-keuzes" role="radiogroup" aria-label="Dagniveau">${DN_NIVEAUS.map(x => `<button type="button" role="radio" class="dn-keuze" data-dn="${x.id}" aria-checked="${n === x.id}">${esc(x.label)}${!gekozen && voorstel === x.id && x.id !== "standaard" ? `<span class="dn-voorstel" aria-label="voorstel van Nate">•</span>` : ""}</button>`).join("")}</div>
+    <div class="dn-keuzes" role="radiogroup" aria-label="Dagniveau">${DN_NIVEAUS.map(x => `<button type="button" role="radio" class="dn-keuze" data-dn="${x.id}" aria-checked="${n === x.id}" tabindex="${n === x.id ? 0 : -1}">${esc(x.label)}${!gekozen && voorstel === x.id && x.id !== "standaard" ? `<span class="dn-voorstel" aria-hidden="true">•</span><span class="sr-only"> (voorstel van Nate)</span>` : ""}</button>`).join("")}</div>
     ${hint}
     <p class="klein dn-uitleg">${esc(DN_NIVEAUS.find(x => x.id === n).uitleg)}</p>
     ${n === "minimum" ? `<button class="knop breed rand dn-landen" data-act="ga" data-view="anker">${ico("anker")} Even landen (1 minuut)</button>` : ""}
@@ -84,10 +91,21 @@ function dnBlokHTML() {
   const _vw = vwVandaag;
   vwVandaag = function () { return dnBlokHTML() + _vw.apply(this, arguments); };
 }
+async function dnKies(id) {
+  await zetInst("dnNiveau", { datum: vandaagISO(), niveau: id });
+  tril(6); teken();
+  const terug = document.querySelector(`[data-dn="${id}"]`); if (terug) terug.focus({ preventScroll: true });
+}
+// Pijltjes, Home en End in de radiogroep (één tabstop, zoals een echte radiogroep).
+document.addEventListener("keydown", e => {
+  const b = e.target.closest && e.target.closest("[data-dn]"); if (!b) return;
+  const ids = DN_NIVEAUS.map(x => x.id), i = ids.indexOf(b.dataset.dn);
+  const j = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: ids.length - 1 }[e.key];
+  if (j == null) return;
+  e.preventDefault(); dnKies(ids[(j + ids.length) % ids.length]);
+});
 document.addEventListener("click", async e => {
   const b = e.target.closest && e.target.closest("[data-dn]"); if (!b) return;
   e.preventDefault(); e.stopImmediatePropagation();
-  await zetInst("dnNiveau", { datum: vandaagISO(), niveau: b.dataset.dn });
-  tril(6); teken();
-  const terug = document.querySelector(`[data-dn="${b.dataset.dn}"]`); if (terug) terug.focus({ preventScroll: true });
+  return dnKies(b.dataset.dn);
 }, true);

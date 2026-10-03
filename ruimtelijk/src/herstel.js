@@ -24,13 +24,17 @@ const HS_SCHAKELS = [
 ];
 
 const hsMin = s => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); return m ? +m[1] * 60 + +m[2] : null; };
-/** Afspraken die voorbij zijn en nog geen uitkomst of status hebben (vandaag en gisteren). nu = Date. */
-function hsTeVragen(afspraken, nu, vandaag, gisteren) {
+/** Afspraken die voorbij zijn en nog geen uitkomst of status hebben (eind vandaag of gisteren). nu = Date.
+    Toezeggingen tellen niet (die zijn geen moment om heen te gaan); ok = extra filter (bv. werk verborgen). */
+function hsTeVragen(afspraken, nu, vandaag, gisteren, ok) {
   const nuMin = nu.getHours() * 60 + nu.getMinutes();
   return (afspraken || []).filter(a => {
-    if (!a || a.uitkomst || a.hsStatus || !a.datum || hsMin(a.tijd) == null) return false;
-    if (a.datum === gisteren) return true;
-    if (a.datum !== vandaag) return false;
+    if (!a || a.uitkomst || a.hsStatus || !a.datum || hsMin(a.tijd) == null || a.soort === "toezegging") return false;
+    if (ok && !ok(a)) return false;
+    const eindDag = a.totDatum && a.totDatum > a.datum ? a.totDatum : a.datum;
+    if (eindDag === gisteren) return true;
+    if (eindDag !== vandaag) return false;
+    if (eindDag !== a.datum) return hsMin(a.eindTijd) != null ? hsMin(a.eindTijd) <= nuMin : true;
     const eind = hsMin(a.eindTijd) != null && hsMin(a.eindTijd) > hsMin(a.tijd) ? hsMin(a.eindTijd) : hsMin(a.tijd) + 60;
     return eind <= nuMin;
   }).sort((x, y) => (x.datum + x.tijd < y.datum + y.tijd ? -1 : 1));
@@ -45,7 +49,7 @@ function hsBericht(a, dagNaam) {
 
 /* ---------- 96.1 De vraag op Mijn dag ---------- */
 function hsKaartHTML() {
-  const lijst = hsTeVragen(S.afspraken, new Date(), vandaagISO(), plusDagen(vandaagISO(), -1));
+  const lijst = hsTeVragen(S.afspraken, new Date(), vandaagISO(), plusDagen(vandaagISO(), -1), a => typeof werkOk !== "function" || werkOk(a));
   const a = lijst[0]; if (!a) return "";
   return `<section class="card card-pad hs-kaart" aria-label="Hoe ging het?">
     <span class="labeltekst">Even terugkijken</span>
@@ -68,6 +72,7 @@ function hsKaartHTML() {
 
 /* ---------- 96.2 De herstelroute ---------- */
 function hsRoute(a) {
+  V.hsGedaan = {}; V.hsBufferOp = false;
   const tekst = hsBericht(a, datumLabel(a.datum).toLowerCase());
   bladOpen("Gemist", `<p class="hs-zin">${esc(HS_ZIN)}</p>
     <h3 class="hs-stap"><span>1</span> Laat het weten</h3>
@@ -83,19 +88,24 @@ function hsRoute(a) {
     `<button class="knop breed primair" id="hs-klaar">Klaar</button>`);
   $("#hs-kopie").onclick = async () => {
     const t = $("#hs-bericht").value;
-    try { await navigator.clipboard.writeText(t); toast("Bericht gekopieerd"); } catch (e) { $("#hs-bericht").select(); toast("Selecteer en kopieer de tekst"); }
+    try { await navigator.clipboard.writeText(t); toast("Bericht gekopieerd"); return; } catch (e) { /* hieronder de terugval */ }
+    const v = $("#hs-bericht"); v.focus(); v.select(); v.setSelectionRange(0, v.value.length);
+    let ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+    toast(ok ? "Bericht gekopieerd" : "De tekst is geselecteerd. Kies Kopieer.");
   };
   $("#hs-plan").onclick = () => {
-    const kopie = { titel: a.titel, soort: a.soort, plek: a.plek, personen: (a.personen || []).slice(), reistijd: a.reistijd, buffer: a.buffer, voorbereiden: a.voorbereiden,
-      voorbereiding: a.voorbereiding, tijd: a.tijd, eindTijd: a.eindTijd, datum: "" };
+    // Datum standaard morgen: zonder datum maakt het blad er vandaag van, en dan staat er meteen weer een voorbije afspraak.
+    const kopie = { titel: a.titel, soort: a.soort, plek: a.plek, personen: (a.personen || []).slice(), werk: !!a.werk, reistijd: a.reistijd,
+      buffer: V.hsBufferOp ? null : a.buffer, voorbereiden: a.voorbereiden, voorbereiding: a.voorbereiding, tijd: a.tijd, eindTijd: a.eindTijd, datum: plusDagen(vandaagISO(), 1) };
     openAfspraakBlad(null, kopie);
   };
   $("#bladinhoud").addEventListener("click", e => {
     const b = e.target.closest("[data-hs-schakel]"); if (!b) return;
     $$("[data-hs-schakel]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
     const s = HS_SCHAKELS.find(x => x.id === b.dataset.hsSchakel);
-    a.hsOorzaak = s.id;
-    const knop = s.actie === "alarmen" ? `<button class="knop breed rand" data-hs-actie="alarmen">Alarmen instellen</button>`
+    a.hsOorzaak = s.id; bewaar("afspraken", a);
+    const gedaan = V.hsGedaan || (V.hsGedaan = {});
+    const knop = gedaan[s.actie] ? `<p class="klein">Al aangepast.</p>` : s.actie === "alarmen" ? `<button class="knop breed rand" data-hs-actie="alarmen">Alarmen instellen</button>`
       : s.actie === "buffer" ? `<button class="knop breed rand" data-hs-actie="buffer">Buffer naar ${(typeof mdBufferStd === "function" ? mdBufferStd() : 10) + 5} minuten</button>`
       : s.actie === "afronden" ? `<button class="knop breed rand" data-hs-actie="afronden">Stopmoment 5 minuten eerder</button>` : "";
     $("#hs-tip").innerHTML = `<p class="hs-tip">${esc(s.tip)}</p>${knop}`;
@@ -104,11 +114,14 @@ function hsRoute(a) {
     const b = e.target.closest("[data-hs-actie]"); if (!b) return;
     const w = b.dataset.hsActie;
     if (w === "alarmen") { await hsBewaar(a); return tpUitleg(null); }
-    if (w === "buffer") { await zetInst("mdBuffer", (typeof mdBufferStd === "function" ? mdBufferStd() : 10) + 5); toast(`Buffer staat nu op ${mdBufferStd()} minuten`); }
-    if (w === "afronden") { const o = Object.assign({}, inst("tpAlarmen", {}) || {}); o.afronden = (+o.afronden || 5) + 5; await zetInst("tpAlarmen", o); toast(`Stoppen nu ${o.afronden} minuten vóór voorbereiden`); }
-    b.disabled = true;
+    if (w === "buffer") { await zetInst("mdBuffer", (typeof mdBufferStd === "function" ? mdBufferStd() : 10) + 5); V.hsBufferOp = true; toast(`Buffer staat nu op ${mdBufferStd()} minuten`); }
+    if (w === "afronden") { const o = Object.assign({}, inst("tpAlarmen", {}) || {}); o.afronden = (o.afronden != null && o.afronden !== "" ? +o.afronden : TP_STD.afronden) + 5; await zetInst("tpAlarmen", o); toast(`Stoppen nu ${o.afronden} minuten vóór voorbereiden`); }
+    (V.hsGedaan || (V.hsGedaan = {}))[w] = true;
+    b.replaceWith(Object.assign(document.createElement("p"), { className: "klein", textContent: "Aangepast." }));
   });
   $("#hs-klaar").onclick = async () => { await hsBewaar(a); bladSluit(); teken(); toast("Genoteerd. Je hebt het opgepakt."); };
+  // Focus in het blad (niet in het tekstveld: dat opent het toetsenbord).
+  setTimeout(() => { const t = $("#bladtitel"); if (t) { t.setAttribute("tabindex", "-1"); t.focus({ preventScroll: true }); } }, 50);
 }
 async function hsBewaar(a) {
   if (a.hsStatus === "gemist") { await bewaar("afspraken", a); return; }
@@ -124,5 +137,6 @@ document.addEventListener("click", async e => {
   if (b.dataset.hs === "geweest") {
     a.hsStatus = "geweest"; await bewaar("afspraken", a);
     tril(6); teken(); toast("Fijn. Iets noteren kan in de afspraak.", "Openen", () => ga("afspraak", a.id));
+    const volgende = document.querySelector("[data-hs]") || document.querySelector('[data-dn][aria-checked="true"]'); if (volgende) volgende.focus({ preventScroll: true });
   } else { await hsBewaar(a); teken(); hsRoute(a); }
 }, true);

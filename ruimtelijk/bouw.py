@@ -310,6 +310,8 @@ vervang('''    a.buffer = $("#a-buffer").value === "" ? null : Math.max(0, +$("#
     a.voorbereiden = $("#a-voorb").value === "" ? null : Math.max(0, +$("#a-voorb").value || 0);''')
 vervang('''"voorbereiding", "reistijd", "buffer"]''', '''"voorbereiding", "reistijd", "buffer", "voorbereiden"]''')
 
+# 13. Een nieuwe keer uit een reeks begint zonder antwoord op "Hoe ging het?" (V8) en zonder alarmstatus (V6).
+vervang('    k.notities = ""; k.uitkomst = "";', '    k.notities = ""; k.uitkomst = ""; delete k.hsStatus; delete k.hsOorzaak; delete k.tpGezet;')
 # 12. Export en import van alle gegevens (vraag Kas, 3 oktober): bestandsnaam met de appnaam,
 #     samenvoegen vergelijkt op de echte sleutel (instellingen-stores hebben "sleutel", geen "id").
 vervang('const naam = `futureme-backup-${vandaagISO()}${metBijlagen ? "-compleet" : ""}.json`;',
