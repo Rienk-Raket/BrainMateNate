@@ -26,7 +26,10 @@ test("SCRUM-kaarten: alleen open, met deadline, van een actieve hustle", () => {
   ];
   const r = I.idxVanSh(h, kaarten, kol);
   assert.deepEqual(kaal(r.map(x => x.id)), ["sh:a"]);
-  assert.deepEqual(kaal(r[0].extern), { soort: "shkaart", bronId: "a", ouder: "h1", label: "Webshop" });
+  assert.deepEqual(kaal(r[0].extern), { soort: "shkaart", bronId: "a", ouder: "h1", label: "Webshop", kanKlaar: true });
+  // Hustle zonder (actieve) klaar-kolom: wel tonen, maar niet afvinkbaar vanaf Mijn dag.
+  const r2 = I.idxVanSh([{ id: "h3", naam: "Blog" }], [{ id: "x", shId: "h3", kolomId: "k9", titel: "Post", deadline: "2026-10-01" }], [{ id: "k9", shId: "h3", rol: "todo" }, { id: "k8", shId: "h3", rol: "klaar", gearchiveerd: true }]);
+  assert.equal(r2[0].extern.kanKlaar, false);
   assert.equal(r[0].duur, 40);
 });
 
@@ -34,11 +37,15 @@ test("huishouden: alleen lijsten die aan de beurt zijn, meest achterstallig eers
   const lijsten = [
     { id: "bad", naam: "Badkamer", ritme: 7, laatstGedaan: "2026-09-20T10:00:00Z", taken: [{ min: 10 }, { min: 15 }, { min: 5, uit: true }] },
     { id: "keuken", naam: "Keuken", ritme: 7, laatstGedaan: "2026-09-30T10:00:00Z", taken: [{ min: 10 }] },
-    { id: "nieuw", naam: "Zolder", ritme: 30, laatstGedaan: null, taken: [] },
+    { id: "leeg", naam: "Zolder", ritme: 30, laatstGedaan: null, taken: [] },
+    { id: "alleUit", naam: "Schuur", ritme: 7, laatstGedaan: null, taken: [{ min: 5, uit: true }] },
+    { id: "nieuw", naam: "Gang", ritme: 7, laatstGedaan: null, gemaakt: "2026-10-01T10:00:00Z", taken: [{ min: 5 }] },
+    { id: "oudNooit", naam: "Ramen", ritme: 7, laatstGedaan: null, gemaakt: "2026-09-20T10:00:00Z", taken: [{ min: 20 }] },
     { id: "geen", naam: "Los", ritme: 0 }
   ];
   const r = I.idxVanHh(lijsten, v);
-  assert.deepEqual(kaal(r.map(x => x.id)), ["hh:bad", "hh:nieuw"]);
+  // Leeg of alles uit: niet. Net aangemaakt en nog nooit gedaan: pas na het ritme.
+  assert.deepEqual(kaal(r.map(x => x.id)), ["hh:bad", "hh:oudNooit"]);
   assert.equal(r[0].duur, 25);
   assert.equal(r[0].titel, "Badkamer schoonmaken");
   assert.match(r[0].extern.label, /12 dagen geleden/);

@@ -33263,8 +33263,10 @@ const dnGekozen = () => { const k = inst("dnNiveau", null); return !!(k && k.dat
     const nu = _nu.apply(this, arguments), n = dnNiveau();
     if (n === "standaard") return Object.assign({ geparkeerd: 0 }, nu);
     // De volledige lijst (mdNu geeft er maar drie terug), inclusief wat andere modules bijdragen (V1).
-    const nuMin = new Date().getHours() * 60 + new Date().getMinutes();
-    return dnNu(nu, mdLijst(), n, nuMin);
+    const nuMin = new Date().getHours() * 60 + new Date().getMinutes(), alle = mdLijst(), taken = alle.filter(x => !x.extern);
+    // Minimum: het kleinste uit je taken; iets uit een andere module alleen als er geen taken zijn.
+    if (n === "minimum" && taken.length) return Object.assign(dnNu(nu, taken, n, nuMin), { geparkeerd: alle.length - 1 });
+    return dnNu(nu, alle, n, nuMin);
   };
   const _html = mdNuHTML;
   mdNuHTML = function () {
@@ -34348,17 +34350,20 @@ const IDX_BRONNEN = [
 /** SCRUM-kaarten → items. Alleen niet-gearchiveerd, niet in de klaar-kolom, met deadline. */
 function idxVanSh(hustles, kaarten, kolommen) {
   const klaar = new Set((kolommen || []).filter(k => k.rol === "klaar").map(k => k.id));
+  const metKlaar = new Set((kolommen || []).filter(k => k.rol === "klaar" && !k.gearchiveerd).map(k => k.shId));
   const naam = Object.fromEntries((hustles || []).map(h => [h.id, h]));
   return (kaarten || []).filter(k => !k.gearchiveerd && !klaar.has(k.kolomId) && k.deadline && naam[k.shId] && !naam[k.shId].gearchiveerd)
     .map(k => ({ id: "sh:" + k.id, titel: k.titel, datum: k.deadline, tijd: null, duur: +k.minuten || 25, prioriteit: 2,
-      extern: { soort: "shkaart", bronId: k.id, ouder: k.shId, label: naam[k.shId].naam } }));
+      extern: { soort: "shkaart", bronId: k.id, ouder: k.shId, label: naam[k.shId].naam, kanKlaar: metKlaar.has(k.shId) } }));
 }
-/** Huishoudlijsten die aan de beurt zijn (ritme verstreken of nog nooit gedaan) → items. */
+/** Huishoudlijsten die aan de beurt zijn → items. Alleen lijsten met open klussen; nog nooit gedaan telt pas
+    vanaf aangemaakt + ritme (anders staan alle nieuwe startlijsten meteen op Mijn dag). */
 function idxVanHh(lijsten, vandaag) {
   const dag = d => Math.round(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) / 864e5);
-  return (lijsten || []).filter(l => l.ritme > 0).map(l => {
+  return (lijsten || []).filter(l => l.ritme > 0 && (l.taken || []).some(t => !t.uit)).map(l => {
     const laatst = l.laatstGedaan ? l.laatstGedaan.slice(0, 10) : null, dagen = laatst ? dag(vandaag) - dag(laatst) : null;
-    return { l, dagen, te: dagen == null ? 1 : dagen / l.ritme };
+    const sinds = !laatst && l.gemaakt ? dag(vandaag) - dag(l.gemaakt.slice(0, 10)) : null;
+    return { l, dagen, te: dagen != null ? dagen / l.ritme : sinds != null ? sinds / l.ritme : 1 };
   }).filter(x => x.te >= 1).sort((a, b) => b.te - a.te).map(({ l, dagen }) => {
     const min = (l.taken || []).filter(t => !t.uit).reduce((a, t) => a + (+t.min || 0), 0);
     return { id: "hh:" + l.id, titel: `${l.naam} schoonmaken`, datum: vandaag, tijd: null, duur: Math.min(30, min || 15), prioriteit: 3,
@@ -34402,7 +34407,10 @@ function idxAlles() {
   mdLijst = function () {
     const lijst = _lijst.apply(this, arguments), v = vandaagISO(), nuMin = new Date().getHours() * 60 + new Date().getMinutes();
     let extern = [];
-    try { extern = idxVoorVandaag(idxVanSh(S.sh_hustles, S.sh_kaarten, S.sh_kolommen).concat(idxVanHh(S.hh_lijsten, v)), v, idxAan()); } catch (e) { extern = []; }
+    // Alleen-werk-filter: huishouden en side hustle horen daar niet bij.
+    if (typeof werkStand === "function" && werkStand() === "alleen") return lijst;
+    // Hooguit één huishoudlijst tegelijk op Mijn dag (de meest achterstallige).
+    try { extern = idxVoorVandaag(idxVanSh(S.sh_hustles, S.sh_kaarten, S.sh_kolommen).concat(idxVanHh(S.hh_lijsten, v).slice(0, 1)), v, idxAan()); } catch (e) { extern = []; }
     return extern.length ? idxSamenvoegen(lijst, extern, v, nuMin, fmMin) : lijst;
   };
 }
@@ -34410,7 +34418,7 @@ function idxAlles() {
 function idxNuHTML(i) {
   const e = i.extern, laat = i.datum && i.datum < vandaagISO();
   const sub = e.soort === "shkaart" ? `${esc(e.label)} · deadline ${laat ? esc(datumLabel(i.datum).toLowerCase()) : "vandaag"}` : `Huishouden · ${esc(e.label)}`;
-  const knop = e.soort === "shkaart" ? `<button class="knop primair" data-idx="klaar" data-id="${esc(i.id)}">${ico("check")} Klaar</button>`
+  const knop = e.soort === "shkaart" ? (e.kanKlaar ? `<button class="knop primair" data-idx="klaar" data-id="${esc(i.id)}">${ico("check")} Klaar</button>` : "")
     : `<button class="knop primair" data-idx="start" data-id="${esc(i.id)}">${ico("ster")} Start</button>`;
   return `<p class="klein idx-bron">${sub}</p><div class="md-nu-acties">${knop}<button class="knop rand" data-idx="open" data-id="${esc(i.id)}">Openen</button></div>`;
 }
@@ -34420,7 +34428,13 @@ document.addEventListener("click", async e => {
   const [soort, bron] = [b.dataset.id.slice(0, b.dataset.id.indexOf(":")), b.dataset.id.slice(b.dataset.id.indexOf(":") + 1)];
   if (soort === "sh") {
     const k = vind("sh_kaarten", bron); if (!k) return;
-    if (b.dataset.idx === "klaar") { await sesShKaartKlaar(bron); tril(10); teken(); toast("Kaart klaar", "Openen", () => ga("sh", k.shId)); }
+    if (b.dataset.idx === "klaar") {
+      // Via het bord zelf: Definition of Done, burndown, gekoppelde check, activiteit en "Ongedaan".
+      await shKaartNaarRol(bron, "klaar");
+      const n = vind("sh_kaarten", bron), kol = n && vind("sh_kolommen", n.kolomId);
+      if (kol && kol.rol === "klaar") tril(10); else toast("Deze side hustle heeft geen klaar-kolom", "Openen", () => ga("sh", k.shId));
+      teken();
+    }
     else ga("sh", k.shId);
   } else if (soort === "hh") {
     if (b.dataset.idx === "start") hhKlaarzetten(bron); else ga("hhlijst", bron);
@@ -34443,6 +34457,13 @@ document.addEventListener("click", async e => {
       await zetInst("idxBronnen", nieuw); teken();
     });
   };
+}
+
+/* ---------- 102.3 Geen dubbele huishoudsuggestie ----------
+   Staat Huishouden aan in "Ook op Mijn dag", dan staat de lijst al op de Nu-kaart; het voorstel valt dan weg. */
+if (typeof vsVoorstellen === "function") {
+  const _vs = vsVoorstellen;
+  vsVoorstellen = function () { const uit = _vs.apply(this, arguments); return idxAan().includes("huishouden") ? uit.filter(x => x.k !== "huishouden") : uit; };
 }
 
 </script>

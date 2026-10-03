@@ -55,8 +55,10 @@ const dnGekozen = () => { const k = inst("dnNiveau", null); return !!(k && k.dat
     const nu = _nu.apply(this, arguments), n = dnNiveau();
     if (n === "standaard") return Object.assign({ geparkeerd: 0 }, nu);
     // De volledige lijst (mdNu geeft er maar drie terug), inclusief wat andere modules bijdragen (V1).
-    const nuMin = new Date().getHours() * 60 + new Date().getMinutes();
-    return dnNu(nu, mdLijst(), n, nuMin);
+    const nuMin = new Date().getHours() * 60 + new Date().getMinutes(), alle = mdLijst(), taken = alle.filter(x => !x.extern);
+    // Minimum: het kleinste uit je taken; iets uit een andere module alleen als er geen taken zijn.
+    if (n === "minimum" && taken.length) return Object.assign(dnNu(nu, taken, n, nuMin), { geparkeerd: alle.length - 1 });
+    return dnNu(nu, alle, n, nuMin);
   };
   const _html = mdNuHTML;
   mdNuHTML = function () {

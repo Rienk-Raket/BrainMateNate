@@ -276,3 +276,16 @@ Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vra
 - Zelf kiezen: Mijn dag → Widgets kiezen → "Ook op Mijn dag" (beide standaard aan; `idxBronnen`).
 - Nog niet (fase 2/3): Dagring-teller, zoeken en chat lezen nog niet uit de gedeelde lijst; gebeurtenisbus.
 - Tests: `tests/items.test.mjs`, `tests/items.e2e.cjs` (15 checks).
+
+## Review stap 20 (verwerkt)
+
+1. Klaar op een SCRUM-kaart gaat via het bord (`shKaartNaarRol`): Definition of Done, burndown, gekoppelde check, activiteit en "Ongedaan".
+2. Hustle zonder actieve klaar-kolom: alleen Openen, geen valse "Kaart klaar".
+3. Huishoudlijsten zonder open klussen komen niet op Mijn dag.
+4. Alleen-werk-filter: geen huishouden of side hustle.
+5. Nooit gedaan telt pas vanaf aangemaakt + ritme; hooguit één huishoudlijst tegelijk op Mijn dag.
+6. Minimumdag kiest het kleinste uit je taken; iets van buiten alleen als er geen taken zijn.
+7. Geen dubbele huishoudsuggestie bij de voorstellen als Huishouden aan staat.
+8. Archiefkolom: opgelost via 1.
+9. UTC-datum van `laatstGedaan`: bestaand, gelijk aan `hhAanDeBeurt`; bewust gelijk gehouden.
+Test: frictie-werkwoord wacht op het blad i.p.v. een vaste tijd (faalde één keer onder belasting).

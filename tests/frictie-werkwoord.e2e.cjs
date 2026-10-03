@@ -98,7 +98,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("V12: 'Nog vaag?' op de Nu-kaart", await p.locator(`.md-nu [data-ww-blad="${vid}"]`).count() === 1);
   await p.evaluate(id => openTaakBlad(id), vid); await wacht(350);
   check("V12: knop in het taakblad", await p.locator("#ww-knop").count() === 1);
-  await p.click("#ww-knop"); await wacht(400);
+  await p.click("#ww-knop"); await p.waitForSelector('#bladtitel:text("Eerste handeling")', { timeout: 5000 }).catch(() => {}); await wacht(200);
   check("V12: taakblad eerst opgeslagen, dan het vraagblok met eigen suggesties", await p.evaluate(() => document.querySelector("#bladtitel").textContent === "Eerste handeling" && !!document.querySelector('#blad [data-ww-vb="Telefoonnummer opzoeken"]')));
   check("V12: geen timer gestart", await p.evaluate(() => !T.actief));
   await p.evaluate(() => bladSluit()); await wacht(350);

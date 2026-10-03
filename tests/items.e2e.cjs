@@ -53,6 +53,8 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.screenshot({ path: path.join(UIT, "v1-01-nu-kaart.png") });
   await p.click('.md-nu [data-idx="klaar"]'); await wacht(400);
   check("V1: Klaar zet de kaart in de klaar-kolom", await p.evaluate(() => { const k = vind("sh_kaarten", "kaart1"); return S.sh_kolommen.find(x => x.id === k.kolomId).rol === "klaar"; }));
+  // Via het bord: "Klaar" met Ongedaan, of de herinnering aan de Definition of Done.
+  check("V1: via het bord (Ongedaan of Definition of Done)", /Ongedaan|Definition of Done/.test(await p.locator("#toast").textContent()));
   check("V1: daarna de taak op de Nu-kaart", (await p.locator(".md-nu h2").textContent()).includes("Formulier invullen"));
   await p.click('.md-nu [data-act="vink"]'); await wacht(400);
   await p.evaluate(() => { const v = document.querySelector(".dk-vraag [data-dk=weetniet]"); if (v) v.click(); }); await wacht(300);
@@ -70,6 +72,22 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   // Minimumdag neemt ze mee
   await p.evaluate(async () => { await zetInst("idxBronnen", ["shkaart", "huishouden"]); await zetInst("dnNiveau", { datum: vandaagISO(), niveau: "minimum" }); teken(); }); await wacht(300);
   check("V1: dagniveau Minimum werkt met de gedeelde lijst", await p.evaluate(() => mdNu().een && mdNu().een.id === "hh:bad"));
+  // Alleen-werk-filter: geen huishouden of side hustle.
+  await p.evaluate(async () => { await zetInst("dnNiveau", null); await zetInst("werkFilter", "alleen"); teken(); }); await wacht(300);
+  check("V1: alleen werk = geen huishouden of side hustle", await p.evaluate(() => !mdLijst().some(x => x.extern)));
+  await p.evaluate(async () => { await zetInst("werkFilter", "alles"); teken(); }); await wacht(200);
+  // Geen dubbele huishoudsuggestie bij de voorstellen.
+  check("V1: geen dubbel huishoudvoorstel", await p.evaluate(() => typeof vsVoorstellen !== "function" || !vsVoorstellen().some(x => x.k === "huishouden")));
+  // Hustle zonder klaar-kolom: alleen Openen.
+  await p.evaluate(async () => {
+    for (const t of S.taken.filter(x => !x.af)) { t.af = true; t.afOp = new Date().toISOString(); await bewaar("taken", t); }
+    await zetInst("idxBronnen", ["shkaart"]);
+    const h = { id: uid(), naam: "Blog", gemaakt: new Date().toISOString() }; await bewaar("sh_hustles", h);
+    const todo = { id: uid(), shId: h.id, naam: "Te doen", rol: "todo", volgorde: 1 }; await bewaar("sh_kolommen", todo);
+    await bewaar("sh_kaarten", { id: "kaart3", shId: h.id, kolomId: todo.id, titel: "Post schrijven", deadline: plusDagen(vandaagISO(), -2) });
+    teken();
+  }); await wacht(400);
+  check("V1: kaart zonder klaar-kolom: alleen Openen", await p.evaluate(() => /Post schrijven/.test(document.querySelector(".md-nu h2").textContent) && !document.querySelector('.md-nu [data-idx="klaar"]') && !!document.querySelector('.md-nu [data-idx="open"]')));
   check("V1: alle open dingen uit alle modules (alleen lezen)", await p.evaluate(() => { const a = idxAlles(); return a.some(x => x.id === "sh:kaart2") && a.some(x => x.id === "hh:bad"); }));
 
   check("geen consolefouten", fouten.length === 0, fouten.slice(0, 3).join(" | "));
