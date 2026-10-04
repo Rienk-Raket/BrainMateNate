@@ -32312,6 +32312,107 @@ document.addEventListener("click", async e => {
 </script>
 <script>
 "use strict";
+// === SECTIE 103: GEBEURTENISBUS (V1, FASE 2) ===
+/* ==========================================================================
+   Conceptvoorstel V1, fase 2 (besluit Kas 4 oktober 2026).
+   Eén plek waar de app meldt wat er gebeurt, zodat modules kunnen
+   reageren zonder elkaars functies te omwikkelen.
+
+   Wie meldt (alleen hier, op één plek omwikkeld):
+   - taak.voorKlaar  vlak vóór afvinken (bijv. timer stoppen)
+   - taak.klaar      taak afgerond (ook een herhaaltaak die doorschuift)
+   - taak.heropend   afvinken ongedaan
+   - subtaak.vink    een stap aan- of uitgevinkt
+   - checkin         dagstart opgeslagen; energie.laag bij energie 1–2
+   - afspraak.geweest / afspraak.gemist   antwoord op "Hoe ging het?" (V8)
+   - shkaart.klaar   SCRUM-kaart naar de klaar-kolom
+   - log             elke regel in het logboek (soort, tekst, refId)
+
+   Wie luistert: duurkalibratie (V9), Ik loop vast (V7), en wat erna komt.
+   Een fout in één luisteraar breekt de rest niet.
+
+   De kern (NATE-BUS-BEGIN/EINDE) is puur en wordt getest in tests/bus.test.mjs.
+   ========================================================================== */
+
+/* NATE-BUS-BEGIN */
+function busMaak() {
+  const luisteraars = {}, laatste = [];
+  const lijst = naam => luisteraars[naam] || (luisteraars[naam] = []);
+  const noteer = (naam, data) => { laatste.push({ naam, ts: Date.now(), data }); if (laatste.length > 50) laatste.shift(); };
+  return {
+    /** Luisteren; geeft een functie terug om te stoppen. */
+    on(naam, fn) { lijst(naam).push(fn); return () => { const l = lijst(naam), i = l.indexOf(fn); if (i >= 0) l.splice(i, 1); }; },
+    /** Melden en wachten tot alle luisteraars klaar zijn (op volgorde van aanmelden). */
+    async emit(naam, data) {
+      noteer(naam, data);
+      for (const fn of lijst(naam).slice()) { try { await fn(data); } catch (e) { if (typeof console !== "undefined") console.error("bus:" + naam, e); } }
+    },
+    /** Melden zonder wachten (voor plekken die synchroon moeten blijven). */
+    emitSync(naam, data) {
+      noteer(naam, data);
+      for (const fn of lijst(naam).slice()) { try { fn(data); } catch (e) { if (typeof console !== "undefined") console.error("bus:" + naam, e); } }
+    },
+    aantal(naam) { return lijst(naam).length; },
+    laatste() { return laatste.slice(); }
+  };
+}
+/* NATE-BUS-EINDE */
+
+const bus = busMaak();
+
+/* ---------- 103.1 Melders: hier, en alleen hier, omwikkeld ---------- */
+{
+  const _vink = vinkTaak;
+  vinkTaak = async function (id) {
+    const voor = vind("taken", id), wasAf = !!(voor && voor.af), datumVoor = voor && voor.datum;
+    if (voor && !wasAf) await bus.emit("taak.voorKlaar", { id, taak: voor });
+    const r = await _vink.apply(this, arguments);
+    const t = vind("taken", id);
+    if (t && !wasAf && t.af) await bus.emit("taak.klaar", { id, taak: t });
+    else if (t && !wasAf && !t.af && t.herhaal && t.datum !== datumVoor) await bus.emit("taak.klaar", { id, taak: t, herhaal: true });
+    else if (t && wasAf && !t.af) await bus.emit("taak.heropend", { id, taak: t });
+    return r;
+  };
+}
+{
+  const _sub = subVink;
+  subVink = function (lijst, i) {
+    const af = _sub.apply(this, arguments);
+    bus.emitSync("subtaak.vink", { lijst, i, af });
+    return af;
+  };
+}
+{
+  const _dc = dcBewaar;
+  dcBewaar = async function (velden) {
+    const d = await _dc.apply(this, arguments);
+    if (velden && velden.checkinTs) {
+      await bus.emit("checkin", { dag: d });
+      if (d && d.energieNr != null && d.energieNr <= 2) await bus.emit("energie.laag", { dag: d, energie: d.energieNr });
+    }
+    return d;
+  };
+}
+if (typeof shKaartVerplaats === "function") {
+  const _kv = shKaartVerplaats;
+  shKaartVerplaats = async function (k, kolomId) {
+    const r = await _kv.apply(this, arguments), naar = vind("sh_kolommen", kolomId);
+    if (naar && naar.rol === "klaar" && k && k.kolomId === kolomId) await bus.emit("shkaart.klaar", { id: k.id, kaart: k });
+    return r;
+  };
+}
+{
+  const _log = logGebeurtenis;
+  logGebeurtenis = async function (soort, tekst, refId) {
+    const r = await _log.apply(this, arguments);
+    bus.emitSync("log", { soort, tekst, refId });
+    return r;
+  };
+}
+
+</script>
+<script>
+"use strict";
 // === SECTIE 90: IK LOOP VAST (V7) ===
 /* ==========================================================================
    Conceptvoorstel V7. Eén knop op de Nu-kaart en in elk taakblad. Eén vraag:
@@ -32483,15 +32584,10 @@ document.addEventListener("click", e => {
   ivOpen(b.dataset.iv);   // bladOpen vervangt een open taakblad meteen
 }, true);
 
-// Tijdstip bij het afvinken van een subtaak (voor de meting hierboven).
-{
-  const _vink = subVink;
-  subVink = function (lijst, i) {
-    const af = _vink.apply(this, arguments);
-    if (lijst && lijst[i]) { if (af) lijst[i].afOp = new Date().toISOString(); else delete lijst[i].afOp; }
-    return af;
-  };
-}
+// Tijdstip bij het afvinken van een subtaak (voor de meting hierboven), via de gebeurtenisbus (V1 fase 2).
+bus.on("subtaak.vink", ({ lijst, i, af }) => {
+  if (lijst && lijst[i]) { if (af) lijst[i].afOp = new Date().toISOString(); else delete lijst[i].afOp; }
+});
 
 </script>
 <script>
@@ -33447,6 +33543,7 @@ async function hsBewaar(a) {
   if (a.hsStatus === "gemist") { await bewaar("afspraken", a); return; }
   a.hsStatus = "gemist";
   await bewaar("afspraken", a);
+  await bus.emit("afspraak.gemist", { afspraak: a });
   await logGebeurtenis("afspraak", `Gemist en opgepakt: ${a.titel}`, a.id).catch(() => {});
 }
 
@@ -33457,8 +33554,9 @@ document.addEventListener("click", async e => {
   if (b.dataset.hs === "geweest") {
     a.hsStatus = "geweest"; await bewaar("afspraken", a);
     tril(6); teken();
-    // Met reistijd: één vraag naar de echte reistijd (V9); anders de gewone bevestiging.
-    if (+a.reistijd > 0 && typeof dkReisVraag === "function") { dkReisVraag(a); return; }
+    // Melden via de gebeurtenisbus (V1 fase 2); opent een luisteraar een blad (reistijd, V9), dan geen toast.
+    await bus.emit("afspraak.geweest", { afspraak: a });
+    if (document.querySelector("#blad.open")) return;
     toast("Fijn. Iets noteren kan in de afspraak.", "Openen", () => ga("afspraak", a.id));
     const volgende = document.querySelector("[data-hs]") || document.querySelector('[data-dn][aria-checked="true"]'); if (volgende) volgende.focus({ preventScroll: true });
   } else { await hsBewaar(a); teken(); hsRoute(a); }
@@ -33682,25 +33780,22 @@ const dkLogGeldig = () => dkLog().filter(r => { const t = vind("taken", r.taakId
 const dkReis = () => inst("dkReis", []) || [];
 async function dkBewaar(r) { await zetInst("dkLog", dkLog().filter(x => x.taakId !== r.taakId).concat(r).slice(-300)); }
 
-/* ---------- 98.1 Liep de timer? Dan meten we zelf ---------- */
-{
-  const _vink = vinkTaak;
-  vinkTaak = async function (id) {
-    const voor = vind("taken", id), wasAf = voor && voor.af;
-    // Loopt de timer op deze taak? Eerst stoppen, zodat die tijd meetelt.
-    if (voor && !wasAf && T.taakId === id && (T.actief || T.opgebouwd)) await stopTimer(true);
-    // Opnieuw afronden is een nieuwe meting: een oude (bv. van vóór "Ongedaan") vervalt.
-    if (voor && !wasAf && dkLog().some(x => x.taakId === id)) await zetInst("dkLog", dkLog().filter(x => x.taakId !== id));
-    const r = await _vink.apply(this, arguments);
-    const t = vind("taken", id);
-    if (t && wasAf && !t.af && dkLog().some(x => x.taakId === id)) { await zetInst("dkLog", dkLog().filter(x => x.taakId !== id)); return r; }
-    if (t && !wasAf && t.af && t.duur > 0 && !dkLog().some(x => x.taakId === t.id)) {
-      const sec = (S.tijdlog || []).filter(l => l.taakId === t.id).reduce((a, l) => a + (+l.seconden || 0), 0);
-      if (sec >= 60) { await dkBewaar({ taakId: t.id, titel: t.titel, geschat: +t.duur, werkelijk: Math.round(sec / 60), bron: "timer", ts: new Date().toISOString() }); teken(); }
-    }
-    return r;
-  };
-}
+/* ---------- 98.1 Liep de timer? Dan meten we zelf ----------
+   Via de gebeurtenisbus (V1 fase 2) in plaats van vinkTaak te omwikkelen. */
+bus.on("taak.voorKlaar", async ({ id }) => {
+  // Loopt de timer op deze taak? Eerst stoppen, zodat die tijd meetelt.
+  if (T.taakId === id && (T.actief || T.opgebouwd)) await stopTimer(true);
+  // Opnieuw afronden is een nieuwe meting: een oude (bv. van vóór "Ongedaan") vervalt.
+  if (dkLog().some(x => x.taakId === id)) await zetInst("dkLog", dkLog().filter(x => x.taakId !== id));
+});
+bus.on("taak.klaar", async ({ taak: t }) => {
+  if (!t.af || !(t.duur > 0) || dkLog().some(x => x.taakId === t.id)) return;
+  const sec = (S.tijdlog || []).filter(l => l.taakId === t.id).reduce((a, l) => a + (+l.seconden || 0), 0);
+  if (sec >= 60) { await dkBewaar({ taakId: t.id, titel: t.titel, geschat: +t.duur, werkelijk: Math.round(sec / 60), bron: "timer", ts: new Date().toISOString() }); teken(); }
+});
+bus.on("taak.heropend", async ({ id }) => {
+  if (dkLog().some(x => x.taakId === id)) await zetInst("dkLog", dkLog().filter(x => x.taakId !== id));
+});
 
 /* ---------- 98.2 De vraag op Mijn dag ---------- */
 function dkVraagHTML() {
@@ -33748,6 +33843,8 @@ document.addEventListener("click", e => {
 }, true);
 
 /* ---------- 98.4 Gemeten reistijd ---------- */
+// Na "Geweest" (V8) met reistijd: één vraag naar de echte reistijd.
+bus.on("afspraak.geweest", ({ afspraak }) => { if (+afspraak.reistijd > 0) dkReisVraag(afspraak); });
 function dkReisVraag(a) {
   if (!(+a.reistijd > 0)) return;
   const r = +a.reistijd, opties = [[Math.max(1, r - 10), "Korter"], [r, `Zoals gepland (${r})`], [r + 10, `+10 min`], [r + 20, `+20 min`]];

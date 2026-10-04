@@ -289,3 +289,11 @@ Opmerking: `kennismaking.e2e.cjs` faalde één keer op "na een tik door naar vra
 8. Archiefkolom: opgelost via 1.
 9. UTC-datum van `laatstGedaan`: bestaand, gelijk aan `hhAanDeBeurt`; bewust gelijk gehouden.
 Test: frictie-werkwoord wacht op het blad i.p.v. een vaste tijd (faalde één keer onder belasting).
+
+## Stap 21: V1 fase 2 — gebeurtenisbus
+
+- `ruimtelijk/src/bus.js` (sectie 103), vroeg geladen (na nate-chat.js). `bus.on`, `bus.emit` (wacht op luisteraars, op volgorde), `bus.emitSync`, `bus.laatste()` (laatste 50, voor tests). Een fout in een luisteraar breekt de rest niet.
+- Melders, op één plek omwikkeld: `taak.voorKlaar`, `taak.klaar`, `taak.heropend` (vinkTaak), `subtaak.vink` (subVink), `checkin` en `energie.laag` (dcBewaar), `shkaart.klaar` (shKaartVerplaats), `log` (logGebeurtenis), `afspraak.geweest` en `afspraak.gemist` (herstel.js).
+- Omgezet van omwikkelen naar luisteren: duurkalibratie (V9: timer stoppen, meten, meting vervalt bij ongedaan), Ik loop vast (V7: tijdstip van een afgevinkte stap), reistijdvraag na "Geweest" (herstel meldt, duur luistert; herstel kent duur niet meer).
+- Geen zichtbare verandering; het gedrag is gelijk gebleven (alle e2e-tests ongewijzigd groen).
+- Tests: `tests/bus.test.mjs`, `tests/bus.e2e.cjs` (10 checks).

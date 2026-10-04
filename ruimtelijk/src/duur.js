@@ -69,25 +69,22 @@ const dkLogGeldig = () => dkLog().filter(r => { const t = vind("taken", r.taakId
 const dkReis = () => inst("dkReis", []) || [];
 async function dkBewaar(r) { await zetInst("dkLog", dkLog().filter(x => x.taakId !== r.taakId).concat(r).slice(-300)); }
 
-/* ---------- 98.1 Liep de timer? Dan meten we zelf ---------- */
-{
-  const _vink = vinkTaak;
-  vinkTaak = async function (id) {
-    const voor = vind("taken", id), wasAf = voor && voor.af;
-    // Loopt de timer op deze taak? Eerst stoppen, zodat die tijd meetelt.
-    if (voor && !wasAf && T.taakId === id && (T.actief || T.opgebouwd)) await stopTimer(true);
-    // Opnieuw afronden is een nieuwe meting: een oude (bv. van vóór "Ongedaan") vervalt.
-    if (voor && !wasAf && dkLog().some(x => x.taakId === id)) await zetInst("dkLog", dkLog().filter(x => x.taakId !== id));
-    const r = await _vink.apply(this, arguments);
-    const t = vind("taken", id);
-    if (t && wasAf && !t.af && dkLog().some(x => x.taakId === id)) { await zetInst("dkLog", dkLog().filter(x => x.taakId !== id)); return r; }
-    if (t && !wasAf && t.af && t.duur > 0 && !dkLog().some(x => x.taakId === t.id)) {
-      const sec = (S.tijdlog || []).filter(l => l.taakId === t.id).reduce((a, l) => a + (+l.seconden || 0), 0);
-      if (sec >= 60) { await dkBewaar({ taakId: t.id, titel: t.titel, geschat: +t.duur, werkelijk: Math.round(sec / 60), bron: "timer", ts: new Date().toISOString() }); teken(); }
-    }
-    return r;
-  };
-}
+/* ---------- 98.1 Liep de timer? Dan meten we zelf ----------
+   Via de gebeurtenisbus (V1 fase 2) in plaats van vinkTaak te omwikkelen. */
+bus.on("taak.voorKlaar", async ({ id }) => {
+  // Loopt de timer op deze taak? Eerst stoppen, zodat die tijd meetelt.
+  if (T.taakId === id && (T.actief || T.opgebouwd)) await stopTimer(true);
+  // Opnieuw afronden is een nieuwe meting: een oude (bv. van vóór "Ongedaan") vervalt.
+  if (dkLog().some(x => x.taakId === id)) await zetInst("dkLog", dkLog().filter(x => x.taakId !== id));
+});
+bus.on("taak.klaar", async ({ taak: t }) => {
+  if (!t.af || !(t.duur > 0) || dkLog().some(x => x.taakId === t.id)) return;
+  const sec = (S.tijdlog || []).filter(l => l.taakId === t.id).reduce((a, l) => a + (+l.seconden || 0), 0);
+  if (sec >= 60) { await dkBewaar({ taakId: t.id, titel: t.titel, geschat: +t.duur, werkelijk: Math.round(sec / 60), bron: "timer", ts: new Date().toISOString() }); teken(); }
+});
+bus.on("taak.heropend", async ({ id }) => {
+  if (dkLog().some(x => x.taakId === id)) await zetInst("dkLog", dkLog().filter(x => x.taakId !== id));
+});
 
 /* ---------- 98.2 De vraag op Mijn dag ---------- */
 function dkVraagHTML() {
@@ -135,6 +132,8 @@ document.addEventListener("click", e => {
 }, true);
 
 /* ---------- 98.4 Gemeten reistijd ---------- */
+// Na "Geweest" (V8) met reistijd: één vraag naar de echte reistijd.
+bus.on("afspraak.geweest", ({ afspraak }) => { if (+afspraak.reistijd > 0) dkReisVraag(afspraak); });
 function dkReisVraag(a) {
   if (!(+a.reistijd > 0)) return;
   const r = +a.reistijd, opties = [[Math.max(1, r - 10), "Korter"], [r, `Zoals gepland (${r})`], [r + 10, `+10 min`], [r + 20, `+20 min`]];

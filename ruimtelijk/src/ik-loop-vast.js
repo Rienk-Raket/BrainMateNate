@@ -170,12 +170,7 @@ document.addEventListener("click", e => {
   ivOpen(b.dataset.iv);   // bladOpen vervangt een open taakblad meteen
 }, true);
 
-// Tijdstip bij het afvinken van een subtaak (voor de meting hierboven).
-{
-  const _vink = subVink;
-  subVink = function (lijst, i) {
-    const af = _vink.apply(this, arguments);
-    if (lijst && lijst[i]) { if (af) lijst[i].afOp = new Date().toISOString(); else delete lijst[i].afOp; }
-    return af;
-  };
-}
+// Tijdstip bij het afvinken van een subtaak (voor de meting hierboven), via de gebeurtenisbus (V1 fase 2).
+bus.on("subtaak.vink", ({ lijst, i, af }) => {
+  if (lijst && lijst[i]) { if (af) lijst[i].afOp = new Date().toISOString(); else delete lijst[i].afOp; }
+});

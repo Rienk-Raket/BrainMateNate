@@ -127,6 +127,7 @@ async function hsBewaar(a) {
   if (a.hsStatus === "gemist") { await bewaar("afspraken", a); return; }
   a.hsStatus = "gemist";
   await bewaar("afspraken", a);
+  await bus.emit("afspraak.gemist", { afspraak: a });
   await logGebeurtenis("afspraak", `Gemist en opgepakt: ${a.titel}`, a.id).catch(() => {});
 }
 
@@ -137,8 +138,9 @@ document.addEventListener("click", async e => {
   if (b.dataset.hs === "geweest") {
     a.hsStatus = "geweest"; await bewaar("afspraken", a);
     tril(6); teken();
-    // Met reistijd: één vraag naar de echte reistijd (V9); anders de gewone bevestiging.
-    if (+a.reistijd > 0 && typeof dkReisVraag === "function") { dkReisVraag(a); return; }
+    // Melden via de gebeurtenisbus (V1 fase 2); opent een luisteraar een blad (reistijd, V9), dan geen toast.
+    await bus.emit("afspraak.geweest", { afspraak: a });
+    if (document.querySelector("#blad.open")) return;
     toast("Fijn. Iets noteren kan in de afspraak.", "Openen", () => ga("afspraak", a.id));
     const volgende = document.querySelector("[data-hs]") || document.querySelector('[data-dn][aria-checked="true"]'); if (volgende) volgende.focus({ preventScroll: true });
   } else { await hsBewaar(a); teken(); hsRoute(a); }
