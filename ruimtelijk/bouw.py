@@ -322,6 +322,16 @@ for oud, nieuw in (("meedoen met de rest van FutureMe — of haal juist dingen u
     assert oud in html, f"tekst niet gevonden: {oud}"
     html = html.replace(oud, nieuw)
 
+# 15. Gebeurtenisbus (V1 fase 2): "Ongedaan" na afvinken meldt taak.heropend.
+vervang('    t.af = false; t.afOp = null; await bewaar("taken", t);',
+        '    t.af = false; t.afOp = null; await bewaar("taken", t);\n    if (typeof bus === "object") await bus.emit("taak.heropend", { id: t.id, taak: t });')
+vervang('      t.datum = oud; await bewaar("taken", t);',
+        '      t.datum = oud; await bewaar("taken", t);\n      if (typeof bus === "object") await bus.emit("taak.heropend", { id: t.id, taak: t, herhaal: true });')
+vervang('''      for (const y of voor) await bewaar("taken", y);
+      if (g) await verwijder("gebeurtenissen", g.id);''', '''      for (const y of voor) await bewaar("taken", y);
+      if (g) await verwijder("gebeurtenissen", g.id);
+      if (typeof bus === "object") await bus.emit("taak.heropend", { id: t.id, taak: t });''')
+
 # 13. Een nieuwe keer uit een reeks begint zonder antwoord op "Hoe ging het?" (V8) en zonder alarmstatus (V6).
 vervang('    k.notities = ""; k.uitkomst = "";', '    k.notities = ""; k.uitkomst = ""; delete k.hsStatus; delete k.hsOorzaak; delete k.tpGezet;')
 # 12. Export en import van alle gegevens (vraag Kas, 3 oktober): bestandsnaam met de appnaam,

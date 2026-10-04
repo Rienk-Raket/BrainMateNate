@@ -297,3 +297,13 @@ Test: frictie-werkwoord wacht op het blad i.p.v. een vaste tijd (faalde één ke
 - Omgezet van omwikkelen naar luisteren: duurkalibratie (V9: timer stoppen, meten, meting vervalt bij ongedaan), Ik loop vast (V7: tijdstip van een afgevinkte stap), reistijdvraag na "Geweest" (herstel meldt, duur luistert; herstel kent duur niet meer).
 - Geen zichtbare verandering; het gedrag is gelijk gebleven (alle e2e-tests ongewijzigd groen).
 - Tests: `tests/bus.test.mjs`, `tests/bus.e2e.cjs` (10 checks).
+
+## Review stap 21 (verwerkt)
+
+1. `shkaart.klaar` alleen als de kaart echt verplaatst is.
+2. Ook gemeld: kaarten via sessies en de knop op Vandaag (`sesShKaartKlaar`), en een taak die de Keuzemachine afrondt (voorKlaar + klaar, dus ook timer stoppen en meten). Mindmap-export maakt alleen nieuwe, al afgevinkte taken: geen melding nodig.
+3. Geen `taak.voorKlaar` bij een taak die nog op een andere wacht.
+4. `checkin` met `eerste` (bij "Wijzig" niet); `energie.laag` alleen bij een nú gekozen lage energie.
+5. "Ongedaan" in de melding (gewone taak, herhaaltaak, reeks) meldt `taak.heropend` (`bouw.py` stap 15).
+6. `emitSync`: ook fouten van async luisteraars worden opgevangen.
+7. `log` geeft ook het vierde argument (`extra`) door.

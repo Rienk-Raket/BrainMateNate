@@ -56,6 +56,24 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
     await shKaartNaarRol("k1", "klaar");
   });
   check("bus: shkaart.klaar", (await namen()).includes("shkaart.klaar"));
+  const tel = naam => p.evaluate(n => bus.laatste().filter(e => e.naam === n).length, naam);
+  const voorKaart = await tel("shkaart.klaar");
+  await p.evaluate(() => shKaartNaarRol("k1", "klaar"));
+  check("bus: geen shkaart.klaar als de kaart al klaar was", (await tel("shkaart.klaar")) === voorKaart);
+  await p.evaluate(async () => { const k = vind("sh_kaarten", "k1"); const todo = S.sh_kolommen.find(x => x.shId === k.shId && x.rol === "todo"); k.kolomId = todo.id; await bewaar("sh_kaarten", k); await sesShKaartKlaar("k1"); });
+  check("bus: ook via sessie (sesShKaartKlaar)", (await tel("shkaart.klaar")) === voorKaart + 1);
+  // Ongedaan via de toast meldt taak.heropend.
+  const voorHer = await tel("taak.heropend");
+  await p.evaluate(async () => { const t = await maakTaakUitTekst("Plant water geven vandaag"); await vinkTaak(t.id); });
+  await wacht(200); await p.click("#toast button"); await wacht(400);
+  check("bus: Ongedaan in de melding geeft taak.heropend", (await tel("taak.heropend")) === voorHer + 1);
+  // Wijzig check-in: niet opnieuw 'eerste'.
+  await p.evaluate(async () => { await dcBewaar({ checkinTs: new Date().toISOString(), stemming: 3 }); });
+  check("bus: tweede check-in is niet de eerste, geen energie.laag zonder nieuwe keuze", await p.evaluate(() => { const l = bus.laatste(), c = l.filter(e => e.naam === "checkin"); return c[c.length - 1].data.eerste === false && l[l.length - 1].naam !== "energie.laag"; }));
+  // Geblokkeerde taak: geen voorKlaar.
+  const voorVk = await tel("taak.voorKlaar");
+  await p.evaluate(async () => { const a = await maakTaakUitTekst("Eerst dit vandaag"); const b = await maakTaakUitTekst("Dan dat vandaag"); b.hangtAf = [a.id]; await bewaar("taken", b); await vinkTaak(b.id); });
+  check("bus: geen taak.voorKlaar bij een taak die nog wacht", (await tel("taak.voorKlaar")) === voorVk);
   // Fouten van de test-luisteraar tellen niet als consolefout van de app.
   const echt = fouten.filter(f => !/test/.test(f));
   check("geen consolefouten", echt.length === 0, echt.slice(0, 3).join(" | "));

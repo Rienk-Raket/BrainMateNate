@@ -734,7 +734,11 @@ async function kmBesluit(d, keuze, verwacht) {
   d.nazorg = { verwacht, score: null, op: null };
   d.status = "besloten";
   await kmBewaarDilemma(d);
-  if (taakId) { const t = vind("taken", taakId); if (t && !t.af) { t.af = true; t.afOp = nu; await bewaar("taken", t); } }
+  if (taakId) { const t = vind("taken", taakId); if (t && !t.af) {
+    if (typeof bus === "object") await bus.emit("taak.voorKlaar", { id: t.id, taak: t });   // gebeurtenisbus (V1 fase 2)
+    t.af = true; t.afOp = nu; await bewaar("taken", t);
+    if (typeof bus === "object") await bus.emit("taak.klaar", { id: t.id, taak: t });
+  } }
   await kmXpErbij(kmXpVoorBesluit(binnen));
   if (typeof logGebeurtenis === "function") await logGebeurtenis("keuze", `Besloten: ${keuze === "A" ? d.a.titel : d.b.titel}`, d.id);
   const badges = await kmBadgesBijwerken();

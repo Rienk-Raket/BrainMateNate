@@ -37,7 +37,10 @@ function busMaak() {
     /** Melden zonder wachten (voor plekken die synchroon moeten blijven). */
     emitSync(naam, data) {
       noteer(naam, data);
-      for (const fn of lijst(naam).slice()) { try { fn(data); } catch (e) { if (typeof console !== "undefined") console.error("bus:" + naam, e); } }
+      for (const fn of lijst(naam).slice()) {
+        try { const r = fn(data); if (r && typeof r.catch === "function") r.catch(e => { if (typeof console !== "undefined") console.error("bus:" + naam, e); }); }
+        catch (e) { if (typeof console !== "undefined") console.error("bus:" + naam, e); }
+      }
     },
     aantal(naam) { return lijst(naam).length; },
     laatste() { return laatste.slice(); }
@@ -52,7 +55,8 @@ const bus = busMaak();
   const _vink = vinkTaak;
   vinkTaak = async function (id) {
     const voor = vind("taken", id), wasAf = !!(voor && voor.af), datumVoor = voor && voor.datum;
-    if (voor && !wasAf) await bus.emit("taak.voorKlaar", { id, taak: voor });
+    // Niet bij een taak die nog op een andere wacht: die wordt niet afgevinkt.
+    if (voor && !wasAf && !(typeof geblokkeerd === "function" && geblokkeerd(voor))) await bus.emit("taak.voorKlaar", { id, taak: voor });
     const r = await _vink.apply(this, arguments);
     const t = vind("taken", id);
     if (t && !wasAf && t.af) await bus.emit("taak.klaar", { id, taak: t });
@@ -72,10 +76,13 @@ const bus = busMaak();
 {
   const _dc = dcBewaar;
   dcBewaar = async function (velden) {
+    const eerder = typeof dcVandaag === "function" ? dcVandaag() : null, eerste = !(eerder && eerder.checkinTs);
     const d = await _dc.apply(this, arguments);
     if (velden && velden.checkinTs) {
-      await bus.emit("checkin", { dag: d });
-      if (d && d.energieNr != null && d.energieNr <= 2) await bus.emit("energie.laag", { dag: d, energie: d.energieNr });
+      // Bij "Wijzig" komt er een nieuwe checkinTs; eerste zegt of het de eerste check-in van vandaag is.
+      await bus.emit("checkin", { dag: d, eerste });
+      // Alleen als er nú een lage energie gekozen is (niet een oude waarde uit het record).
+      if (velden.energieNr != null && velden.energieNr <= 2) await bus.emit("energie.laag", { dag: d, energie: velden.energieNr, eerste });
     }
     return d;
   };
@@ -83,16 +90,27 @@ const bus = busMaak();
 if (typeof shKaartVerplaats === "function") {
   const _kv = shKaartVerplaats;
   shKaartVerplaats = async function (k, kolomId) {
+    const van = k && k.kolomId;
     const r = await _kv.apply(this, arguments), naar = vind("sh_kolommen", kolomId);
-    if (naar && naar.rol === "klaar" && k && k.kolomId === kolomId) await bus.emit("shkaart.klaar", { id: k.id, kaart: k });
+    if (naar && naar.rol === "klaar" && k && van !== kolomId && k.kolomId === kolomId) await bus.emit("shkaart.klaar", { id: k.id, kaart: k });
+    return r;
+  };
+}
+// Sessies en de knop op Vandaag zetten kaarten via sesShKaartKlaar op klaar (zonder het bord); ook dan melden.
+if (typeof sesShKaartKlaar === "function") {
+  const _ses = sesShKaartKlaar;
+  sesShKaartKlaar = async function (id) {
+    const voor = vind("sh_kaarten", id), van = voor && voor.kolomId;
+    const r = await _ses.apply(this, arguments), na = vind("sh_kaarten", id), kol = na && vind("sh_kolommen", na.kolomId);
+    if (na && kol && kol.rol === "klaar" && na.kolomId !== van) await bus.emit("shkaart.klaar", { id, kaart: na });
     return r;
   };
 }
 {
   const _log = logGebeurtenis;
-  logGebeurtenis = async function (soort, tekst, refId) {
+  logGebeurtenis = async function (soort, tekst, refId, extra) {
     const r = await _log.apply(this, arguments);
-    bus.emitSync("log", { soort, tekst, refId });
+    bus.emitSync("log", { soort, tekst, refId, extra });
     return r;
   };
 }
