@@ -61,6 +61,23 @@ function idxSamenvoegen(lijst, extern, vandaag, nuMin, minVan) {
   const nu = extern.filter(i => i.datum >= vandaag);
   return komend.concat(laat, zonder, nu, voorbij);
 }
+/** Zoeken in alles wat open staat (titel en herkomst), zonder accenten of hoofdletters. */
+function idxZoek(items, q, max) {
+  const n = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const w = n(q).trim(); if (!w) return [];
+  return (items || []).filter(i => n(i.titel + " " + ((i.extern && i.extern.label) || "")).includes(w)).slice(0, max || 20);
+}
+/** Vraagt iemand in de chat wat er nu aan de beurt is? */
+function idxIsWatNu(tekst) {
+  const t = String(tekst || "").toLowerCase();
+  return /\bwat (nu|eerst)\b|\bwat (moet|kan|zal) ik\b.*\b(nu|doen|eerst|vandaag)\b|\bwat staat er\b.*\b(open|nu|vandaag)\b|\bwaar (begin|start) ik\b/.test(t);
+}
+/** Het antwoord: hooguit twee zinnen. */
+function idxNuZin(nu) {
+  if (!nu || !nu.een) return "Er staat nu niets open. Rust is ook een plan.";
+  const daarna = (nu.twee || []).map(x => x.titel);
+  return `Nu: ${nu.een.titel}.` + (daarna.length ? ` Daarna: ${daarna.join(" en ")}.` : "");
+}
 /* NATE-ITEMS-EINDE */
 
 const idxAan = () => inst("idxBronnen", IDX_BRONNEN.map(b => b.id)) || [];
@@ -77,16 +94,19 @@ function idxAlles() {
 }
 
 /* ---------- 102.1 Mijn dag leest uit de gedeelde lijst ---------- */
+/** Wat er vandaag van buiten de takenlijst op Mijn dag hoort (zelfde regels als de Nu-kaart). */
+function idxExternVandaag() {
+  const v = vandaagISO();
+  // Alleen-werk-filter: huishouden en side hustle horen daar niet bij.
+  if (typeof werkStand === "function" && werkStand() === "alleen") return [];
+  // Hooguit één huishoudlijst tegelijk op Mijn dag (de meest achterstallige).
+  try { return idxVoorVandaag(idxVanSh(S.sh_hustles, S.sh_kaarten, S.sh_kolommen).concat(idxVanHh(S.hh_lijsten, v).slice(0, 1)), v, idxAan()); } catch (e) { return []; }
+}
 {
   const _lijst = mdLijst;
   mdLijst = function () {
-    const lijst = _lijst.apply(this, arguments), v = vandaagISO(), nuMin = new Date().getHours() * 60 + new Date().getMinutes();
-    let extern = [];
-    // Alleen-werk-filter: huishouden en side hustle horen daar niet bij.
-    if (typeof werkStand === "function" && werkStand() === "alleen") return lijst;
-    // Hooguit één huishoudlijst tegelijk op Mijn dag (de meest achterstallige).
-    try { extern = idxVoorVandaag(idxVanSh(S.sh_hustles, S.sh_kaarten, S.sh_kolommen).concat(idxVanHh(S.hh_lijsten, v).slice(0, 1)), v, idxAan()); } catch (e) { extern = []; }
-    return extern.length ? idxSamenvoegen(lijst, extern, v, nuMin, fmMin) : lijst;
+    const lijst = _lijst.apply(this, arguments), extern = idxExternVandaag(), nuMin = new Date().getHours() * 60 + new Date().getMinutes();
+    return extern.length ? idxSamenvoegen(lijst, extern, vandaagISO(), nuMin, fmMin) : lijst;
   };
 }
 /** Knoppen op de Nu-kaart voor iets van buiten de takenlijst. */
@@ -113,7 +133,8 @@ document.addEventListener("click", async e => {
     else ga("sh", k.shId);
   } else if (soort === "hh") {
     if (b.dataset.idx === "start") hhKlaarzetten(bron); else ga("hhlijst", bron);
-  }
+  } else if (soort === "hs") ga("hobbyskill", bron.split(":")[0]);
+  else if (soort === "cl") ga("checklist", bron.split(":")[0]);
 }, true);
 
 /* ---------- 102.2 Zelf kiezen wat er van buiten bij mag (Widgets kiezen) ---------- */
@@ -139,4 +160,49 @@ document.addEventListener("click", async e => {
 if (typeof vsVoorstellen === "function") {
   const _vs = vsVoorstellen;
   vsVoorstellen = function () { const uit = _vs.apply(this, arguments); return idxAan().includes("huishouden") ? uit.filter(x => x.k !== "huishouden") : uit; };
+}
+
+/* ---------- 102.4 Dagring telt mee (V1 fase 3) ---------- */
+{
+  const _ring = fmDagringHTML;
+  fmDagringHTML = function () {
+    const h = _ring.apply(this, arguments), n = idxExternVandaag().length;
+    return n ? h.replace(/(class="fm-dr-sub">)(\d+) open/, (m, a, x) => `${a}${+x + n} open`) : h;
+  };
+}
+
+/* ---------- 102.5 Zoeken vindt ook wat in andere modules open staat (V1 fase 3) ---------- */
+function idxZoekItems() {
+  // Voor zoeken ook SCRUM-kaarten zonder deadline en alle huishoudlijsten (niet alleen wat aan de beurt is).
+  const uit = idxAlles().filter(i => i.extern);
+  try {
+    const klaar = new Set((S.sh_kolommen || []).filter(k => k.rol === "klaar").map(k => k.id)), h = Object.fromEntries((S.sh_hustles || []).map(x => [x.id, x]));
+    for (const k of S.sh_kaarten || []) if (!k.gearchiveerd && !k.deadline && !klaar.has(k.kolomId) && h[k.shId] && !h[k.shId].gearchiveerd)
+      uit.push({ id: "sh:" + k.id, titel: k.titel, extern: { soort: "shkaart", bronId: k.id, ouder: k.shId, label: h[k.shId].naam } });
+    for (const l of S.hh_lijsten || []) if (!uit.some(i => i.id === "hh:" + l.id)) uit.push({ id: "hh:" + l.id, titel: l.naam, extern: { soort: "huishouden", bronId: l.id, label: "Huishouden" } });
+  } catch (e) {}
+  return uit;
+}
+const IDX_SOORTNAAM = { shkaart: "SCRUM-kaart", huishouden: "Huishouden", checklist: "Checklist", mijlpaal: "Mijlpaal" };
+{
+  const _zoek = vwZoeken;
+  vwZoeken = function () {
+    let h = _zoek.apply(this, arguments);
+    if (!V.zoek || !V.zoek.trim()) return h;
+    // Checklists staan al in de gewone resultaten; hier de rest.
+    const r = idxZoek(idxZoekItems().filter(i => i.extern.soort !== "checklist"), V.zoek, 20);
+    if (r.length) h += sectie("Uit andere modules", r.length) + `<div class="card">${r.map(i => `<button class="rijknop" data-idx="open" data-id="${esc(i.id)}">
+      <span class="nm"><b>${esc(i.titel)}</b><span class="klein" style="display:block">${esc(IDX_SOORTNAAM[i.extern.soort] || "")}${i.extern.label ? " · " + esc(i.extern.label) : ""}</span></span>${ico("pijlr", "width:16px;height:16px;color:var(--faint)")}</button>`).join("")}</div>`;
+    return h;
+  };
+}
+
+/* ---------- 102.6 De chat weet wat er nu aan de beurt is (V1 fase 3) ---------- */
+if (typeof ncAntwoord === "function") {
+  const _antw = ncAntwoord;
+  ncAntwoord = function (r) {
+    if (r && r.uitkomst !== "nood" && idxIsWatNu(V.ncLaatste))
+      return { tekst: idxNuZin(mdNu()), knoppen: `<button type="button" class="primair" data-nate="ga" data-view="vandaag">Naar Mijn dag</button>` };
+    return _antw.apply(this, arguments);
+  };
 }

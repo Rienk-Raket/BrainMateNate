@@ -97,19 +97,13 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- 101.2 Vastleggen: direct na het opslaan ---------- */
-{
-  const _op = viOpslaanNu;
-  viOpslaanNu = async function () {
-    const voor = new Set(S.taken.map(t => t.id));
-    const r = await _op.apply(this, arguments);
-    const nieuw = S.taken.find(t => !voor.has(t.id));
-    if (nieuw && wwVragen(nieuw)) {
-      // Na teken(): het blok komt onder het veld, waar je net typte.
-      setTimeout(() => { const uit = document.querySelector("#scherm #vi-uit"); if (uit) uit.innerHTML = wwVraagHTML(nieuw, "ww-vi"); }, 0);
-    }
-    return r;
-  };
-}
+// Via de gebeurtenisbus (V1 fase 3): Vastleggen meldt wat er nieuw is, de werkwoordcheck luistert.
+bus.on("vastleggen.opgeslagen", ({ soort, id }) => {
+  const nieuw = soort === "taak" && id && vind("taken", id);
+  if (!nieuw || !wwVragen(nieuw)) return;
+  // Na teken(): het blok komt onder het veld, waar je net typte.
+  setTimeout(() => { const uit = document.querySelector("#scherm #vi-uit"); if (uit) uit.innerHTML = wwVraagHTML(nieuw, "ww-vi"); }, 0);
+});
 
 /* ---------- 101.3 Taakblad: knop bij een vage taak zonder stappen ---------- */
 {

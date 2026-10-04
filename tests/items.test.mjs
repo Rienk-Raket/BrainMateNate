@@ -9,7 +9,7 @@ const html = readFileSync(fileURLToPath(new URL("../index.html", import.meta.url
 const i = html.indexOf("/* NATE-ITEMS-BEGIN */"), j = html.indexOf("/* NATE-ITEMS-EINDE */");
 assert.ok(i > 0 && j > i);
 const ctx = vm.createContext({});
-vm.runInContext(html.slice(i, j) + ";globalThis.I = { idxVanSh, idxVanHh, idxVoorVandaag, idxSamenvoegen };", ctx);
+vm.runInContext(html.slice(i, j) + ";globalThis.I = { idxVanSh, idxVanHh, idxVoorVandaag, idxSamenvoegen, idxZoek, idxIsWatNu, idxNuZin };", ctx);
 const I = ctx.I, kaal = x => JSON.parse(JSON.stringify(x));
 const min = s => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); return m ? +m[1] * 60 + +m[2] : null; };
 const v = "2026-10-02";
@@ -63,4 +63,19 @@ test("volgorde: tijd die komt, over de deadline, taken zonder tijd, deadline van
   const extern = [{ id: "vandaag", datum: v }, { id: "laat", datum: "2026-09-30" }];
   const r = I.idxSamenvoegen(lijst, extern, v, 10 * 60 + 42, min);
   assert.deepEqual(kaal(r.map(x => x.id)), ["om11", "laat", "zonder", "vandaag", "om8"]);
+});
+
+test("zoeken: titel of herkomst, zonder accenten", () => {
+  const items = [{ id: "a", titel: "Productfoto's maken", extern: { label: "Webshop" } }, { id: "b", titel: "Café bellen", extern: { label: "Werk" } }, { id: "c", titel: "Iets", extern: { label: "Huishouden" } }];
+  assert.deepEqual(kaal(I.idxZoek(items, "webshop").map(x => x.id)), ["a"]);
+  assert.deepEqual(kaal(I.idxZoek(items, "cafe").map(x => x.id)), ["b"]);
+  assert.equal(I.idxZoek(items, "  ").length, 0);
+});
+
+test("chat: 'wat nu?' herkennen, en kort antwoorden", () => {
+  for (const t of ["Wat nu?", "wat moet ik nu doen", "Wat staat er vandaag open?", "waar begin ik"]) assert.equal(I.idxIsWatNu(t), true, t);
+  for (const t of ["waar staat mijn dagboek", "wat kost een tandarts", "open de mindmap"]) assert.equal(I.idxIsWatNu(t), false, t);
+  assert.equal(I.idxNuZin({ een: { titel: "Logo" }, twee: [{ titel: "Was" }, { titel: "Mail" }] }), "Nu: Logo. Daarna: Was en Mail.");
+  assert.match(I.idxNuZin({ een: null }), /niets open/);
+  for (const t of [I.idxNuZin({ een: { titel: "A" }, twee: [{ titel: "B" }] }), I.idxNuZin({ een: null })]) assert.ok((t.match(/[.?!](\s|$)/g) || []).length <= 2);
 });

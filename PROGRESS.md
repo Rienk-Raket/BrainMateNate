@@ -307,3 +307,12 @@ Test: frictie-werkwoord wacht op het blad i.p.v. een vaste tijd (faalde één ke
 5. "Ongedaan" in de melding (gewone taak, herhaaltaak, reeks) meldt `taak.heropend` (`bouw.py` stap 15).
 6. `emitSync`: ook fouten van async luisteraars worden opgevangen.
 7. `log` geeft ook het vierde argument (`extra`) door.
+
+## Stap 22: V1 fase 3 — gedeelde lijst overal, laatste koppeling naar de bus
+
+- Dagring: "x open" telt ook wat van buiten op Mijn dag staat (zelfde regels als de Nu-kaart, `idxExternVandaag`).
+- Zoeken: nieuwe sectie "Uit andere modules" (SCRUM-kaarten ook zonder deadline, huishoudlijsten, HobbySkills-mijlpalen; checklists stonden er al). Een resultaat opent de module.
+- Chat: "Wat nu?", "Wat moet ik nu doen?", "Waar begin ik?" → "Nu: X. Daarna: Y en Z." met knop naar Mijn dag (uit `mdNu`, dus met dagniveau en de gedeelde lijst).
+- Bus: Vastleggen meldt `vastleggen.opgeslagen` {soort, id}; de werkwoordcheck (V12) luistert in plaats van `viOpslaanNu` te omwikkelen.
+- Wat bewust omwikkeld blijft: schermopbouw (vwVandaag, mdNuHTML, vwZoeken, openTaakBlad …). Dat is samenstellen van wat je ziet, geen gebeurtenis; de bus is voor "er is iets gebeurd".
+- Tests: `tests/items.test.mjs` (+2), `tests/items.e2e.cjs` (23 checks).

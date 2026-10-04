@@ -46,6 +46,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   });
   await wacht(500);
 
+  check("V1 fase 3: Dagring telt ook wat van buiten komt", await p.evaluate(() => /3 open/.test(document.querySelector(".fm-dr-sub").textContent)), await p.evaluate(() => document.querySelector(".fm-dr-sub").textContent));
   check("V1: SCRUM-kaart over de deadline staat bovenaan", (await p.locator(".md-nu h2").textContent()).includes("Productfoto's maken"));
   check("V1: met herkomst en deadline", (await p.locator(".md-nu .idx-bron").textContent()).includes("Webshop"));
   check("V1: daarna ook taak en huishouden", await p.evaluate(() => { const t = document.querySelector(".md-daarna").textContent; return /Formulier invullen/.test(t) && /Badkamer schoonmaken/.test(t); }));
@@ -88,6 +89,16 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
     teken();
   }); await wacht(400);
   check("V1: kaart zonder klaar-kolom: alleen Openen", await p.evaluate(() => /Post schrijven/.test(document.querySelector(".md-nu h2").textContent) && !document.querySelector('.md-nu [data-idx="klaar"]') && !!document.querySelector('.md-nu [data-idx="open"]')));
+  // Zoeken
+  await p.evaluate(() => { V.zoek = "webshop"; ga("zoeken"); }); await wacht(400);
+  check("V1 fase 3: zoeken vindt SCRUM-kaarten (ook zonder deadline)", await p.evaluate(() => { const t = document.querySelector("#scherm").textContent; return /Uit andere modules/.test(t) && /Later/.test(t); }));
+  await p.click('#scherm [data-idx="open"]'); await wacht(400);
+  check("V1 fase 3: resultaat opent de module", await p.evaluate(() => V.view === "sh"));
+  // Chat
+  await p.evaluate(async () => { await zetInst("dnNiveau", null); ga("vandaag"); nateOpen(); }); await wacht(400);
+  await p.fill("#nc-veld", "wat moet ik nu doen?"); await p.press("#nc-veld", "Enter"); await wacht(300);
+  check("V1 fase 3: chat antwoordt met wat er nu aan de beurt is", await p.evaluate(() => { const l = [...document.querySelectorAll(".nc-nate")].pop(); return /^Nate: Nu: /.test(l.textContent.trim()) || /Nu: /.test(l.textContent); }));
+  await p.evaluate(() => nateSluit && nateSluit()); await wacht(200);
   check("V1: alle open dingen uit alle modules (alleen lezen)", await p.evaluate(() => { const a = idxAlles(); return a.some(x => x.id === "sh:kaart2") && a.some(x => x.id === "hh:bad"); }));
 
   check("geen consolefouten", fouten.length === 0, fouten.slice(0, 3).join(" | "));

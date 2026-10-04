@@ -103,16 +103,17 @@ async function viOpslaanNu() {
   const tekst = V.vi.tekst.trim(); if (!tekst) return;
   const b = viBegrijp(tekst), soort = b.soort;
   if (!b.s.zeker && !V.vi.keuze) return;
-  let toastTekst = "", terug = null;
+  let toastTekst = "", terug = null, nieuw = { soort, id: null };
   if (soort === "taak") {
     const t = await maakTaakUitTekst(viReistijd(tekst).tekst); if (!t) { toast("Niets herkend"); return; }
+    nieuw.id = t.id;
     toastTekst = "Taak opgeslagen" + (t.datum ? " · " + datumLabel(t.datum) : ""); terug = () => openTaakBlad(t.id);
   } else if (soort === "afspraak") {
     const p = b.p, a = { id: uid(), titel: p.titel || tekst, soort: "gesprek", datum: p.datum || (p.tijd ? vandaagISO() : null), tijd: p.tijd || "", eindTijd: "",
       plek: "", personen: p.personen || [], voorbereiding: "", notities: "", uitkomst: "", reistijd: b.reistijd || 0, buffer: null,
       herhaal: p.herhaal || null, labels: p.labels || [], gemaakt: new Date().toISOString() };
     if (p.project) a.notities = "#" + p.project;
-    await bewaar("afspraken", a);
+    await bewaar("afspraken", a); nieuw.id = a.id;
     if (a.herhaal && typeof reeksNieuw === "function") await reeksNieuw("afspraken", a); await logGebeurtenis("afspraak", "Afspraak vastgelegd: " + a.titel, a.id).catch(() => {});
     toastTekst = "Afspraak opgeslagen" + (a.datum ? " · " + datumLabel(a.datum) : ""); terug = () => openAfspraakBlad(a.id);
   } else if (soort === "gedachte") {
@@ -128,6 +129,8 @@ async function viOpslaanNu() {
   V.vi = { tekst: "", keuze: null };
   tril(6); teken();
   toast(toastTekst, terug ? "Bewerken" : null, terug);
+  // Gebeurtenisbus (V1 fase 3): wie wil reageren op iets nieuws, luistert (bv. de werkwoordcheck).
+  if (typeof bus === "object") await bus.emit("vastleggen.opgeslagen", nieuw);
 }
 
 /* ---------- In Vastleggen, boven de lagen ---------- */
