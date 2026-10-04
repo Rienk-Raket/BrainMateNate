@@ -46,7 +46,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   });
   await wacht(500);
 
-  check("V1 fase 3: Dagring telt ook wat van buiten komt", await p.evaluate(() => /3 open/.test(document.querySelector(".fm-dr-sub").textContent)), await p.evaluate(() => document.querySelector(".fm-dr-sub").textContent));
+  check("V1 fase 3: Dagring telt ook wat van buiten komt", await p.evaluate(() => /^1 open/.test(document.querySelector(".fm-dr-sub").textContent) && /\+2 elders/.test(document.querySelector(".fm-dr-elders").textContent) && /2 open in andere modules/.test(document.querySelector("svg.fm-dr").getAttribute("aria-label"))), await p.evaluate(() => document.querySelector(".fm-dr-wrap svg").textContent));
   check("V1: SCRUM-kaart over de deadline staat bovenaan", (await p.locator(".md-nu h2").textContent()).includes("Productfoto's maken"));
   check("V1: met herkomst en deadline", (await p.locator(".md-nu .idx-bron").textContent()).includes("Webshop"));
   check("V1: daarna ook taak en huishouden", await p.evaluate(() => { const t = document.querySelector(".md-daarna").textContent; return /Formulier invullen/.test(t) && /Badkamer schoonmaken/.test(t); }));

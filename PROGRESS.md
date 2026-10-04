@@ -316,3 +316,4 @@ Test: frictie-werkwoord wacht op het blad i.p.v. een vaste tijd (faalde één ke
 - Bus: Vastleggen meldt `vastleggen.opgeslagen` {soort, id}; de werkwoordcheck (V12) luistert in plaats van `viOpslaanNu` te omwikkelen.
 - Wat bewust omwikkeld blijft: schermopbouw (vwVandaag, mdNuHTML, vwZoeken, openTaakBlad …). Dat is samenstellen van wat je ziet, geen gebeurtenis; de bus is voor "er is iets gebeurd".
 - Tests: `tests/items.test.mjs` (+2), `tests/items.e2e.cjs` (23 checks).
+- Na review: "wat nu?" alleen bij een echte vraag over nu (niet bij een gedachte, hulpvraag, andere dag of "wat kan ik doen tegen …"); Dagring toont "+N elders" apart van open · % (ook in de schermlezertekst); zoeken volgt het werkfilter, toont mijlpalen niet dubbel en zoekt huishouden alleen op de naam; titels zonder losse leestekens in Nate's antwoord; nood herkent ook "wil dood" en "wil niet meer leven".

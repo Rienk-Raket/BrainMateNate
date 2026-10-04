@@ -65,18 +65,21 @@ function idxSamenvoegen(lijst, extern, vandaag, nuMin, minVan) {
 function idxZoek(items, q, max) {
   const n = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const w = n(q).trim(); if (!w) return [];
-  return (items || []).filter(i => n(i.titel + " " + ((i.extern && i.extern.label) || "")).includes(w)).slice(0, max || 20);
+  return (items || []).filter(i => n(i.titel + " " + ((i.extern && i.extern.soort !== "huishouden" && i.extern.label) || "")).includes(w)).slice(0, max || 20);
 }
 /** Vraagt iemand in de chat wat er nu aan de beurt is? */
 function idxIsWatNu(tekst) {
   const t = String(tekst || "").toLowerCase();
-  return /\bwat (nu|eerst)\b|\bwat (moet|kan|zal) ik\b.*\b(nu|doen|eerst|vandaag)\b|\bwat staat er\b.*\b(open|nu|vandaag)\b|\bwaar (begin|start) ik\b/.test(t);
+  // Een andere dag ("morgen", "vrijdag", "12-10") is geen vraag over nu.
+  if (/\b(morgen|overmorgen|straks|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag|weekend|volgende|\d{1,2}[-/.]\d{1,2})\b/.test(t)) return false;
+  return /\bwat (nu|eerst)\b|\bwat (moet|kan|zal) ik\b.*\b(nu|eerst)\b|\bwat (moet|kan|zal) ik( vandaag)?( nog)? doen\s*\??\s*$|\bwat staat er\b.*\b(open|nu)\b|\bwaar (begin|start) ik\b/.test(t);
 }
 /** Het antwoord: hooguit twee zinnen. */
 function idxNuZin(nu) {
   if (!nu || !nu.een) return "Er staat nu niets open. Rust is ook een plan.";
-  const daarna = (nu.twee || []).map(x => x.titel);
-  return `Nu: ${nu.een.titel}.` + (daarna.length ? ` Daarna: ${daarna.join(" en ")}.` : "");
+  const kaal = x => String(x.titel || "").trim().replace(/[.?!…\s]+$/, "").replace(/[.?!]+(\s)/g, "$1");
+  const daarna = (nu.twee || []).map(kaal);
+  return `Nu: ${kaal(nu.een)}.` + (daarna.length ? ` Daarna: ${daarna.join(" en ")}.` : "");
 }
 /* NATE-ITEMS-EINDE */
 
@@ -167,7 +170,10 @@ if (typeof vsVoorstellen === "function") {
   const _ring = fmDagringHTML;
   fmDagringHTML = function () {
     const h = _ring.apply(this, arguments), n = idxExternVandaag().length;
-    return n ? h.replace(/(class="fm-dr-sub">)(\d+) open/, (m, a, x) => `${a}${+x + n} open`) : h;
+    if (!n) return h;
+    // Apart van "open · %": dat zijn de taken van de ring zelf; dit staat in andere modules.
+    return h.replace(/(aria-label="Je dag als klok: [^"]*)"/, `$1, en ${n} open in andere modules"`)
+      .replace(/<text x="([\d.]+)" y="([\d.]+)" class="fm-dr-sub">[^<]*<\/text>/, (m, x, y) => `${m}<text x="${x}" y="${+y + 14}" class="fm-dr-sub fm-dr-elders">+${n} elders</text>`);
   };
 }
 
@@ -188,9 +194,9 @@ const IDX_SOORTNAAM = { shkaart: "SCRUM-kaart", huishouden: "Huishouden", checkl
   const _zoek = vwZoeken;
   vwZoeken = function () {
     let h = _zoek.apply(this, arguments);
-    if (!V.zoek || !V.zoek.trim()) return h;
-    // Checklists staan al in de gewone resultaten; hier de rest.
-    const r = idxZoek(idxZoekItems().filter(i => i.extern.soort !== "checklist"), V.zoek, 20);
+    if (!V.zoek || !V.zoek.trim() || (typeof werkStand === "function" && werkStand() === "alleen")) return h;
+    // Checklists en mijlpalen staan al in de gewone resultaten; hier de rest.
+    const r = idxZoek(idxZoekItems().filter(i => !["checklist", "mijlpaal"].includes(i.extern.soort)), V.zoek, 20);
     if (r.length) h += sectie("Uit andere modules", r.length) + `<div class="card">${r.map(i => `<button class="rijknop" data-idx="open" data-id="${esc(i.id)}">
       <span class="nm"><b>${esc(i.titel)}</b><span class="klein" style="display:block">${esc(IDX_SOORTNAAM[i.extern.soort] || "")}${i.extern.label ? " · " + esc(i.extern.label) : ""}</span></span>${ico("pijlr", "width:16px;height:16px;color:var(--faint)")}</button>`).join("")}</div>`;
     return h;
@@ -201,7 +207,8 @@ const IDX_SOORTNAAM = { shkaart: "SCRUM-kaart", huishouden: "Huishouden", checkl
 if (typeof ncAntwoord === "function") {
   const _antw = ncAntwoord;
   ncAntwoord = function (r) {
-    if (r && r.uitkomst !== "nood" && idxIsWatNu(V.ncLaatste))
+    // Niet bij nood, een gedachte om vast te houden of een vraag om hulp (die hebben een eigen antwoord).
+    if (r && !["nood", "gedachte"].includes(r.uitkomst) && r.soort !== "hulp" && idxIsWatNu(V.ncLaatste))
       return { tekst: idxNuZin(mdNu()), knoppen: `<button type="button" class="primair" data-nate="ga" data-view="vandaag">Naar Mijn dag</button>` };
     return _antw.apply(this, arguments);
   };

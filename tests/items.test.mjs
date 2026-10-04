@@ -74,7 +74,11 @@ test("zoeken: titel of herkomst, zonder accenten", () => {
 
 test("chat: 'wat nu?' herkennen, en kort antwoorden", () => {
   for (const t of ["Wat nu?", "wat moet ik nu doen", "Wat staat er vandaag open?", "waar begin ik"]) assert.equal(I.idxIsWatNu(t), true, t);
-  for (const t of ["waar staat mijn dagboek", "wat kost een tandarts", "open de mindmap"]) assert.equal(I.idxIsWatNu(t), false, t);
+  for (const t of ["waar staat mijn dagboek", "wat kost een tandarts", "open de mindmap", "wat kan ik doen tegen stress", "wat staat er vandaag in mijn agenda", "wat kan ik vandaag koken", "wat moet ik morgen doen", "wat moet ik vrijdag nu regelen"]) assert.equal(I.idxIsWatNu(t), false, t);
+  for (const t of ["wat moet ik doen?", "wat kan ik vandaag nog doen", "wat eerst"]) assert.equal(I.idxIsWatNu(t), true, t);
+  assert.equal(I.idxNuZin({ een: { titel: "Bel mam?" }, twee: [{ titel: "Dr. Jansen mailen!" }] }), "Nu: Bel mam. Daarna: Dr Jansen mailen.");
+  // Huishoudlijsten: zoeken op de naam, niet op de statustekst.
+  assert.equal(I.idxZoek([{ titel: "Badkamer", extern: { soort: "huishouden", label: "10 dagen geleden" } }], "dagen").length, 0);
   assert.equal(I.idxNuZin({ een: { titel: "Logo" }, twee: [{ titel: "Was" }, { titel: "Mail" }] }), "Nu: Logo. Daarna: Was en Mail.");
   assert.match(I.idxNuZin({ een: null }), /niets open/);
   for (const t of [I.idxNuZin({ een: { titel: "A" }, twee: [{ titel: "B" }] }), I.idxNuZin({ een: null })]) assert.ok((t.match(/[.?!](\s|$)/g) || []).length <= 2);
