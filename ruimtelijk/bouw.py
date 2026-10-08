@@ -2,7 +2,7 @@
 """Bouwt de hoofd-index.html: de basis-app (basis/index.html) plus de ruimtelijke
 laag, HobbySkills en de koppelingen uit src/. Alles blijft één bestand zonder
 externe bronnen. Gebruik: python3 ruimtelijk/bouw.py [pad-naar-basis-index.html]"""
-import base64, json, pathlib, sys
+import base64, json, pathlib, re, sys
 
 HIER = pathlib.Path(__file__).resolve().parent
 SRC = HIER / "src"
@@ -59,6 +59,7 @@ vervang('shles: (typeof vwShLes === "function" ? vwShLes : vwStart)',
         '    ruimtes: (typeof vwRuimtes === "function" ? vwRuimtes : vwStart),\n'
         '    aanpak: (typeof vwAanpak === "function" ? vwAanpak : vwStart),\n'
         '    weekreview: (typeof vwWeekreview === "function" ? vwWeekreview : vwStart),\n'
+        '    morgen: (typeof vwMorgen === "function" ? vwMorgen : vwStart),\n'
         '    keuzedilemma: (typeof vwKeuzeDilemma === "function" ? vwKeuzeDilemma : vwStart),\n'
         '    keuzetheorie: (typeof vwKeuzeTheorie === "function" ? vwKeuzeTheorie : vwStart),\n'
         '    ontwerp: (typeof vwOntwerp === "function" ? vwOntwerp : vwStart)')
@@ -176,7 +177,7 @@ ILL_TB = ('<symbol id="ill-toolbox" viewBox="0 0 100 80"><g fill="none" stroke="
 vervang('<symbol id="ill-persoonlijk"', ILL + '\n' + ILL_WL + '\n' + ILL_ANKER + '\n' + ILL_VOORTGANG + '\n' + ILL_HUIS + '\n' + ILL_LJ + '\n' + ILL_KM + '\n' + ILL_TB + '\n' + BEZEM + '\n' + EXTRA_ICONEN + '\n<symbol id="ill-persoonlijk"')
 
 # 5. Stijl: achteraan in het bestaande <style>-blok.
-css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n\n" + lees("nate.css") + "\n\n" + lees("kennismaking.css") + "\n\n" + lees("mijn-dag.css") + "\n\n" + lees("navigatie.css") + "\n\n" + lees("nate-chat.css") + "\n\n" + lees("ik-loop-vast.css") + "\n\n" + lees("terugplannen.css") + "\n\n" + lees("een-invoer.css") + "\n\n" + lees("mijn-aanpak.css") + "\n\n" + lees("ruimtes-clusters.css") + "\n\n" + lees("leesbaar.css") + "\n\n" + lees("dagniveau-herstel.css") + "\n\n" + lees("kleine-verbeteringen.css") + "\n\n" + lees("duur-review.css") + "\n\n" + lees("frictie-werkwoord.css") + "\n"
+css = "\n\n" + lees("ruimte.css") + "\n\n" + lees("ruimte-data.css") + "\n\n" + lees("ontwerp.css") + "\n\n" + lees("hobbyskills.css") + "\n\n" + lees("sh-tabs.css") + "\n\n" + lees("eigen-categorieen.css") + "\n\n" + lees("fin-vast.css") + "\n\n" + lees("wishlist.css") + "\n\n" + lees("nieuw-rail.css") + "\n\n" + lees("mm-export.css") + "\n\n" + lees("retro.css").replace("__PIXELFONT__", base64.b64encode((HIER / "fonts" / "press-start-2p.woff2").read_bytes()).decode()) + "\n\n" + lees("incasso-bellen.css") + "\n\n" + lees("nieuw-overzicht.css") + "\n\n" + lees("sh-ideeen.css") + "\n\n" + lees("anker.css") + "\n\n" + lees("voortgang.css") + "\n\n" + lees("huishouden.css") + "\n\n" + lees("verweven.css") + "\n\n" + lees("lijstjes.css") + "\n\n" + lees("keuzemachine.css") + "\n\n" + lees("nieuw-lagen.css") + "\n\n" + lees("nate.css") + "\n\n" + lees("kennismaking.css") + "\n\n" + lees("mijn-dag.css") + "\n\n" + lees("navigatie.css") + "\n\n" + lees("nate-chat.css") + "\n\n" + lees("ik-loop-vast.css") + "\n\n" + lees("terugplannen.css") + "\n\n" + lees("een-invoer.css") + "\n\n" + lees("mijn-aanpak.css") + "\n\n" + lees("ruimtes-clusters.css") + "\n\n" + lees("leesbaar.css") + "\n\n" + lees("dagniveau-herstel.css") + "\n\n" + lees("kleine-verbeteringen.css") + "\n\n" + lees("duur-review.css") + "\n\n" + lees("frictie-werkwoord.css") + "\n\n" + lees("inclusief.css") + "\n"
 vervang('</style>\n</head>', css + '</style>\n</head>')
 
 # 6. Scripts: vlak vóór het blok dat start() aanroept.
@@ -204,6 +205,18 @@ for d in adhd["domeinen"]:
     assert isinstance(d.get("subthemas"), list) and d["subthemas"], f"domein {d['id']} mist 'subthemas'"
 NATE_SVG = HIER.parent / "assets" / "nate" / "nate.svg"
 kennis_js += "\nconst NATE_ADHD = " + json.dumps(adhd, ensure_ascii=False).replace("</", "<\\/") + ";"
+# 6b2. Aanvulling op de kennisbasis (V15, concept): zelfde vorm, eigen bestand.
+AANVULLING = json.loads((HIER.parent / "kennis" / "aanvulling.json").read_text(encoding="utf-8"))
+assert AANVULLING["meta"].get("status") == "concept" or AANVULLING["meta"].get("status") == "nagekeken", "aanvulling: status concept of nagekeken"
+for d in AANVULLING["domeinen"]:
+    for veld in ("id", "naam", "theorie", "interventies", "minimaleInterventie", "appAdvies", "subthemas", "waaromKort", "nate", "opschalen"):
+        assert veld in d, f"aanvulling: domein {d.get('id')} mist '{veld}'"
+    assert d["id"] not in {x["id"] for x in adhd["domeinen"]}, f"aanvulling: domein {d['id']} bestaat al"
+    for i in d["interventies"]:
+        assert i["bewijs"] in adhd["bewijsniveaus"], f"aanvulling: onbekend bewijsniveau bij {d['id']}"
+    for stand, zin in d["nate"].items():
+        assert len(re.findall(r"[.?!](\s|$)", zin)) <= 2 and zin.count("!") <= 1 and not re.search(r"\bmoet", zin, re.I), f"aanvulling: Nate-zin {d['id']}/{stand} past niet bij Nate's stem"
+kennis_js += "\nconst NATE_AANVULLING = " + json.dumps(AANVULLING, ensure_ascii=False).replace("</", "<\\/") + ";"
 kennis_js += "\nconst NATE_SVG_DATA = " + json.dumps("data:image/svg+xml;base64," + base64.b64encode(NATE_SVG.read_bytes()).decode()) + ";"
 # 6c. Kennismaking: kennis/vragenbank.json en kennis/scoreweging.json komen letterlijk in de app.
 #     We controleren de vorm, zodat een kapotte kopie de bouw stopt in plaats van de app.
@@ -224,7 +237,7 @@ for cl in WEGING["pattern_clusters"]:
     assert abs(sum(cl["dimension_weights"].values()) - 1) < 1e-9, f"clustergewichten {cl['cluster_id']} tellen niet op tot 1"
 assert len(WEGING["pattern_clusters"]) == 7 and len(WEGING["context_prompts"]) == 12, "7 clusters en 12 contextvragen verwacht"
 SUBTHEMAS = {q["subtheme_id"] for q in VRAGEN["questions"] if q["assessment_part"] == "A"}
-for d in adhd["domeinen"]:
+for d in adhd["domeinen"] + AANVULLING["domeinen"]:
     for sid in d["subthemas"]:
         assert sid in SUBTHEMAS, f"domein {d['id']}: onbekend subthema {sid}"
 # 6d. Chat met Nate (stap 6): kennis/intenties.json. Elke bestemming wijst naar een scherm of actie.
@@ -240,7 +253,7 @@ assert "113" in INTENTIES["nood"]["antwoord"], "nood-antwoord noemt 113"
 kennis_js += "\nconst NATE_INTENTIES = " + json.dumps(INTENTIES, ensure_ascii=False).replace("</", "<\\/") + ";"
 kennis_js += "\nconst NATE_VRAGENBANK = " + json.dumps(VRAGEN, ensure_ascii=False).replace("</", "<\\/") + ";"
 kennis_js += "\nconst NATE_SCOREWEGING = " + json.dumps(WEGING, ensure_ascii=False).replace("</", "<\\/") + ";"
-blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js", "kennismaking.js", "nate-tips.js", "mijn-dag.js", "navigatie.js", "nate-chat.js", "bus.js", "ik-loop-vast.js", "terugplannen.js", "een-invoer.js", "mijn-aanpak.js", "ruimtes-clusters.js", "dagniveau.js", "herstel.js", "kleine-verbeteringen.js", "duur.js", "weekreview.js", "impulsfrictie.js", "werkwoord.js", "items.js"))
+blokken = f"<script>\n\"use strict\";\n// Kennisbanken (gegenereerd uit kennis/huishouden.json en kennis/adhd-theorie.json, niet met de hand aanpassen)\n{kennis_js}\n</script>\n" + "".join(f"<script>\n{lees(naam)}\n</script>\n" for naam in ("sh-theorie.js", "sh-modellen.js", "sh-scrum.js", "sh-dashboard.js", "ruimte.js", "ruimte-data.js", "hobbyskills.js", "hs-sjablonen.js", "mm-bron.js", "koppelingen.js", "eigen-categorieen.js", "fin-vast.js", "wishlist.js", "sh-ideeen.js", "anker-data.js", "anker-speler.js", "anker-schermen.js", "anker-koppelingen.js", "voortgang-data.js", "voortgang.js", "profiel.js", "huishouden-data.js", "huishouden.js", "huishouden-sessie.js", "verweven.js", "lijstjes.js", "keuzemachine.js", "nieuw-rail.js", "nieuw-overzicht.js", "nieuw-analyse.js", "nieuw-lagen.js", "mm-export.js", "ontwerp.js", "retro.js", "incasso-bellen.js", "tijdlijn-rust.js", "nate.js", "nate-score.js", "kennismaking.js", "nate-tips.js", "mijn-dag.js", "navigatie.js", "nate-chat.js", "bus.js", "ik-loop-vast.js", "terugplannen.js", "een-invoer.js", "mijn-aanpak.js", "ruimtes-clusters.js", "dagniveau.js", "herstel.js", "kleine-verbeteringen.js", "duur.js", "weekreview.js", "impulsfrictie.js", "werkwoord.js", "items.js", "voorspelbaar.js", "lezen.js", "kennis-aanvulling.js"))
 html = html[:j] + blokken + html[j:]
 
 # 8. Merk: Brain-Mate Nate.

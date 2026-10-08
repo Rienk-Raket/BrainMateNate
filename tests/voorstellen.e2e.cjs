@@ -98,7 +98,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("V6: keten op het afspraakscherm (3 momenten + begin)", await p.locator(".tp-keten li").count() === 4);
   await p.screenshot({ path: path.join(UIT, "v6-01-afspraak.png") });
   await p.click('[data-tp="zet"]'); await wacht(350);
-  check("V6: eerste keer: uitleg en stappenplan", await p.locator("#blad.open .tp-recept").count() === 1);
+  check("V6: eerste keer: uitleg, stappenplan en 'Werkt het niet?'", await p.locator("#blad.open .tp-recept").count() === 2);
   check("V6: wekker staat standaard aan", (await p.getAttribute("#tp-wekker", "aria-pressed")) === "true");
   await p.click("#tp-recept summary, .tp-recept summary").catch(() => {});
   await p.screenshot({ path: path.join(UIT, "v6-02-uitleg.png") });

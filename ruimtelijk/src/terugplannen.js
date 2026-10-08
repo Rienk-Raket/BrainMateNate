@@ -147,6 +147,7 @@ function tpUitleg(id) {
   bladOpen("Alarmen via Opdrachten", `<p>Een app op je beginscherm kan geen wekker zetten als hij dicht is. De app Opdrachten kan dat wel, op je eigen iPhone.</p>
     <ol class="tp-stappen"><li>Maak één keer de opdracht <b>${esc(o.naam)}</b>. Het stappenplan staat hieronder.</li><li>Tik daarna bij een afspraak op <b>Alarmen op mijn iPhone zetten</b>.</li><li>Opdrachten maakt de herinneringen${o.wekker ? " en, op de dag zelf, een wekker voor vertrekken" : ""}.</li></ol>
     <details class="tp-recept"><summary>Stappenplan voor de opdracht</summary>${tpRecept(o.naam)}</details>
+    <details class="tp-recept"><summary>Werkt het niet?</summary>${TP_HULP}</details>
     <button type="button" class="tp-schakel" id="tp-wekker" aria-pressed="${o.wekker}"><span class="tekst"><b>Wekker voor vertrekken</b><small class="klein">Gaat ook af als je telefoon op stil staat.</small></span><span class="toggle" aria-hidden="true" aria-pressed="${o.wekker}"></span></button>
     <div class="veld"><label for="tp-naam">Naam van de opdracht</label><input class="invoer" id="tp-naam" value="${esc(o.naam)}" autocomplete="off"></div>
     <button class="knop breed rand" id="tp-test">Test: herinnering over 2 minuten</button>
@@ -166,6 +167,16 @@ function tpUitleg(id) {
   };
 }
 
+// Per symptoom één controle, in de volgorde waarin het misgaat (link → naam → invoer → datum → toestemming).
+const TP_HULP = `<ol class="tp-recept-lijst">
+  <li><b>Opdrachten opent niet.</b> Tik op de testknop en kies <b>Open</b> als je iPhone vraagt of Opdrachten mag openen. Staat Opdrachten niet meer op je iPhone, zet hem terug via de App Store.</li>
+  <li><b>Opdrachten opent, maar zegt dat de opdracht niet bestaat.</b> Gebruik letterlijk dezelfde naam, met hoofdletters en spaties. Kopieer de naam uit het veld hierboven en plak hem in Opdrachten.</li>
+  <li><b>De opdracht draait, maar er komt niets.</b> Zet als allereerste stap tijdelijk <b>Toon resultaat</b> (Show Result) met <i>Invoer van opdracht</i> en tik op de testknop.
+    <ul><li>Leeg venster: de invoer komt niet binnen. Open ⓘ, zet <b>Ontvang invoer van</b> op <b>Tekst</b>, en kies bij <b>Als er geen invoer is</b> voor <b>Ga door</b>.</li>
+    <li>Je ziet tekst die begint met <i>{"app":"BrainMateNate"</i>: de invoer werkt. Controleer dan stap 3 en 4: bij <b>Haal woordenboek op uit</b> staat <i>Invoer van opdracht</i>, en de sleutel heet precies <i>alarmen</i>.</li></ul></li>
+  <li><b>Wel een herinnering, maar op de verkeerde tijd of zonder melding.</b> Tik in de actie Voeg herinnering toe op <b>Waarschuw</b> en kies <b>Op een tijdstip</b> met <i>Wanneer</i>. Staat er een vaste datum, tik erop en kies de variabele <i>Wanneer</i>.</li>
+  <li><b>Opdrachten meldt dat hij geen toegang heeft.</b> Ga naar Instellingen → Opdrachten (of → Herinneringen) en sta de toegang toe, of verwijder de actie en voeg hem opnieuw toe.</li>
+</ol><p class="klein">Lukt het nog niet? Vertel welk punt het is; dan weet ik waar het misgaat.</p>`;
 const tpRecept = naam => `<ol class="tp-recept-lijst">
   <li>Open <b>Opdrachten</b>, tik op <b>+</b> en noem de opdracht <b>${esc(naam)}</b> (precies zo).</li>
   <li>Tik op <b>ⓘ</b> (details) en zet <b>Ontvang invoer van</b> aan, met als soort <b>Tekst</b> (Receive Text input).</li>

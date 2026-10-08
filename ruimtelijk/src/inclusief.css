@@ -1,0 +1,39 @@
+/* === Voorspelbaarheid (V13) === */
+.vb-veranderd { margin-bottom: 12px; border-left: 4px solid var(--accent); }
+.vb-veranderd ul { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 6px; }
+.vb-veranderd small { color: var(--muted); }
+.vb-label { display: inline-block; min-width: 58px; font-size: calc(12px * var(--t)); font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+.vb-gezien { min-height: 44px; }
+.vb-lijst { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.vb-item { display: grid; grid-template-columns: 92px 1fr; gap: 10px; }
+.vb-item time { font-weight: 700; font-variant-numeric: tabular-nums; }
+.vb-item span { display: flex; flex-direction: column; gap: 2px; }
+.vb-item small { color: var(--muted); }
+.vb-daarna { font-style: italic; }
+.vb-mensen { margin: 12px 0 0; font-weight: 600; }
+.vb-prikkels { margin-bottom: 12px; }
+.vb-rust { margin: 8px 0 4px; font-weight: 600; }
+.vb-knoppen { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.vb-knoppen .knop { min-height: 44px; }
+.vb-morgenkaart { margin-top: 12px; }
+.vb-kort { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 4px; }
+.vb-kort time { display: inline-block; min-width: 48px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.vb-kort small { color: var(--muted); }
+.vb-let { margin: 6px 0; font-weight: 700; color: var(--accent); }
+
+/* === Lezen (V14) === */
+.lz-lees { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin: 2px 0 0; padding: 0; vertical-align: middle;
+  border: 1px solid var(--line2, rgba(127,127,127,.35)); border-radius: 999px; background: var(--card); color: var(--accent); cursor: pointer; }
+.lz-lees[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.iv-waarom > p .lz-lees, .md-nu h2 .lz-lees { margin-left: 8px; }
+html[data-ruim="1"] body { line-height: 1.75; }
+html[data-ruim="1"] :is(p, li, small, label, .klein, summary, .nc-gesprek li) { letter-spacing: .035em; word-spacing: .14em; line-height: 1.75; }
+html[data-ruim="1"] p { margin-block: .6em; }
+
+/* === Nieuwe kennis (V15) === */
+.ka-lees { margin: 12px 0; }
+.ka-lees summary { min-height: 44px; display: flex; align-items: center; font-weight: 700; cursor: pointer; }
+.ka-domein { border-top: 1px solid var(--line, rgba(127,127,127,.2)); padding-top: 10px; margin-top: 10px; }
+.ka-domein h3 { margin: 0 0 6px; font-size: calc(17px * var(--t)); }
+.ka-domein ul { margin: 6px 0; padding-left: 18px; display: grid; gap: 6px; }
+.ka-bewijs { font-size: calc(12px * var(--t)); font-weight: 700; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 0 7px; }

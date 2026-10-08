@@ -21,6 +21,18 @@ Een wekker in Klok kent alleen een kloktijd, geen datum. Daarom zet Nate `wekker
 
 De namen van de acties kunnen per iOS-versie iets anders heten; zoek op het Engelse woord als het Nederlandse niet werkt.
 
+## Werkt het niet?
+
+Loop deze punten na, in deze volgorde:
+
+1. **Opdrachten opent niet.** Tik op de testknop en kies **Open** als je iPhone vraagt of Opdrachten mag openen.
+2. **Opdrachten zegt dat de opdracht niet bestaat.** Gebruik letterlijk dezelfde naam, met hoofdletters en spaties. Kopieer hem uit Nate.
+3. **De opdracht draait, maar er komt niets.** Zet als allereerste stap tijdelijk **Toon resultaat** (Show Result) met *Invoer van opdracht* en tik op de testknop.
+   - Leeg venster: de invoer komt niet binnen. Open ⓘ, zet **Ontvang invoer van** op **Tekst**, en kies bij **Als er geen invoer is** voor **Ga door**.
+   - Tekst die begint met `{"app":"BrainMateNate"`: de invoer werkt. Controleer stap 3 en 4: *Invoer van opdracht* bij **Haal woordenboek op uit**, en de sleutel heet precies `alarmen`.
+4. **Wel een herinnering, maar op de verkeerde tijd of zonder melding.** Tik in **Voeg herinnering toe** op **Waarschuw**, kies **Op een tijdstip** en de variabele *Wanneer* (niet een vaste datum).
+5. **Geen toegang.** Instellingen → Opdrachten (of → Herinneringen): toegang toestaan.
+
 ## Wat Nate doorgeeft
 
 ```json

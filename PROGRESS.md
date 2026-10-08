@@ -317,3 +317,29 @@ Test: frictie-werkwoord wacht op het blad i.p.v. een vaste tijd (faalde één ke
 - Wat bewust omwikkeld blijft: schermopbouw (vwVandaag, mdNuHTML, vwZoeken, openTaakBlad …). Dat is samenstellen van wat je ziet, geen gebeurtenis; de bus is voor "er is iets gebeurd".
 - Tests: `tests/items.test.mjs` (+2), `tests/items.e2e.cjs` (23 checks).
 - Na review: "wat nu?" alleen bij een echte vraag over nu (niet bij een gedachte, hulpvraag, andere dag of "wat kan ik doen tegen …"); Dagring toont "+N elders" apart van open · % (ook in de schermlezertekst); zoeken volgt het werkfilter, toont mijlpalen niet dubbel en zoekt huishouden alleen op de naam; titels zonder losse leestekens in Nate's antwoord; nood herkent ook "wil dood" en "wil niet meer leven".
+
+## Stap 23: V13–V15 inclusief ontwerp, en hulp bij Nate alarmen
+
+Alles staat in **Mijn aanpak** als schakelaar; Nate stelt voor bij het passende patroon, niets gaat vanzelf aan.
+
+**V13 Voorspelbaarheid en sensorische rust** (`voorspelbaar.js`, sectie 104; voorstel bij Vuurtoren, Batterij)
+- Scherm **Morgen in het kort** (`morgen`; ook via de chat: "wat komt er morgen"): per item tijd–eind, duur, plek, met wie en "Daarna: …".
+- **Wijzigingen bovenaan**: bij je eerste blik maakt de app een foto van de dag. Wat daarna nieuw, anders (tijd, duur, plek, titel) of weg is, staat bovenaan tot je op **Gezien** tikt. Op Mijn dag ook "Veranderd sinds gisteren".
+- 's Avonds (vanaf 16:00) een kaart Morgen in het kort op Mijn dag.
+- **Prikkels vandaag** (rustig, gewoon, veel) plus een teller voor momenten met mensen. Bij "veel" of vanaf drie keer mensen stelt Nate een **rustblok** van 20 minuten voor in het eerste vrije gat (taak met `rustblok: true`).
+- Vaste indeling en Minder beweging bestonden al (V2, V4).
+
+**V14 Lezen** (`lezen.js`, sectie 105; voorstel bij Vertaler)
+- **Voorlezen**: luidsprekerknop (44px) bij Nate's berichten, de chat, de Nu-kaart en elke "Waarom zeg je dit?". Spraak van het toestel (nl-NL), geen netwerk. Nog eens tikken stopt.
+- **Ruime tekst**: meer regel-, letter- en woordafstand (`html[data-ruim]`).
+- **Grotere tekst**: één schakelaar voor de bestaande tekstgrootte (terug naar je vorige keuze).
+- Geen dyslexielettertype (geen bewezen voordeel). Inspreken: het invoerveld wees al naar de microfoon van het toetsenbord.
+
+**V15 Kennisgaten** (`kennis/aanvulling.json`, `kennis-aanvulling.js`, sectie 106)
+- Zes domeinen in dezelfde vorm als de ADHD-kennisbasis: prikkels, voorspelbaarheid, communicatie, lezen, steun, werk en studie (subthema's A2.1, A3.1–A3.4, A1.4, A4.4 hebben nu ook tips).
+- Status **concept**: Nate gebruikt ze pas na de schakelaar "Nieuwe kennis (concept)". In Mijn aanpak is alles eerst te lezen, met bronnen. Bewijsniveaus voorzichtig (geen "direct"). Nakijken door een professional blijft het advies.
+- bouw.py controleert vorm, bewijsniveaus, subthema's en Nate's stem (≤2 zinnen, ≤1 "!", geen "moet").
+
+**Nate alarmen**: Kas meldde dat het niet werkt. In het blad en in `docs/opdracht-nate-alarmen.md` staat nu "Werkt het niet?": per symptoom één controle (link, naam, invoer met de stap Toon resultaat, tijdstip van de herinnering, toegang). Oorzaak nog onbekend; wacht op welk punt het is.
+
+Tests: `tests/inclusief.test.mjs` (6), `tests/inclusief.e2e.cjs` (30).

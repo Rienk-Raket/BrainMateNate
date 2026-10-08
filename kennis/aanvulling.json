@@ -1,0 +1,195 @@
+{
+  "meta": {
+    "titel": "Aanvulling op de kennisbasis: prikkels, voorspelbaarheid, communicatie, lezen, steun en werk",
+    "versie": "0.1",
+    "datum": "2026-10-08",
+    "status": "concept",
+    "uitleg": "Conceptvoorstel V15. Zes domeinen voor de patronen die de ADHD-kennisbasis niet dekte (Vuurtoren, Vertaler, Batterij). Zelfde vorm als adhd-theorie.json. Status concept: Nate gebruikt dit pas als Kas het aanzet in Mijn aanpak, en het wordt bij voorkeur eerst nagekeken door een professional. Het onderzoek waarschuwt voor het doortrekken van ADHD-bevindingen naar andere groepen; daarom zijn de bewijsniveaus voorzichtig.",
+    "geenDiagnose": "Dit is uitleg en zelfhulp, geen diagnose of behandeling."
+  },
+  "domeinen": [
+    {
+      "id": "prikkels",
+      "naam": "Prikkels en sensorische belasting",
+      "categorie": "aanvulling",
+      "modules": ["anker", "mijnDag", "checkin"],
+      "theorie": "Mensen verschillen in hoe sterk ze reageren op geluid, licht, aanraking, geur en drukte. Bij autisme en ADHD komen over- en ondergevoeligheid vaker voor. Prikkels stapelen zich op over de dag: wat 's ochtends lukt, kan 's middags te veel zijn. Overbelasting merk je vaak pas laat, aan prikkelbaarheid, moeheid of afsluiten.",
+      "interventies": [
+        { "naam": "Prikkels in kaart brengen", "uitleg": "Noteer een week welke situaties energie kosten en welke rust geven. Dan worden patronen zichtbaar.", "bewijs": "praktisch" },
+        { "naam": "Omgeving aanpassen", "uitleg": "Koptelefoon met ruisonderdrukking, gedimd licht, een vaste rustige plek, drukke plekken op rustige tijden. Richtlijnen voor autisme noemen aanpassingen van de omgeving.", "bewijs": "indirect" },
+        { "naam": "Rust vooraf plannen", "uitleg": "Een rustmoment na een drukke afspraak, niet pas als je leeg bent.", "bewijs": "praktisch" },
+        { "naam": "Vroege signalen en een als-dan-plan", "uitleg": "Spreek met jezelf af wat je doet bij het eerste signaal: 'Als het geluid te veel wordt, dan zet ik mijn koptelefoon op.'", "bewijs": "indirect" }
+      ],
+      "valkuilen": [
+        "Alles vermijden maakt je wereld klein. Het doel is doseren, niet wegblijven.",
+        "Speciale zintuiglijke programma's hebben weinig bewijs. Begin bij eenvoudige aanpassingen."
+      ],
+      "minimaleInterventie": "Plan na elke drukke afspraak twintig minuten zonder scherm en zonder mensen.",
+      "opschalen": "Overbelasting leidt vaak tot uitval of paniek, of je redt werk of school niet meer.",
+      "waaromKort": "Prikkels tellen op over de dag. Rust plannen voordat je leeg bent, werkt beter dan herstellen achteraf. Concept: nog niet nagekeken door een professional.",
+      "nate": {
+        "normaal": "Drukke dag gehad? Twintig minuten zonder scherm en zonder mensen is onderhoud, geen luxe.",
+        "zacht": "Plan na een drukke afspraak twintig minuten rust."
+      },
+      "appAdvies": [
+        "Prikkels vandaag kiezen op Mijn dag; bij 'veel' stelt Nate een rustblok voor.",
+        "Anker voor een korte landing na een druk moment."
+      ],
+      "subthemas": ["A2.1"]
+    },
+    {
+      "id": "voorspelbaarheid",
+      "naam": "Duidelijkheid en voorspelbaarheid",
+      "categorie": "aanvulling",
+      "modules": ["mijnDag", "planning", "afspraken"],
+      "theorie": "Onduidelijkheid kost veel denkwerk: wat gaat er gebeuren, hoe lang duurt het, wat wordt er van mij verwacht? Vooral bij autisme geeft voorspelbaarheid rust, en kan een onverwachte wijziging veel spanning geven. Een vaste structuur en op tijd weten wat er verandert, verlagen die spanning.",
+      "interventies": [
+        { "naam": "De dag vooraf doornemen", "uitleg": "'s Avonds of 's ochtends kort kijken wat er komt: tijd, duur, plek, met wie en wat daarna. Visuele dagschema's worden veel gebruikt in autismezorg; 'houd mensen op de hoogte als iets verandert' is een doel in de W3C-richtlijn voor cognitieve toegankelijkheid.", "bewijs": "indirect" },
+        { "naam": "Wijzigingen apart en op tijd", "uitleg": "Wat anders is dan gepland, apart en bovenaan. Liefst niet op het laatste moment.", "bewijs": "indirect" },
+        { "naam": "Om duidelijkheid vragen", "uitleg": "Vraag bij een afspraak naar duur, onderwerp en wat er van je verwacht wordt. Een korte bevestiging op schrift helpt.", "bewijs": "indirect" },
+        { "naam": "Vaste indeling", "uitleg": "Dezelfde volgorde en dezelfde plek voor dingen, in je dag en op je scherm.", "bewijs": "praktisch" }
+      ],
+      "valkuilen": [
+        "Alles willen vastleggen kan juist spanning geven. Houd ruimte voor 'nog onbekend'.",
+        "Een app die zichzelf steeds herschikt, werkt averechts."
+      ],
+      "minimaleInterventie": "Kijk 's avonds twee minuten naar morgen: wat, hoe laat, waar, en wat er veranderd is.",
+      "opschalen": "Veranderingen geven zoveel spanning dat je dagelijks leven vastloopt.",
+      "waaromKort": "Weten wat er komt, kost minder energie dan het onderweg ontdekken. Wijzigingen apart zien voorkomt verrassingen. Concept: nog niet nagekeken door een professional.",
+      "nate": {
+        "normaal": "Even naar morgen kijken? Twee minuten nu scheelt een verrassing straks.",
+        "zacht": "Kijk even wat er morgen komt."
+      },
+      "appAdvies": [
+        "Morgen in het kort, met wijzigingen bovenaan.",
+        "Vaste indeling in Ruimtes."
+      ],
+      "subthemas": ["A3.2"]
+    },
+    {
+      "id": "communicatie",
+      "naam": "Sociale communicatie en sociale energie",
+      "categorie": "aanvulling",
+      "modules": ["afspraken", "dagboek", "mijnDag"],
+      "theorie": "Een gesprek vraagt veel tegelijk: luisteren, signalen lezen, je beurt nemen en een antwoord bedenken. Bij autisme gaat dat vaker bewust in plaats van vanzelf; bij ADHD kunnen afdwalen of snel reageren meespelen. Misverstanden ontstaan van twee kanten, niet alleen bij jou. Contact met mensen kost energie, ook als het leuk is.",
+      "interventies": [
+        { "naam": "Voorbereiden met steekwoorden", "uitleg": "Bedenk vooraf wat je wilt zeggen of vragen. Een paar steekwoorden is genoeg.", "bewijs": "praktisch" },
+        { "naam": "Doorvragen en op schrift vragen", "uitleg": "'Bedoel je…?' of 'Wat verwacht je van mij?' is een gewone vraag. Vraag na afloop een korte samenvatting.", "bewijs": "indirect" },
+        { "naam": "Sociale energie doseren", "uitleg": "Niet te veel contactmomenten op één dag, en rust erna inplannen.", "bewijs": "praktisch" },
+        { "naam": "Kiezen hoe je communiceert", "uitleg": "Bellen, appen of mailen: kies wat voor jou het best werkt, waar dat kan.", "bewijs": "praktisch" }
+      ],
+      "valkuilen": [
+        "Een gesprek achteraf eindeloos naspelen kost energie zonder te helpen.",
+        "Je zo sterk aanpassen dat je jezelf kwijtraakt. Maskeren is geen doel."
+      ],
+      "minimaleInterventie": "Schrijf vóór een belangrijk gesprek drie steekwoorden op.",
+      "opschalen": "Eenzaamheid, veel conflicten of angst voor contact die blijft.",
+      "waaromKort": "Een gesprek kost minder energie als je vooraf weet wat je wilt zeggen en erna even kunt bijkomen. Concept: nog niet nagekeken door een professional.",
+      "nate": {
+        "normaal": "Belangrijk gesprek straks? Drie steekwoorden op papier, dan hoeft je hoofd het niet vast te houden.",
+        "zacht": "Schrijf drie steekwoorden op voor je gesprek."
+      },
+      "appAdvies": [
+        "Teller voor momenten met mensen op Mijn dag.",
+        "Notities bij een afspraak: steekwoorden vooraf, afspraken achteraf."
+      ],
+      "subthemas": ["A3.1", "A3.3"]
+    },
+    {
+      "id": "lezen",
+      "naam": "Lezen en informatie verwerken",
+      "categorie": "aanvulling",
+      "modules": ["checklists", "afspraken", "financieel"],
+      "theorie": "Lezen, spelling en het vasthouden van een volgorde kunnen veel moeite kosten, bijvoorbeeld bij dyslexie, en bij ADHD door aandacht en werkgeheugen. Lange teksten, kleine letters en veel tekst op één scherm maken het zwaarder. Leesmoeite zegt niets over intelligentie.",
+      "interventies": [
+        { "naam": "Voorlezen", "uitleg": "Laat teksten voorlezen met de stem van je telefoon, zodat horen en lezen samen gaan.", "bewijs": "indirect" },
+        { "naam": "Meer ruimte in de tekst", "uitleg": "Extra letter- en regelafstand hielp in onderzoek kinderen met dyslexie sneller en nauwkeuriger lezen (Zorzi e.a., 2012).", "bewijs": "indirect" },
+        { "naam": "Geen speciaal lettertype nodig", "uitleg": "Het dyslexielettertype OpenDyslexic gaf in onderzoek geen voordeel (Wery en Diliberto, 2017). Een gewoon, duidelijk lettertype volstaat.", "bewijs": "indirect" },
+        { "naam": "Kort en in stappen", "uitleg": "Een lange brief in stukken: eerst wat ze van je vragen en wanneer, daarna de rest.", "bewijs": "praktisch" },
+        { "naam": "Inspreken", "uitleg": "Spreek in met de microfoon van je toetsenbord in plaats van te typen.", "bewijs": "praktisch" }
+      ],
+      "valkuilen": [
+        "Belangrijke post laten liggen omdat lezen zwaar is. Vraag iemand om mee te lezen.",
+        "Jezelf lui of dom noemen. Leesmoeite is een kwestie van verwerking, niet van slimheid."
+      ],
+      "minimaleInterventie": "Zet Voorlezen aan en laat de volgende lange tekst voorlezen.",
+      "opschalen": "Lezen en schrijven blokkeren werk of school, of je mist belangrijke post.",
+      "waaromKort": "Horen en lezen tegelijk, en meer ruimte tussen de letters, maken een tekst lichter. Een speciaal lettertype helpt niet. Concept: nog niet nagekeken door een professional.",
+      "nate": {
+        "normaal": "Lange tekst? Laat hem voorlezen, dan doen je oren de helft van het werk.",
+        "zacht": "Laat lange teksten voorlezen."
+      },
+      "appAdvies": [
+        "Voorlezen, Ruime tekst en Grotere tekst in Mijn aanpak.",
+        "Inspreken in het invoerveld."
+      ],
+      "subthemas": ["A3.4"]
+    },
+    {
+      "id": "steun",
+      "naam": "Steun en samen doen",
+      "categorie": "aanvulling",
+      "modules": ["focus", "taken", "dagboek"],
+      "theorie": "Beginnen en volhouden is makkelijker als iemand meekijkt of meedoet. Structuur van buiten, zoals een afspraak met iemand, een vast moment of iemand die vraagt hoe het ging, neemt een deel van het zelf-starten over. Steun vragen is een hulpmiddel, net als een agenda.",
+      "interventies": [
+        { "naam": "Uitleg en begeleiding", "uitleg": "Psycho-educatie hoort bij de behandeling van ADHD in de Nederlandse zorgstandaard. Coaching wordt vaak aangeboden; het onderzoek daarnaar is nog klein.", "bewijs": "indirect" },
+        { "naam": "Samen werken", "uitleg": "Werk naast iemand aan je eigen klus, in het echt of via video (body doubling).", "bewijs": "praktisch" },
+        { "naam": "Een vast check-in moment", "uitleg": "Spreek een vast moment af waarop iemand vraagt hoe het ging.", "bewijs": "praktisch" },
+        { "naam": "Hulp klein vragen", "uitleg": "Vraag om één concrete handeling: 'Wil je naast me zitten terwijl ik die brief open?'", "bewijs": "praktisch" }
+      ],
+      "valkuilen": [
+        "Steun die controle wordt, werkt averechts. Jij houdt de regie.",
+        "Alleen op anderen leunen maakt kwetsbaar als zij er niet zijn. Bouw ook eigen systemen."
+      ],
+      "minimaleInterventie": "Kies één klus en vraag iemand om twintig minuten naast je te zitten.",
+      "opschalen": "Het lukt al langere tijd niet alleen. Vraag je huisarts naar begeleiding.",
+      "waaromKort": "Iemand die meekijkt of meedoet, neemt een deel van het zelf-starten over. Concept: nog niet nagekeken door een professional.",
+      "nate": {
+        "normaal": "Lastige klus? Vraag iemand om twintig minuten naast je te zitten, via video kan ook.",
+        "zacht": "Vraag iemand om naast je te zitten bij een lastige klus."
+      },
+      "appAdvies": [
+        "Focus-timer als samenwerkblok.",
+        "Weekreview als vast check-in moment."
+      ],
+      "subthemas": ["A1.4", "A4.4"]
+    },
+    {
+      "id": "werk-studie",
+      "naam": "Aanpassingen op werk en studie, en maskeren",
+      "categorie": "aanvulling",
+      "modules": ["focus", "planning", "dagboek"],
+      "theorie": "Veel mensen passen zich de hele dag aan om 'gewoon' over te komen: maskeren. Dat kost energie die niemand ziet, en hangt in onderzoek samen met uitputting en somberheid (vooral bij autisme onderzocht, bv. Hull e.a., 2017). Aanpassingen op werk of studie, zoals een rustige plek, opdrachten op schrift en flexibele tijden, kunnen veel schelen. In Nederland heb je recht op doeltreffende aanpassingen bij een handicap of chronische ziekte (Wgbh/cz).",
+      "interventies": [
+        { "naam": "Redelijke aanpassingen", "uitleg": "Rustige werkplek, koptelefoon, opdrachten op schrift, vaste overlegmomenten, flexibele tijden. Richtlijnen voor autisme noemen aanpassingen op het werk.", "bewijs": "indirect" },
+        { "naam": "Zelf kiezen wat je deelt", "uitleg": "Je hoeft geen diagnose te noemen om om een aanpassing te vragen. Beschrijf wat je nodig hebt.", "bewijs": "praktisch" },
+        { "naam": "Herstel na werk", "uitleg": "Plan na een dag vol aanpassen een moment waarop je niets hoeft.", "bewijs": "praktisch" },
+        { "naam": "Meedenkers", "uitleg": "Een bedrijfsarts, studentendecaan of jobcoach kan meedenken over aanpassingen.", "bewijs": "praktisch" }
+      ],
+      "valkuilen": [
+        "Doorgaan tot je uitvalt. Let op vroege signalen van uitputting.",
+        "Denken dat je een aanpassing eerst verdient door harder te werken."
+      ],
+      "minimaleInterventie": "Schrijf één aanpassing op die je werk of studie lichter zou maken.",
+      "opschalen": "Uitputting, vaak ziek of dreigende uitval. Praat met je huisarts of bedrijfsarts.",
+      "waaromKort": "Je de hele dag aanpassen kost energie die je niet ziet. Een kleine aanpassing op werk of studie kan veel schelen. Concept: nog niet nagekeken door een professional.",
+      "nate": {
+        "normaal": "Welke ene aanpassing zou je werkdag lichter maken? Opschrijven is al stap één.",
+        "zacht": "Schrijf één aanpassing op die je werk lichter maakt."
+      },
+      "appAdvies": [
+        "Prikkels en rustblok op werkdagen.",
+        "Dagboek om je energie na werk te noteren."
+      ],
+      "subthemas": ["A4.4"]
+    }
+  ],
+  "bronnen": [
+    { "tekst": "NICE CG142: Autism spectrum disorder in adults: diagnosis and management", "url": "https://www.nice.org.uk/guidance/cg142" },
+    { "tekst": "W3C: Making Content Usable for People with Cognitive and Learning Disabilities (COGA)", "url": "https://www.w3.org/TR/coga-usable/" },
+    { "tekst": "Zorzi e.a. (2012). Extra-large letter spacing improves reading in dyslexia. PNAS 109(28)." },
+    { "tekst": "Wery en Diliberto (2017). The effect of a specialized dyslexia font, OpenDyslexic, on reading rate and accuracy. Annals of Dyslexia 67." },
+    { "tekst": "Hull e.a. (2017). 'Putting on my best normal': social camouflaging in adults with autism spectrum conditions. J Autism Dev Disord 47." },
+    { "tekst": "Samenvatting GGZ Zorgstandaard ADHD", "url": "https://www.zorginzicht.nl/binaries/content/assets/zorginzicht/kwaliteitsinstrumenten/samenvatting-ggz-zorgstandaard-adhd.pdf" }
+  ]
+}
