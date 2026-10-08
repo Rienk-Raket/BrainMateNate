@@ -43,11 +43,24 @@ test("Wijzigingen: nieuw, anders en weg; zonder foto niets", () => {
   assert.equal(K.vbVerschil(foto, plek).anders.length, 1);
 });
 
+test("Review: af of doorgeschoven is niet 'weg'; afspraak zonder eind is een uur bezet; 'was zonder tijd'", () => {
+  const foto = K.vbFoto(K.vbDag([K.vbRegel(it("a", "Boodschappen", "09:00", { soort: "taak" })), K.vbRegel(it("b", "Lunch", "12:30"))]));
+  const nu = K.vbDag([K.vbRegel(it("b", "Lunch", "12:30"))]);
+  assert.equal(K.vbVerschil(foto, nu).weg.length, 1);
+  assert.equal(K.vbVerschil(foto, nu, k => k === "taak:a").weg.length, 0);
+  // Afvinken verandert het kenmerk niet.
+  assert.equal(K.vbAantalVerschil(K.vbVerschil(foto, K.vbDag([K.vbRegel(it("a", "Boodschappen", "09:00", { soort: "taak", af: true })), K.vbRegel(it("b", "Lunch", "12:30"))]))), 0);
+  const dag = K.vbDag([K.vbRegel(it("o", "Overleg", "12:00")), K.vbRegel(it("p", "P", "13:30"))]);
+  assert.equal(K.vbHHMM(K.vbVrijBlok(dag, 12 * 60, 20)), "13:00");   // niet midden in het overleg
+  const zonder = K.vbFoto([K.vbRegel(it("z", "Bellen", ""))]);
+  assert.equal(K.vbVerschil(zonder, [K.vbRegel(it("z", "Bellen", "10:00"))]).anders[0].was, "");
+});
+
 test("Rustblok: eerste vrije twintig minuten, of null als de dag vol is", () => {
   const dag = K.vbDag([K.vbRegel(it("a", "A", "10:00", { eind: "11:00" })), K.vbRegel(it("b", "B", "11:10", { eind: "12:00" })), K.vbRegel(it("c", "C", "12:30"))]);
   assert.equal(K.vbHHMM(K.vbVrijBlok(dag, 9 * 60 + 50, 20)), "12:00");   // 9:50–10:00 te kort, 11:00–11:10 te kort
   assert.equal(K.vbHHMM(K.vbVrijBlok(dag, 8 * 60, 20)), "08:00");
-  assert.equal(K.vbHHMM(K.vbVrijBlok(dag, 12 * 60 + 15, 20)), "13:00");  // C zonder eind telt als 30 minuten
+  assert.equal(K.vbHHMM(K.vbVrijBlok(dag, 12 * 60 + 15, 20)), "13:30");  // afspraak C zonder eind telt als een uur
   assert.equal(K.vbVrijBlok(dag, 21 * 60 + 50, 20), null);
   assert.equal(K.vbRustNodig("veel", 0), true);
   assert.equal(K.vbRustNodig("gewoon", 3), true);

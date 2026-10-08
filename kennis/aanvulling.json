@@ -44,7 +44,7 @@
       "modules": ["mijnDag", "planning", "afspraken"],
       "theorie": "Onduidelijkheid kost veel denkwerk: wat gaat er gebeuren, hoe lang duurt het, wat wordt er van mij verwacht? Vooral bij autisme geeft voorspelbaarheid rust, en kan een onverwachte wijziging veel spanning geven. Een vaste structuur en op tijd weten wat er verandert, verlagen die spanning.",
       "interventies": [
-        { "naam": "De dag vooraf doornemen", "uitleg": "'s Avonds of 's ochtends kort kijken wat er komt: tijd, duur, plek, met wie en wat daarna. Visuele dagschema's worden veel gebruikt in autismezorg; 'houd mensen op de hoogte als iets verandert' is een doel in de W3C-richtlijn voor cognitieve toegankelijkheid.", "bewijs": "indirect" },
+        { "naam": "De dag vooraf doornemen", "uitleg": "'s Avonds of 's ochtends kort kijken wat er komt: tijd, duur, plek, met wie en wat daarna. Visuele dagschema's worden veel gebruikt in autismezorg; de W3C-richtlijn voor cognitieve toegankelijkheid vraagt om duidelijk te maken wat er verandert.", "bewijs": "indirect" },
         { "naam": "Wijzigingen apart en op tijd", "uitleg": "Wat anders is dan gepland, apart en bovenaan. Liefst niet op het laatste moment.", "bewijs": "indirect" },
         { "naam": "Om duidelijkheid vragen", "uitleg": "Vraag bij een afspraak naar duur, onderwerp en wat er van je verwacht wordt. Een korte bevestiging op schrift helpt.", "bewijs": "indirect" },
         { "naam": "Vaste indeling", "uitleg": "Dezelfde volgorde en dezelfde plek voor dingen, in je dag en op je scherm.", "bewijs": "praktisch" }
@@ -103,7 +103,7 @@
       "theorie": "Lezen, spelling en het vasthouden van een volgorde kunnen veel moeite kosten, bijvoorbeeld bij dyslexie, en bij ADHD door aandacht en werkgeheugen. Lange teksten, kleine letters en veel tekst op één scherm maken het zwaarder. Leesmoeite zegt niets over intelligentie.",
       "interventies": [
         { "naam": "Voorlezen", "uitleg": "Laat teksten voorlezen met de stem van je telefoon, zodat horen en lezen samen gaan.", "bewijs": "indirect" },
-        { "naam": "Meer ruimte in de tekst", "uitleg": "Extra letter- en regelafstand hielp in onderzoek kinderen met dyslexie sneller en nauwkeuriger lezen (Zorzi e.a., 2012).", "bewijs": "indirect" },
+        { "naam": "Meer ruimte in de tekst", "uitleg": "Grote extra letterafstand hielp in één onderzoek kinderen met dyslexie sneller en nauwkeuriger lezen (Zorzi e.a., 2012); later onderzoek is wisselend. Meer ruimte schaadt niet, dus probeer wat prettig leest.", "bewijs": "indirect" },
         { "naam": "Geen speciaal lettertype nodig", "uitleg": "Het dyslexielettertype OpenDyslexic gaf in onderzoek geen voordeel (Wery en Diliberto, 2017). Een gewoon, duidelijk lettertype volstaat.", "bewijs": "indirect" },
         { "naam": "Kort en in stappen", "uitleg": "Een lange brief in stukken: eerst wat ze van je vragen en wanneer, daarna de rest.", "bewijs": "praktisch" },
         { "naam": "Inspreken", "uitleg": "Spreek in met de microfoon van je toetsenbord in plaats van te typen.", "bewijs": "praktisch" }
@@ -159,7 +159,7 @@
       "naam": "Aanpassingen op werk en studie, en maskeren",
       "categorie": "aanvulling",
       "modules": ["focus", "planning", "dagboek"],
-      "theorie": "Veel mensen passen zich de hele dag aan om 'gewoon' over te komen: maskeren. Dat kost energie die niemand ziet, en hangt in onderzoek samen met uitputting en somberheid (vooral bij autisme onderzocht, bv. Hull e.a., 2017). Aanpassingen op werk of studie, zoals een rustige plek, opdrachten op schrift en flexibele tijden, kunnen veel schelen. In Nederland heb je recht op doeltreffende aanpassingen bij een handicap of chronische ziekte (Wgbh/cz).",
+      "theorie": "Veel mensen passen zich de hele dag aan om 'gewoon' over te komen: maskeren. Dat kost energie die niemand ziet. Mensen beschrijven het als uitputtend (Hull e.a., 2017), en later onderzoek vond een verband met angst en somberheid (Hull e.a., 2021); dit is vooral bij autisme onderzocht. Aanpassingen op werk of studie, zoals een rustige plek, opdrachten op schrift en flexibele tijden, kunnen veel schelen. In Nederland heb je bij een handicap of chronische ziekte op werk en in het beroepsonderwijs recht op doeltreffende aanpassingen, tenzij dat voor de werkgever of school onevenredig zwaar is (Wgbh/cz).",
       "interventies": [
         { "naam": "Redelijke aanpassingen", "uitleg": "Rustige werkplek, koptelefoon, opdrachten op schrift, vaste overlegmomenten, flexibele tijden. Richtlijnen voor autisme noemen aanpassingen op het werk.", "bewijs": "indirect" },
         { "naam": "Zelf kiezen wat je deelt", "uitleg": "Je hoeft geen diagnose te noemen om om een aanpassing te vragen. Beschrijf wat je nodig hebt.", "bewijs": "praktisch" },
@@ -189,6 +189,7 @@
     { "tekst": "W3C: Making Content Usable for People with Cognitive and Learning Disabilities (COGA)", "url": "https://www.w3.org/TR/coga-usable/" },
     { "tekst": "Zorzi e.a. (2012). Extra-large letter spacing improves reading in dyslexia. PNAS 109(28)." },
     { "tekst": "Wery en Diliberto (2017). The effect of a specialized dyslexia font, OpenDyslexic, on reading rate and accuracy. Annals of Dyslexia 67." },
+    { "tekst": "Hull e.a. (2021). Is social camouflaging associated with anxiety and depression in autistic adults? Molecular Autism 12." },
     { "tekst": "Hull e.a. (2017). 'Putting on my best normal': social camouflaging in adults with autism spectrum conditions. J Autism Dev Disord 47." },
     { "tekst": "Samenvatting GGZ Zorgstandaard ADHD", "url": "https://www.zorginzicht.nl/binaries/content/assets/zorginzicht/kwaliteitsinstrumenten/samenvatting-ggz-zorgstandaard-adhd.pdf" }
   ]

@@ -18,8 +18,11 @@
 function lzTekst(el) {
   if (!el) return "";
   const k = el.cloneNode(true);
-  k.querySelectorAll("button, .sr-only, .nate-acties, .lz-lees, summary, script, style").forEach(x => x.remove());
-  return String(k.textContent || "").replace(/\s+/g, " ").trim();
+  // Dichtgeklapte uitleg en de afzender ("Nate") niet voorlezen.
+  k.querySelectorAll("details:not([open]), button, .sr-only, .nate-acties, .nate-van, .lz-lees, summary, script, style").forEach(x => x.remove());
+  // Een spatie na elk element, zodat kop en tekst niet aan elkaar plakken.
+  k.querySelectorAll("*").forEach(x => x.after(" "));
+  return String(k.textContent || "").replace(/\s+([.,;:?!])/g, "$1").replace(/\s+/g, " ").trim();
 }
 /** Een Nederlandse stem kiezen: eerst nl-NL, dan elke nl-stem, anders geen (dan kiest het toestel). */
 function lzStem(stemmen) {
@@ -85,7 +88,7 @@ AP_AANPASSINGEN.push(
   { id: "voorlezen", label: "Voorlezen", uitleg: "Een luidsprekerknop bij Nate en bij elke uitleg. Zonder internet.", patronen: ["P4"],
     waarom: "Horen en lezen tegelijk maakt een tekst lichter om te verwerken.", bewijs: "indirect" },
   { id: "ruim", label: "Ruime tekst", uitleg: "Meer ruimte tussen regels, woorden en letters.", patronen: ["P4"],
-    waarom: "Meer ruimte tussen letters hielp in onderzoek bij dyslexie sneller en nauwkeuriger lezen. Een speciaal dyslexielettertype hielp niet, daarom zit dat er niet in.", bewijs: "indirect" },
+    waarom: "Grote extra letterafstand hielp in één onderzoek kinderen met dyslexie sneller lezen; later onderzoek is wisselend. Een speciaal dyslexielettertype hielp niet, daarom zit dat er niet in.", bewijs: "indirect" },
   { id: "groot", label: "Grotere tekst", uitleg: "Alle tekst een maat groter.", patronen: ["P4"],
     waarom: "Grotere letters kosten minder moeite om te lezen, zeker op een telefoon.", bewijs: "praktisch" }
 );

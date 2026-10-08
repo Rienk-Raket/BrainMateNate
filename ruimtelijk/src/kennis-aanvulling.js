@@ -20,7 +20,7 @@ if (typeof NATE_ADHD === "object" && typeof NATE_AANVULLING === "object") {
   const extra = NATE_AANVULLING.domeinen.map(d => Object.assign({ concept: true }, d));
   Object.defineProperty(NATE_ADHD, "domeinen", { get: () => kaDomeinen(basis, extra, !!inst("kennisConcept", false)), configurable: true, enumerable: true });
 
-  AP_AANPASSINGEN.push({ id: "kennis", label: "Nieuwe kennis (concept)", uitleg: "Tips over prikkels, voorspelbaarheid, gesprekken, lezen, steun en werk.", patronen: ["P3", "P4", "P7"],
+  AP_AANPASSINGEN.push({ id: "kennis", label: "Nieuwe kennis (concept)", uitleg: "Tips over prikkels, voorspelbaarheid, gesprekken, lezen, steun en werk.", patronen: [],   // bewust zelf aanzetten, nog niet nagekeken
     waarom: "De kennisbasis ging vooral over ADHD. Deze aanvulling dekt de rest, maar is nog niet nagekeken door een professional; lees hem eerst hieronder.", bewijs: "praktisch" });
   AP_LEES.kennis = () => !!inst("kennisConcept", false);
   AP_ZET.kennis = aan => zetInst("kennisConcept", aan);

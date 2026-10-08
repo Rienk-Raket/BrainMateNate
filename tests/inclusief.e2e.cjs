@@ -65,6 +65,9 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("V14: luidspreker bij elke 'Waarom zeg je dit?'", await p.evaluate(() => document.querySelectorAll("#scherm .iv-waarom > p .lz-lees").length >= 6));
   await p.evaluate(() => { document.querySelector("#scherm .ap-rij .iv-waarom").open = true; }); await wacht(100);
   await p.click("#scherm .ap-rij .iv-waarom > p .lz-lees"); await wacht(100);
+  await p.evaluate(() => { const li = document.createElement("li"); li.className = "nate-bericht"; li.innerHTML = '<span class="nate-van">Nate</span><b>Klein idee</b><p>Tekst hier.</p><details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Verborgen.</p></details>'; document.body.appendChild(li); window.__li = li; });
+  check("Review: voorlezen zonder afzender en dichte uitleg, met spaties", await p.evaluate(() => lzTekst(window.__li) === "Klein idee Tekst hier."), await p.evaluate(() => lzTekst(window.__li)));
+  await p.evaluate(() => window.__li.remove());
   check("V14: leest de uitleg voor, zonder knoplabels", await p.evaluate(() => window.__gezegd.length === 1 && /Een scherm dat steeds hetzelfde is/.test(window.__gezegd[0]) && !/Lees voor/.test(window.__gezegd[0])));
   await p.evaluate(() => { ga("vandaag"); nateOpen(); }); await wacht(400);
   await p.fill("#nc-veld", "hoi"); await p.press("#nc-veld", "Enter"); await wacht(400);
@@ -99,7 +102,8 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   // V13: prikkels en rustblok
   await p.evaluate(async () => {
     const v = vandaagISO(), a = (id, tijd, wie) => bewaar("afspraken", { id, titel: "Bezoek " + id, datum: v, tijd, eindTijd: "", plek: "", personen: [wie], soort: "gesprek", notities: "", uitkomst: "" });
-    await a("x1", "09:00", "Ana"); await a("x2", "13:00", "Bo"); await a("x3", "18:30", "Cas"); ga("vandaag");
+    await a("x1", "09:00", "Ana"); await a("x2", "13:00", "Bo"); await a("x3", "18:30", "Cas");
+    await vbGezien(v); ga("vandaag");   // de drie bezoeken zijn gezien; zo test het hieronder alleen het rustblok
   });
   await wacht(400);
   check("V13: teller momenten met mensen", await p.evaluate(() => /3 keer met mensen/.test(document.querySelector("#scherm .vb-prikkels").textContent)));
@@ -108,8 +112,14 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("V13: prikkels 'veel' gekozen", await p.evaluate(() => document.querySelector('#scherm [data-vbp="veel"]').getAttribute("aria-checked") === "true" && /Veel prikkels/.test(document.querySelector("#scherm .vb-prikkels").textContent)));
   check("44px: Mijn dag", (await tikvlakken(p)).length === 0, JSON.stringify(await tikvlakken(p)));
   await p.click('#scherm .vb-prikkels [data-vb-rust]'); await wacht(500);
-  check("V13: rustblok ingepland in een vrij gat (19:00, na het bezoek van 18:30)", await p.evaluate(() => { const t = S.taken.find(x => x.rustblok); return t && t.tijd === "19:00" && t.duur === 20 && t.datum === vandaagISO(); }), await p.evaluate(() => JSON.stringify(S.taken.find(x => x.rustblok))));
-  check("V13: daarna 'Je rustblok staat om …'", await p.evaluate(() => /Je rustblok staat om 19:00/.test(document.querySelector("#scherm .vb-prikkels").textContent)));
+  check("V13: rustblok ingepland in een vrij gat (19:30: het bezoek van 18:30 telt als een uur)", await p.evaluate(() => { const t = S.taken.find(x => x.rustblok); return t && t.tijd === "19:30" && t.duur === 20 && t.datum === vandaagISO(); }), await p.evaluate(() => JSON.stringify(S.taken.find(x => x.rustblok))));
+  check("Review: zelf ingepland rustblok staat niet als 'Nieuw'", await p.evaluate(() => !document.querySelector("#scherm .vb-veranderd")), await p.evaluate(() => (document.querySelector("#scherm .vb-veranderd") || {}).textContent));
+  await p.evaluate(async () => { await maakTaakUitTekst("Boodschappen", { datum: vandaagISO(), tijd: "20:30" }); await vbGezien(vandaagISO()); const t = S.taken.find(x => x.titel === "Boodschappen"); await vinkTaak(t.id); teken(); });
+  await wacht(400);
+  check("Review: afvinken telt niet als 'Weg'", await p.evaluate(() => !document.querySelector("#scherm .vb-veranderd")));
+  await p.evaluate(async () => { await bewaar("vs_sport", { id: "zw", titel: "Zwemmen", datum: vandaagISO(), tijd: "07:00", duurMin: 45, herhaal: null }); });
+  check("Review: sport van vandaag staat niet bij morgen", await p.evaluate(() => !vbRegels(plusDagen(vandaagISO(), 1)).some(r => r.soort === "sport") && vbRegels(vandaagISO()).some(r => r.soort === "sport")));
+  check("V13: daarna 'Je rustblok staat om …'", await p.evaluate(() => /Je rustblok staat om 19:30/.test(document.querySelector("#scherm .vb-prikkels").textContent)));
 
   // Nate alarmen: hulp bij problemen
   await p.evaluate(() => tpUitleg(null)); await wacht(400);

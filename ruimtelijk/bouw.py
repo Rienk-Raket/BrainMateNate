@@ -64,6 +64,10 @@ vervang('shles: (typeof vwShLes === "function" ? vwShLes : vwStart)',
         '    keuzetheorie: (typeof vwKeuzeTheorie === "function" ? vwKeuzeTheorie : vwStart),\n'
         '    ontwerp: (typeof vwOntwerp === "function" ? vwOntwerp : vwStart)')
 
+# 3a2. Dagoverzicht (wkItems) voor elke dag, niet alleen vandaag: sport van díe dag (V13 vraagt morgen op).
+vervang('if (typeof vsSportVandaag === "function") vsSportVandaag().filter(o => vsSportStatus(o.sportId, v) !== "gedaan")',
+        'if (typeof vsSportOccurrences === "function") vsSportOccurrences(v, v).filter(o => vsSportStatus(o.sportId, v) !== "gedaan")')
+
 # 3b. Categorieën: terugvallen op "overig" op naam, niet op positie (ruimte voor eigen categorieën).
 vervang("(CATEGORIEEN.find(c => c[0] === k) || CATEGORIEEN[6])", '(CATEGORIEEN.find(c => c[0] === k) || CATEGORIEEN.find(c => c[0] === "overig"))', 2)
 vervang("(VLCATS.find(c => c[0] === k) || VLCATS[6])", '(VLCATS.find(c => c[0] === k) || VLCATS.find(c => c[0] === "overig"))', 2)

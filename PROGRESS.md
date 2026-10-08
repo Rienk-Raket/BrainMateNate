@@ -343,3 +343,15 @@ Alles staat in **Mijn aanpak** als schakelaar; Nate stelt voor bij het passende 
 **Nate alarmen**: Kas meldde dat het niet werkt. In het blad en in `docs/opdracht-nate-alarmen.md` staat nu "Werkt het niet?": per symptoom één controle (link, naam, invoer met de stap Toon resultaat, tijdstip van de herinnering, toegang). Oorzaak nog onbekend; wacht op welk punt het is.
 
 Tests: `tests/inclusief.test.mjs` (6), `tests/inclusief.e2e.cjs` (30).
+- Na review:
+  - Wijzigingen komen uit een eigen bron zonder werkfilter en mét wat af is. Daardoor tellen afvinken, gewoontes, het werkfilter en een doorgeschoven herhaaltaak niet meer als "Weg".
+  - Een zelf ingepland rustblok gaat meteen in de foto. Heb je de avond ervoor niet naar morgen gekeken, dan is de eerste blik op Mijn dag de foto.
+  - De sport van die dag (`wkItems` gebruikte altijd vandaag) staat nu bij de juiste dag.
+  - Een afspraak zonder eindtijd telt als een uur bezet. Het rustblok voor morgen wordt gezocht vanaf 08:00.
+  - "Was zonder tijd" wordt nu getoond.
+  - Voorlezen slaat de afzender en dichtgeklapte uitleg over en zet spaties tussen kop en tekst.
+  - Nieuwe kennis heeft geen label "Nate stelt voor" meer.
+  - Teksten aangescherpt:
+    - Wgbh/cz: met de grens "onevenredig zwaar".
+    - Zorzi: één onderzoek, wisselende herhaling.
+    - Maskeren: Hull 2017 (beleving) en Hull 2021 (verband met angst en somberheid).

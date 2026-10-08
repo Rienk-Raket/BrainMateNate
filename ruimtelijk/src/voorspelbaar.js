@@ -28,8 +28,10 @@ const vbHHMM = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m
 function vbRegel(it, extra) {
   const start = vbMin(it.tijd), eindT = vbMin(it.eind);
   const duur = start == null ? (it.duur || null) : eindT != null && eindT > start ? eindT - start : (it.duur || null);
+  // Bezet tot: zonder eindtijd telt een afspraak of meeting als een uur (zoals elders in de app), de rest als een halfuur.
+  const tot = start == null ? null : duur ? start + duur : start + (it.soort === "afspraak" || it.soort === "werkdoc" ? 60 : 30);
   return { sleutel: it.soort + ":" + it.id, soort: it.soort, id: it.id, titel: it.titel, tijd: it.tijd || "", start,
-    eind: start != null && duur ? start + duur : null, duur, plek: (extra && extra.plek) || "", personen: it.personen || [] };
+    eind: start != null && duur ? start + duur : null, tot, duur, plek: (extra && extra.plek) || "", personen: it.personen || [], af: !!it.af };
 }
 /** Op volgorde van tijd; zonder tijd achteraan. Elk item met tijd weet wat daarna komt. */
 function vbDag(regels) {
@@ -44,8 +46,10 @@ function vbFoto(regels) {
   for (const r of regels) f[r.sleutel] = { k: vbKenmerk(r), titel: r.titel, tijd: r.tijd };
   return f;
 }
-/** Wat is er nieuw, anders of weg sinds de foto? Zonder foto: niets (eerste blik). */
-function vbVerschil(foto, regels) {
+/** Wat is er nieuw, anders of weg sinds de foto? Zonder foto: niets (eerste blik).
+    nogDaar(sleutel): bestaat het item nog maar staat het niet meer op deze dag omdat het af is
+    (een herhaaltaak schuift door)? Dan is het niet "weg". */
+function vbVerschil(foto, regels, nogDaar) {
   const uit = { nieuw: [], anders: [], weg: [] };
   if (!foto) return uit;
   const nu = new Set();
@@ -55,7 +59,7 @@ function vbVerschil(foto, regels) {
     if (!oud) uit.nieuw.push(r);
     else if (oud.k !== vbKenmerk(r)) uit.anders.push(Object.assign({ was: oud.tijd }, r));
   }
-  for (const k of Object.keys(foto)) if (!nu.has(k)) uit.weg.push({ sleutel: k, titel: foto[k].titel, tijd: foto[k].tijd });
+  for (const k of Object.keys(foto)) if (!nu.has(k) && !(nogDaar && nogDaar(k))) uit.weg.push({ sleutel: k, titel: foto[k].titel, tijd: foto[k].tijd });
   return uit;
 }
 const vbAantalVerschil = v => v.nieuw.length + v.anders.length + v.weg.length;
@@ -65,7 +69,7 @@ function vbMensen(regels) { return regels.filter(r => r.personen.length && r.soo
 function vbVrijBlok(regels, vanaf, duur, dagEind) {
   const eind = dagEind == null ? 22 * 60 : dagEind;
   let t = Math.ceil(vanaf / 5) * 5;
-  const bezet = regels.filter(r => r.start != null).map(r => [r.start, r.eind != null ? r.eind : r.start + 30]).sort((a, b) => a[0] - b[0]);
+  const bezet = regels.filter(r => r.start != null && !r.af).map(r => [r.start, r.tot != null ? r.tot : r.start + 30]).sort((a, b) => a[0] - b[0]);
   for (const [s, e] of bezet) {
     if (e <= t) continue;
     if (s - t >= duur) break;
@@ -79,17 +83,32 @@ function vbRustNodig(prikkels, mensen) { return prikkels === "veel" || mensen >=
 
 const VB_BEWIJS = "Indirect: minder prikkels, een vaste structuur en wijzigingen op tijd melden worden genoemd in richtlijnen en in de W3C-richtlijn voor cognitieve toegankelijkheid (COGA). Het onderzoek is smaller dan voor ADHD, dus kijk wat bij jou werkt.";
 
-/* ---------- 104.1 Gegevens van een dag ---------- */
+/* ---------- 104.1 Gegevens van een dag ----------
+   Eigen bron, zonder werkfilter en mét wat al af is: zo verandert de foto niet door
+   afvinken of door het werkfilter. Gewoontes horen er niet bij (die vink je elke dag af). */
 function vbRegels(datum) {
-  const bron = { taak: "taken", afspraak: "afspraken", werkdoc: "werkdocs" };
-  return vbDag((typeof wkItems === "function" ? wkItems(datum) : []).filter(it => {
-    if (it.deadline) return false;   // een deadline is geen moment op de dag
-    const o = bron[it.soort] && vind(bron[it.soort], it.id);
-    return !(o && typeof werkOk === "function" && !werkOk(o));
-  }).map(it => {
-    const o = it.soort === "afspraak" ? vind("afspraken", it.id) : null;
-    return vbRegel(it, { plek: o && o.plek });
-  }));
+  const uit = [];
+  for (const t of S.taken) if (t.datum === datum)
+    uit.push(vbRegel({ soort: "taak", id: t.id, titel: t.titel || "Taak", tijd: t.tijd || "", duur: t.duur || 0, personen: t.personen || [], af: t.af }));
+  for (const a of S.afspraken) if (a.datum === datum || (a.datum && a.totDatum && a.datum <= datum && datum <= a.totDatum))
+    uit.push(vbRegel({ soort: "afspraak", id: a.id, titel: a.titel || "Afspraak", tijd: a.datum === datum ? a.tijd || "" : "", eind: a.datum === datum ? a.eindTijd || "" : "", personen: a.personen || [] }, { plek: a.plek }));
+  for (const d of S.werkdocs || []) if (d.soort === "meeting" && d.datum === datum && d.status !== "archief")
+    uit.push(vbRegel({ soort: "werkdoc", id: d.id, titel: d.titel || "Meeting", tijd: d.tijd || "", personen: d.personen || [] }));
+  if (typeof vsSportOccurrences === "function") for (const o of vsSportOccurrences(datum, datum))
+    uit.push(vbRegel({ soort: "sport", id: o.sportId, titel: "Sporten: " + o.titel, tijd: o.tijd || "", duur: o.duurMin || 60, personen: [] }));
+  return vbDag(uit);
+}
+const VB_WINKEL = { taak: "taken", afspraak: "afspraken", werkdoc: "werkdocs" };
+const vbObj = x => VB_WINKEL[x.soort] ? vind(VB_WINKEL[x.soort], x.id || String(x.sleutel).split(":")[1]) : null;
+/** Werkfilter pas bij het tonen, voor nu én voor wat weg is. */
+const vbZichtbaar = x => { const o = vbObj(x); return !(o && typeof werkOk === "function" && !werkOk(o)); };
+const vbTonen = regels => vbDag(regels.filter(r => !r.af && vbZichtbaar(r)));
+/** Verschil voor één dag, met de regels: af of doorgeschoven telt niet als weg. */
+function vbVerschilVan(datum, regels) {
+  const nogDaar = k => { const o = vbObj({ sleutel: k, soort: k.split(":")[0] }); return !!(o && (o.af || (o.herhaal && o.datum > datum))); };
+  const v = vbVerschil(vbFotos()[datum], regels, nogDaar);
+  for (const k of ["nieuw", "anders", "weg"]) v[k] = v[k].filter(x => !x.af && vbZichtbaar(Object.assign({ soort: String(x.sleutel).split(":")[0] }, x)));
+  return v;
 }
 const vbFotos = () => inst("vbFotos", {}) || {};
 /** De foto van een dag; de eerste keer wordt hij gemaakt (dat is je eerste blik). */
@@ -117,7 +136,7 @@ function vbRegelHTML(r) {
 }
 function vbVerschilHTML(v, datum, kop) {
   if (!vbAantalVerschil(v)) return "";
-  const r = (lbl, x) => `<li><span class="vb-label">${lbl}</span> ${esc(x.titel)}${x.tijd ? ` · ${esc(x.tijd)}` : ""}${x.was && x.was !== x.tijd ? ` <small>(was ${esc(x.was || "zonder tijd")})</small>` : ""}</li>`;
+  const r = (lbl, x) => `<li><span class="vb-label">${lbl}</span> ${esc(x.titel)}${x.tijd ? ` · ${esc(x.tijd)}` : ""}${x.was !== undefined && x.was !== x.tijd ? ` <small>(was ${esc(x.was || "zonder tijd")})</small>` : ""}</li>`;
   return `<section class="card card-pad vb-veranderd" aria-label="${esc(kop)}"><span class="labeltekst">${esc(kop)}</span>
     <ul>${v.nieuw.map(x => r("Nieuw", x)).join("")}${v.anders.map(x => r("Anders", x)).join("")}${v.weg.map(x => r("Weg", x)).join("")}</ul>
     <button type="button" class="knop rand vb-gezien" data-vb-gezien="${esc(datum)}">Gezien</button></section>`;
@@ -129,10 +148,11 @@ function vbMensenHTML(n, wanneer) {
 function vwMorgen() {
   const datum = plusDagen(vandaagISO(), 1), regels = vbRegels(datum), f = vbFotos()[datum];
   if (!f) vbFotoVan(datum, regels);
-  let h = vbVerschilHTML(vbVerschil(f, regels), datum, "Veranderd sinds je vorige blik");
-  if (!regels.length) h += `<div class="card card-pad"><p>Morgen staat er nog niets. Een lege dag is ook een plan.</p></div>`;
-  else h += `<div class="card card-pad"><ol class="vb-lijst">${regels.map(vbRegelHTML).join("")}</ol>${vbMensenHTML(vbMensen(regels), "Morgen ben je")}</div>`;
-  if (vbMensen(regels) >= VB_MENSEN_VEEL) h += `<button class="knop breed rand" data-vb-rust="${esc(datum)}">Rustblok morgen plannen</button>`;
+  const toon = vbTonen(regels);
+  let h = vbVerschilHTML(vbVerschilVan(datum, regels), datum, "Veranderd sinds je vorige blik");
+  if (!toon.length) h += `<div class="card card-pad"><p>Morgen staat er nog niets. Een lege dag is ook een plan.</p></div>`;
+  else h += `<div class="card card-pad"><ol class="vb-lijst">${toon.map(vbRegelHTML).join("")}</ol>${vbMensenHTML(vbMensen(toon), "Morgen ben je")}</div>`;
+  if (vbMensen(toon) >= VB_MENSEN_VEEL) h += `<button class="knop breed rand" data-vb-rust="${esc(datum)}">Rustblok morgen plannen</button>`;
   h += `<details class="iv-waarom"><summary>Waarom zeg je dit?</summary><p>Weten wat er komt, hoe lang het duurt en wat er daarna gebeurt, maakt een dag voorspelbaar. ${esc(VB_BEWIJS)}</p></details>`;
   return h;
 }
@@ -142,7 +162,7 @@ Object.defineProperty(KOPPEN, "morgen", { get: () => ["Morgen in het kort", () =
 const vbPrikkels = () => { const p = inst("vbPrikkels", null); return p && p.datum === vandaagISO() ? p.niveau : null; };
 function vbRustTaak(datum) { return S.taken.find(t => t.rustblok && t.datum === datum && !t.af) || null; }
 function vbPrikkelHTML() {
-  const n = vbPrikkels(), regels = vbRegels(vandaagISO()), mensen = vbMensen(regels), rust = vbRustTaak(vandaagISO());
+  const n = vbPrikkels(), regels = vbRegels(vandaagISO()), mensen = vbMensen(vbTonen(regels)), rust = vbRustTaak(vandaagISO());
   const nu = new Date(), vrij = vbVrijBlok(regels, nu.getHours() * 60 + nu.getMinutes() + 5, VB_RUST_MIN);
   let voorstel = "";
   if (vbRustNodig(n, mensen)) voorstel = rust ? `<p class="vb-rust">Je rustblok staat om ${esc(rust.tijd)}.</p>`
@@ -158,10 +178,10 @@ function vbPrikkelHTML() {
 function vbMorgenKaartHTML() {
   const datum = plusDagen(vandaagISO(), 1), regels = vbRegels(datum), f = vbFotos()[datum];
   if (!f) vbFotoVan(datum, regels);
-  const v = vbVerschil(f, regels), n = vbAantalVerschil(v), eerste = regels.slice(0, 3);
+  const toon = vbTonen(regels), v = vbVerschilVan(datum, regels), n = vbAantalVerschil(v), eerste = toon.slice(0, 3);
   return `<section class="card card-pad vb-morgenkaart" aria-label="Morgen in het kort"><span class="labeltekst">Morgen in het kort</span>
     ${n ? `<p class="vb-let">${n} ${n === 1 ? "ding is" : "dingen zijn"} veranderd.</p>` : ""}
-    ${eerste.length ? `<ul class="vb-kort">${eerste.map(r => `<li><time>${esc(r.tijd || "—")}</time> ${esc(r.titel)}${r.plek ? ` <small>· ${esc(r.plek)}</small>` : ""}</li>`).join("")}</ul>${regels.length > 3 ? `<p class="klein">En nog ${regels.length - 3}.</p>` : ""}` : `<p>Nog niets gepland.</p>`}
+    ${eerste.length ? `<ul class="vb-kort">${eerste.map(r => `<li><time>${esc(r.tijd || "—")}</time> ${esc(r.titel)}${r.plek ? ` <small>· ${esc(r.plek)}</small>` : ""}</li>`).join("")}</ul>${toon.length > 3 ? `<p class="klein">En nog ${toon.length - 3}.</p>` : ""}` : `<p>Nog niets gepland.</p>`}
     <button class="knop breed rand" data-act="ga" data-view="morgen">Bekijk morgen</button></section>`;
 }
 {
@@ -169,8 +189,9 @@ function vbMorgenKaartHTML() {
   vwVandaag = function () {
     let voor = "", na = "";
     if (vbAan("vbMorgen")) {
-      const v = vandaagISO(), f = vbFotos()[v];
-      voor += vbVerschilHTML(vbVerschil(f, vbRegels(v)), v, "Veranderd sinds gisteren");
+      const v = vandaagISO(), regels = vbRegels(v);
+      if (!vbFotos()[v]) vbFotoVan(v, regels);   // nooit naar morgen gekeken: dan nu de eerste blik
+      voor += vbVerschilHTML(vbVerschilVan(v, regels), v, "Veranderd sinds gisteren");
       if (new Date().getHours() >= 16) na += vbMorgenKaartHTML();
     }
     if (vbAan("vbPrikkelsAan")) voor += vbPrikkelHTML();
@@ -186,10 +207,13 @@ async function vbKiesPrikkels(id) {
 }
 async function vbPlanRust(datum) {
   if (vbRustTaak(datum)) { toast("Er staat al een rustblok"); return; }
-  const nu = new Date(), vanaf = datum === vandaagISO() ? nu.getHours() * 60 + nu.getMinutes() + 5 : 12 * 60;
+  const nu = new Date(), vanaf = datum === vandaagISO() ? nu.getHours() * 60 + nu.getMinutes() + 5 : 8 * 60;
   const t0 = vbVrijBlok(vbRegels(datum), vanaf, VB_RUST_MIN);
   if (t0 == null) { toast("Geen vrije twintig minuten gevonden"); return; }
   const t = await maakTaakUitTekst("Rustblok", { datum, tijd: vbHHMM(t0), duur: VB_RUST_MIN, rustblok: true, notitie: "Twintig minuten zonder scherm en zonder mensen." });
+  // Zelf ingepland is geen verrassing: meteen in de foto, dan staat hij niet als "Nieuw".
+  const f = vbFotos()[datum];
+  if (t && f) await zetInst("vbFotos", Object.assign({}, vbFotos(), { [datum]: Object.assign({}, f, vbFoto(vbRegels(datum).filter(x => x.id === t.id))) }));
   tril(6); teken();
   if (t) toast(`Rustblok om ${t.tijd}`, "Bewerken", () => openTaakBlad(t.id));
 }
