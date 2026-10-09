@@ -355,3 +355,12 @@ Tests: `tests/inclusief.test.mjs` (6), `tests/inclusief.e2e.cjs` (30).
     - Wgbh/cz: met de grens "onevenredig zwaar".
     - Zorzi: één onderzoek, wisselende herhaling.
     - Maskeren: Hull 2017 (beleving) en Hull 2021 (verband met angst en somberheid).
+
+**V16 Vuur** (`sh-vuur.js`, `sh-vuur.css`, sectie 107; Side Hustle, dashboardblok)
+- Het Doom-vuur (MIT, filipedeschamps/doom-fire-algorithm) als voortgangsvisual: de vuurbron groeit met de Gezondheidsscore (`shGezondheid`). Nooit helemaal uit: bij een lage score blijft een vonkje ("Klein beginnen mag"). Geen schuld, geen percentage erbij.
+- Eigen code op een klein canvas (56 × 32), geen netwerk, geen bibliotheek. Wind waait om de rand heen, anders blijft de rechterkant leeg.
+- **Pauzeert buiten beeld** (IntersectionObserver), als de app op de achtergrond staat en na weggaan van het dashboard. Eigen pauzeknop (44 × 44 px, `aria-pressed`), keuze onthouden in instelling `vuur`.
+- Minder beweging of `prefers-reduced-motion`: één stilstaand beeld, pauzeknop verborgen.
+- Blok `vuur` staat bij nieuwe side hustles direct onder de heldenkaart. Bestaande dashboards krijgen het onderaan; verplaatsen kan via "Dashboard aanpassen". Geen wijziging in `basis/index.html`, geen databaseversie omhoog.
+- Tests: `tests/vuur.test.mjs` (7) en `tests/vuur.e2e.cjs` (21: 390 × 844, licht, donker, minder beweging, buiten beeld, achtergrond, pauzeknop, nul externe verzoeken, geen consolefouten). Alle bestaande tests blijven slagen (145).
+- Open: kijk op je iPhone of de hoogte (150 px) en snelheid (25 beelden per seconde) prettig voelen. Beide staan bovenaan `sh-vuur.css` en in `vuurLoop` (40 ms).
