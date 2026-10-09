@@ -15,13 +15,12 @@
 
 /* NATE-SAMEN-BEGIN */
 /** Oude schermnaam → nieuwe plek, met de stand die erbij hoort. Onbekend: null (niets doen). */
-function smDoorsturen(view, ovModus) {
+function smDoorsturen(view) {
   switch (view) {
     case "meldingen": return { view: "inbox", zet: { inboxTab: "nate" } };
-    case "morgen": return { view: "planning", zet: { plZoom: "morgen" } };
     case "komend": return { view: "planning", zet: { plZoom: "week" } };
     case "kalender": return { view: "planning", zet: { plZoom: "maand" } };
-    case "overzicht": return ovModus === "vooruit" ? { view: "planning", zet: { plZoom: "maand" } } : { view: "terugkijken", zet: { tkModus: "week" } };
+    case "overzicht": return { view: "terugkijken", zet: { tkModus: "week", ovModus: "week" } };
     case "dagboek": return { view: "terugkijken", zet: { tkModus: "dag" } };
     case "weekreview": return { view: "terugkijken", zet: { tkModus: "week" } };
     default: return null;
@@ -35,12 +34,24 @@ function smSegment(naam, keuzes, actief) {
 /* NATE-SAMEN-EINDE */
 
 /* ---------- 107.0 Doorsturen ---------- */
+const SM_STANDEN = ["plZoom", "tkModus", "inboxTab"];
+const SM_BEGIN = { planning: { plZoom: "week" }, inbox: { inboxTab: "indelen" }, terugkijken: { tkModus: "dag" } };
 {
-  const _ga = ga;
+  const _ga = ga, _terug = terug;
   ga = function (view, param, terugStap) {
-    const d = smDoorsturen(view, V.ovModus);
-    if (d) { Object.assign(V, d.zet); return _ga.call(this, d.view, param, terugStap); }
-    return _ga.apply(this, arguments);
+    const d = smDoorsturen(view), was = {}, diepte = V.stapel.length;
+    for (const k of SM_STANDEN) was[k] = V[k];
+    // Via een oude naam: die stand. Gewoon geopend (tab, Meer): de vaste beginstand.
+    if (d) Object.assign(V, d.zet); else if (!terugStap && SM_BEGIN[view] && V.view !== view) Object.assign(V, SM_BEGIN[view]);
+    const r = _ga.call(this, d ? d.view : view, param, terugStap);
+    // De stand van het scherm dat je verlaat, gaat mee op de terugstapel.
+    if (!terugStap && V.stapel.length > diepte) V.stapel[V.stapel.length - 1].sm = was;
+    return r;
+  };
+  terug = function () {
+    const boven = V.stapel[V.stapel.length - 1];
+    if (boven && boven.sm) Object.assign(V, boven.sm);
+    return _terug.apply(this, arguments);
   };
 }
 const SM_STAND = { inbox: "inboxTab", planning: "plZoom", terugkijken: "tkModus" };
@@ -67,7 +78,7 @@ document.addEventListener("click", e => {
   // Een nieuw bericht terwijl je in de Inbox kijkt: meteen tonen (de basis keek naar "meldingen").
   if (typeof meldingMaak === "function") {
     const _maak = meldingMaak;
-    meldingMaak = async function () { const r = await _maak.apply(this, arguments); if (V.view === "inbox" && V.inboxTab === "nate") teken(); return r; };
+    meldingMaak = async function () { const r = await _maak.apply(this, arguments); if (V.view === "inbox") teken(); return r; };
   }
 }
 
@@ -80,7 +91,7 @@ document.addEventListener("click", e => {
     const z = V.plZoom || "week";
     let h = smSegment("planning", [["morgen", "Morgen"], ["week", "Week"], ["maand", "Maand"]], z);
     if (z === "morgen") h += vwMorgen();
-    else if (z === "maand") h += vwKalender() + sectie("Komende 14 dagen") + ovVooruit();
+    else if (z === "maand") h += `<div class="sm-plan">${vwKalender()}${smVooruit()}</div>`;
     else h += _week.apply(this, arguments);
     return h;
   };
@@ -89,17 +100,26 @@ document.addEventListener("click", e => {
   Object.defineProperty(KOPPEN, "planning", { get: () => ["Planning", () => zoomKop[V.plZoom || "week"]()], configurable: true, enumerable: true });
 }
 
+/** De vooruitblik zonder de knoppen naar Komend en Kalender (die zijn nu de zoomstanden),
+    en met staafjes die alleen tonen (te smal om op te tikken; de kalender erboven is de ingang). */
+function smVooruit() {
+  return ovVooruit()
+    .replace(/<div class="knoprij" style="margin-top:12px">\s*<button class="knop rand" data-act="ga" data-view="komend">[\s\S]*?<\/div>\s*$/, "")
+    .replace(/<button class="(nu)?" data-act="ov-dag" (data-datum="[^"]*")\s*(aria-label="[^"]*")>([\s\S]*?)<\/button>/g, (m, nu, dd, al, binnen) => `<span class="ov-staaf ${nu || ""}" role="img" ${al}>${binnen}</span>`);
+}
+
 /* ---------- 107.3 Terugkijken: Dag · Week ---------- */
 function smLogKort(dagen) {
   const v = vandaagISO(), van = plusDagen(v, -(dagen - 1));
-  const items = S.gebeurtenissen.filter(g => (typeof werkOk !== "function" || werkOk(g)) && (g.datum || (g.ts || "").slice(0, 10)) >= van)
+  const lokaal = g => { const d = new Date(g.ts); return isNaN(d) ? { dag: g.datum || "", tijd: "" } : { dag: g.datum || dISO(d), tijd: pad(d.getHours()) + ":" + pad(d.getMinutes()) }; };
+  const items = S.gebeurtenissen.filter(g => (typeof werkOk !== "function" || werkOk(g)) && lokaal(g).dag >= van)
     .sort((a, b) => a.ts < b.ts ? 1 : -1).slice(0, 30);
   if (!items.length) return `<div class="card card-pad klein">Nog niets gelogd de laatste dagen.</div>`;
   let dag = "", h = `<div class="card card-pad sm-log">`;
   for (const g of items) {
-    const d = g.datum || g.ts.slice(0, 10);
-    if (d !== dag) { dag = d; h += `<p class="sm-logdag">${esc(datumLabel(d, true))}</p>`; }
-    h += `<p class="sm-logregel"><span class="mono">${esc((g.ts || "").slice(11, 16))}</span> ${esc(g.tekst)}</p>`;
+    const l = lokaal(g);
+    if (l.dag !== dag) { dag = l.dag; h += `<p class="sm-logdag">${esc(datumLabel(l.dag, true))}</p>`; }
+    h += `<p class="sm-logregel"><span class="mono">${esc(l.tijd)}</span> ${esc(g.tekst)}</p>`;
   }
   return h + `</div>`;
 }
@@ -135,17 +155,62 @@ IV_OORZAKEN.push({ id: "kiezen", label: "Kan niet kiezen", sub: "Twijfel tussen 
   ivDoe = async function (t, o, stap, tekst) {
     if (stap && stap.actie === "keuze") {
       await ivLogVoeg(t.id, o.id, "keuze"); bladSluit();
-      if (typeof kmProfiel !== "function" || !kmProfiel()) { ga("keuze"); toast("Doe eerst de korte uitsteltest"); return; }
-      const bestaand = S.km_dilemmas.find(d => d.bron && d.bron.module === "taak" && d.bron.id === t.id && d.status !== "besloten");
-      if (bestaand) { ga("keuzedilemma", bestaand.id); return; }
-      const d = kmNieuwDilemma({ a: { titel: String(t.titel).slice(0, 80), notitie: "" }, b: { titel: "", notitie: "" },
-        context: { inzet: "klein", omkeerbaar: "ja", deadline: t.datum || null, zichtbaar: false }, bron: { module: "taak", id: t.id } });
-      await kmBewaarDilemma(d); ga("keuzedilemma", d.id);
-      return;
+      return smKiezenVoor(t);
     }
     // Een eerste handeling via Ik loop vast telt ook als antwoord op de werkwoordcheck.
     if (stap && stap.actie === "stap" && String(tekst || "").trim()) t.wwGevraagd = true;
     return _doe.apply(this, arguments);
+  };
+}
+
+/** Een dilemma voor deze taak (of het lopende). Zonder uitsteltest: eerst die, daarna terug naar deze taak. */
+async function smKiezenVoor(t) {
+  if (typeof kmProfiel !== "function" || !kmProfiel()) { V.smKiesTaak = t.id; ga("keuze"); toast("Eerst de korte uitsteltest, daarna kies je voor deze taak"); return; }
+  V.smKiesTaak = null;
+  const bestaand = S.km_dilemmas.find(d => d.bron && d.bron.module === "taak" && d.bron.id === t.id && d.status !== "besloten");
+  if (bestaand) { ga("keuzedilemma", bestaand.id); return; }
+  const d = kmNieuwDilemma({ a: { titel: String(t.titel).slice(0, 80), notitie: "" }, b: { titel: "", notitie: "" },
+    context: { inzet: "klein", omkeerbaar: "ja", deadline: t.datum && t.datum >= vandaagISO() ? t.datum : null, zichtbaar: false }, bron: { module: "taak", id: t.id } });
+  await kmBewaarDilemma(d); ga("keuzedilemma", d.id);
+}
+{
+  // Na de uitsteltest: verder met de taak waarvoor je wilde kiezen.
+  const _test = kmTestAfronden;
+  kmTestAfronden = async function () {
+    const r = await _test.apply(this, arguments), t = V.smKiesTaak && vind("taken", V.smKiesTaak);
+    if (t) toast(`Verder met ${t.titel}?`, "Verder", () => smKiezenVoor(t), 8000);
+    return r;
+  };
+  // Besloten: de gekozen optie wordt de eerste stap van de taak (de taak zelf blijft open, je moet hem nog doen).
+  const _besluit = kmBesluit;
+  kmBesluit = async function (d, keuze) {
+    const r = await _besluit.apply(this, arguments), bron = d && d.bron, t = bron && bron.module === "taak" && vind("taken", bron.id);
+    if (t && !t.af) {
+      const gekozen = String((keuze === "A" ? d.a.titel : d.b.titel) || "").trim();
+      if (gekozen) {
+        t.subtaken = normaliseerSubtaken(ivMetStap(t.subtaken, gekozen)); t.wwGevraagd = true;
+        await bewaar("taken", t); teken();
+        toast(`Gekozen: ${gekozen}. Staat als eerste stap bij ${t.titel}.`, "Openen", () => openTaakBlad(t.id), 7000);
+      }
+    }
+    return r;
+  };
+  // Nog niet kiezen bij een taak: geen tweede taak, maar de taak zelf krijgt de kiesdatum.
+  const _parkeer = kmParkeerBlad;
+  kmParkeerBlad = function (d) {
+    const t = d && d.bron && d.bron.module === "taak" && vind("taken", d.bron.id);
+    if (!t) return _parkeer.apply(this, arguments);
+    const standaard = d.context.deadline || plusDagen(vandaagISO(), 1);
+    bladOpen("Nog niet kiezen", `<p class="klein" style="margin:0 0 10px">Prima. Kies een dag; dan staat ${esc(t.titel)} op die dag, met dit dilemma erbij.</p>
+      <div class="veld"><label for="km-pdatum">Ik kies uiterlijk op</label><input class="invoer" type="date" id="km-pdatum" value="${esc(standaard)}" min="${vandaagISO()}"></div>`,
+      `<button class="knop breed primair" id="km-pok">Zet de dag</button>`);
+    $("#km-pok").onclick = async () => {
+      const datum = $("#km-pdatum").value || standaard;
+      t.datum = datum; await bewaar("taken", t);
+      if (typeof plangMeldingen === "function") plangMeldingen();
+      d.context.deadline = datum; d.status = "geparkeerd"; await kmBewaarDilemma(d);
+      bladSluit(); teken(); toast(`${t.titel} staat op ${datumLabel(datum)}`);
+    };
   };
 }
 

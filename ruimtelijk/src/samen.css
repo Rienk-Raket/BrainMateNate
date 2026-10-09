@@ -13,3 +13,7 @@
 .sm-inbox .segment button, .sm-inbox .sectie .actie { min-height: 44px; }
 .sm-inbox .icon-btn { min-width: 44px !important; min-height: 44px !important; }
 .sm-tk .keuze { min-height: 44px; }
+/* Planning › Maand: tikvlakken van de kalender op 44px; de staafjes tonen alleen. */
+.sm-plan .kal-tgl, .sm-plan .actie, .sm-plan .sectie .actie { min-height: 44px; }
+.sm-plan .vb-staaf > .ov-staaf { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; }
+.sm-plan .vb-staaf > .ov-staaf.nu .dg { color: var(--accent); }

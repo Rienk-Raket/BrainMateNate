@@ -372,9 +372,20 @@ Tests: `tests/inclusief.test.mjs` (6), `tests/inclusief.e2e.cjs` (30).
    - Dag = stemming en notitie, dan "Wat je deed" (logboek van de laatste 3 dagen, knop Heel logboek), dan de eerdere notities.
    - Week = weekreview plus "Je week in cijfers" (overzicht van de week, met bladeren en de knop Cijfers en trends).
    - Doorsturen: `dagboek`, `weekreview` en Overzicht week/maand.
-   - In Ruimtes heet Dagboek nu Terugkijken. Chat: "terugkijken", "hoe was mijn week".
+   - In Ruimtes heet Dagboek nu Terugkijken. Chat: "terugkijken", "weekreview".
 4. **Vastlopen: één ingang**
    - Ik loop vast heeft een zesde keuze: **Kan niet kiezen**. Die maakt een dilemma in de Keuzemachine met de taak als optie A, of gaat eerst naar de uitsteltest.
    - Onduidelijk geeft bij een vage taak de suggesties van de werkwoordcheck. Een eerste handeling telt ook als antwoord op de werkwoordcheck.
 - Meer › Alle schermen: Nate's berichten, Logboek, Terugblik, Weekreview en Overzicht zijn opgegaan in Inbox en Terugkijken.
 - Tests: `tests/samen.e2e.cjs` (28).
+- Na review:
+  - **Kan niet kiezen** maakt een dilemma met de taak als optie A. De gekozen optie wordt de eerste stap van de taak; de taak blijft open. "Nog niet kiezen" zet de taak zelf op de kiesdag, zonder een tweede taak. Na de uitsteltest vraagt de app "Verder met <taak>?". Een verlopen datum wordt geen deadline.
+  - Planning opent via de tab altijd op Week, Inbox op Nog indelen en Terugkijken op Dag.
+  - **Terug** herstelt de stand waarin je wegging.
+  - Morgen in het kort vanaf Mijn dag blijft een eigen scherm met Terug; in Planning is het een zoomstand.
+  - **Planning › Maand:** de dode knoppen Kalender en Komend zijn weg, er staat geen dubbele kop meer, de staafjes tonen alleen, en de tikvlakken zijn 44px.
+  - "Wat je deed" toont de lokale tijd.
+  - De teller "Van Nate" werkt ook bij op Nog indelen.
+  - Overzicht gaat altijd naar Terugkijken › Week.
+  - De beloofde chatzin "hoe was mijn dag" is geschrapt (die gaat terecht naar Mijn dag).
+- Tests: `tests/samen.e2e.cjs` (35).
