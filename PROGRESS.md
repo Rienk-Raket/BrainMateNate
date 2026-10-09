@@ -355,3 +355,26 @@ Tests: `tests/inclusief.test.mjs` (6), `tests/inclusief.e2e.cjs` (30).
     - Wgbh/cz: met de grens "onevenredig zwaar".
     - Zorzi: één onderzoek, wisselende herhaling.
     - Maskeren: Hull 2017 (beleving) en Hull 2021 (verband met angst en somberheid).
+
+## Stap 24: samenvoegen — één plek per vraag (besluit Kas 9 oktober 2026)
+
+`samen.js` en `samen.css` (sectie 107). Oude schermnamen sturen door via `ga()`, dus links, chat en zoeken blijven werken. Er verdwijnt geen data. Logboek en Cijfers (stats) blijven bestaan als detailscherm.
+
+1. **Eén Inbox**
+   - Bovenaan kies je tussen **Nog indelen** en **Van Nate**, elk met een teller.
+   - `meldingen` stuurt door naar Inbox › Van Nate.
+   - Knoppen van de oude berichtenlijst zijn nu 44px.
+2. **Planning: Morgen · Week · Maand**
+   - Morgen = Morgen in het kort (V13). Week = de bestaande planning. Maand = kalender plus de vooruitblik van 14 dagen.
+   - De chips Kalender en Overzicht zijn weg.
+   - Doorsturen: `morgen`, `komend`, `kalender` en Overzicht-vooruitblik.
+3. **Terugkijken: Dag · Week** (nieuw scherm `terugkijken`)
+   - Dag = stemming en notitie, dan "Wat je deed" (logboek van de laatste 3 dagen, knop Heel logboek), dan de eerdere notities.
+   - Week = weekreview plus "Je week in cijfers" (overzicht van de week, met bladeren en de knop Cijfers en trends).
+   - Doorsturen: `dagboek`, `weekreview` en Overzicht week/maand.
+   - In Ruimtes heet Dagboek nu Terugkijken. Chat: "terugkijken", "hoe was mijn week".
+4. **Vastlopen: één ingang**
+   - Ik loop vast heeft een zesde keuze: **Kan niet kiezen**. Die maakt een dilemma in de Keuzemachine met de taak als optie A, of gaat eerst naar de uitsteltest.
+   - Onduidelijk geeft bij een vage taak de suggesties van de werkwoordcheck. Een eerste handeling telt ook als antwoord op de werkwoordcheck.
+- Meer › Alle schermen: Nate's berichten, Logboek, Terugblik, Weekreview en Overzicht zijn opgegaan in Inbox en Terugkijken.
+- Tests: `tests/samen.e2e.cjs` (28).

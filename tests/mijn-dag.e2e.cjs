@@ -119,7 +119,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("Terug: scrollpositie blijft behouden", was > 0 && await p.evaluate(() => Math.abs(document.querySelector("#scherm").scrollTop - 300) < 40), String(was) + " → " + await p.evaluate(() => document.querySelector("#scherm").scrollTop));
   // Tabs: Planning en Ruimtes.
   await p.click('#tabs [data-tab="planning"]'); await wacht(400);
-  check("Planning: week plus planhulpen", await p.evaluate(() => V.view === "planning" && document.querySelectorAll(".nv-chip").length === 6 && (document.querySelector("#titel").textContent === "Planning")));
+  check("Planning: week plus planhulpen", await p.evaluate(() => V.view === "planning" && document.querySelectorAll(".nv-chip").length === 4 && document.querySelectorAll('[data-sm="planning"]').length === 3 && (document.querySelector("#titel").textContent === "Planning")));
   await p.screenshot({ path: path.join(UIT, "nv-02-planning-390.png") });
   check("Planning: tikvlakken ≥ 44 px", (await tikvlakken(p)).length === 0, JSON.stringify(await tikvlakken(p)));
   await p.click('#tabs [data-tab="ruimtes"]'); await wacht(400);
@@ -134,7 +134,9 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   const views = await p.evaluate(async () => {
     const lijst = ["vandaag", "planning", "start", "mindmap", "ruimtes", "meer", "komend", "afspraken", "instellingen", "zoeken", "meldingen", "inbox", "persoonlijk", "gezondheid", "roken", "financieel", "overzicht", "focus", "werk", "logboek", "projecten", "kalender", "checklists", "gewoontes", "dagboek", "filters", "personen", "stats", "backup", "help", "tijd", "profiel", "kennismaking", "sidehustles", "hobbyskills", "wishlist", "anker", "huishouden", "lijstjes", "keuze", "keuzetheorie", "ontwerp", "welkom"];
     const kapot = [];
-    for (const v of lijst) { try { ga(v); if (V.view !== v && !(v === "welkom" && V.view === "vandaag")) kapot.push(v + "→" + V.view); } catch (e) { kapot.push(v + ": " + e.message); } }
+    for (const v of lijst) { try { ga(v); // Samengevoegd (sectie 107): doorsturen naar de nieuwe plek is goed.
+      const door = { komend: "planning", kalender: "planning", meldingen: "inbox", overzicht: "terugkijken", dagboek: "terugkijken", weekreview: "terugkijken", morgen: "planning" };
+      if (V.view !== v && V.view !== door[v] && !(v === "welkom" && V.view === "vandaag")) kapot.push(v + "→" + V.view); } catch (e) { kapot.push(v + ": " + e.message); } }
     ga("vandaag"); return kapot;
   });
   check("alle schermen tekenen zonder fout", views.length === 0, views.join(", "));
@@ -166,7 +168,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("chat: tikvlakken ≥ 44 px", (await tikvlakken(p, "#nate-paneel .nc")).length === 0, JSON.stringify(await tikvlakken(p, "#nate-paneel .nc")));
   await p.fill("#nc-veld", "dagboek"); await p.press("#nc-veld", "Enter"); await wacht(300);
   await p.locator('#nate-paneel .nc-nate [data-view="dagboek"]').last().click(); await wacht(400);
-  check("chat: knop brengt je naar het scherm en sluit het paneel", await p.evaluate(() => V.view === "dagboek" && !document.querySelector("#nate-paneel").classList.contains("open")));
+  check("chat: knop brengt je naar het scherm en sluit het paneel", await p.evaluate(() => V.view === "terugkijken" && !document.querySelector("#nate-paneel").classList.contains("open")));
 
   await ctx.close();
   /* ---------- 360 × 740 donker, minder beweging ---------- */

@@ -92,7 +92,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await wacht(400);
   check("V13: kaart meldt wat veranderd is", await p.evaluate(() => /2 dingen zijn veranderd/.test(document.querySelector("#scherm .vb-morgenkaart").textContent)));
   await p.click('#scherm .vb-morgenkaart [data-view="morgen"]'); await wacht(500);
-  check("V13: scherm Morgen, wijzigingen bovenaan", await p.evaluate(() => { const s = document.querySelector("#scherm"), v = s.querySelector(".vb-veranderd"); return v && s.firstElementChild === v.closest("#scherm > *") && /Nieuw/.test(v.textContent) && /Gemeente bellen/.test(v.textContent) && /Anders/.test(v.textContent) && /was 09:00/.test(v.textContent); }));
+  check("V13: scherm Morgen, wijzigingen bovenaan", await p.evaluate(() => { const s = document.querySelector("#scherm"), v = s.querySelector(".vb-veranderd"); return v && (s.firstElementChild === v || (s.firstElementChild.classList.contains("sm-segment") && s.firstElementChild.nextElementSibling === v)) && /Nieuw/.test(v.textContent) && /Gemeente bellen/.test(v.textContent) && /Anders/.test(v.textContent) && /was 09:00/.test(v.textContent); }));
   check("V13: per item duur, plek, met wie en wat daarna", await p.evaluate(() => { const t = document.querySelector("#scherm .vb-lijst").textContent; return /10:00–10:45/.test(t) && /45 min/.test(t) && /met Sam/.test(t) && /Daarna: Lunch met Sam om 12:30/.test(t) && /Daarna niets meer gepland/.test(t); }));
   check("44px: Morgen", (await tikvlakken(p)).length === 0, JSON.stringify(await tikvlakken(p)));
   await p.click("#scherm [data-vb-gezien]"); await wacht(400);

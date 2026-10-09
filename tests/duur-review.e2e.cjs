@@ -105,7 +105,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.click('[data-wr-exp="behouden"]'); await wacht(300);
   check("V10: behouden en in de geschiedenis", await p.evaluate(() => inst("wrExperimenten")[1].status === "behouden" && /behouden/.test(document.querySelector("#scherm").textContent)));
   await p.evaluate(() => ga("meer")); await wacht(300);
-  check("V10: Weekreview in Meer → Alle schermen", await p.locator('#scherm [data-view="weekreview"]').count() === 1);
+  check("V10: Weekreview via Meer → Terugkijken", await p.locator('#scherm [data-view="terugkijken"]').count() === 1);
 
   // Kaart op Mijn dag: zaterdag, nog niet gedaan.
   const c2 = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });

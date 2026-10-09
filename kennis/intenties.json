@@ -18,6 +18,7 @@
     { "id": "vastleggen", "naam": "Vastleggen", "view": "start", "trefwoorden": ["vastleggen", "nieuw", "toevoegen", "plus"], "synoniemen": ["noteren", "invoeren", "aanmaken"] },
     { "id": "mijndag", "naam": "Mijn dag", "view": "vandaag", "trefwoorden": ["vandaag", "dag", "dagring", "tijdlijn"], "synoniemen": ["mijn dag", "nu", "planning vandaag", "check-in", "checkin", "dagstart"] },
     { "id": "planning", "naam": "Planning", "view": "planning", "trefwoorden": ["planning", "week", "komend", "komende"], "synoniemen": ["deze week", "volgende week", "plannen"] },
+    { "id": "terugkijken", "naam": "Terugkijken", "view": "terugkijken", "trefwoorden": ["terugkijken", "weekreview", "terugblikken"], "synoniemen": ["mijn week", "hoe was mijn week", "hoe was mijn dag"] },
     { "id": "morgen", "naam": "Morgen in het kort", "view": "morgen", "trefwoorden": ["morgen"], "synoniemen": ["morgen in het kort", "wat is morgen", "wat komt er morgen"] },
     { "id": "ruimtes", "naam": "Ruimtes", "view": "ruimtes", "trefwoorden": ["ruimtes", "ruimte", "modules", "kamers"], "synoniemen": ["alle onderdelen", "overzicht modules"] },
     { "id": "meer", "naam": "Meer", "view": "meer", "trefwoorden": ["meer", "menu"], "synoniemen": ["alles", "overige"] },

@@ -42,7 +42,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   /* ---------- V7 Ik loop vast ---------- */
   check("V7: knop op de Nu-kaart", await p.locator(".md-nu [data-iv]").count() === 1);
   await p.click(".md-nu [data-iv]"); await wacht(350);
-  check("V7: vijf oorzaken", await p.locator("#blad.open .iv-keuze").count() === 5);
+  check("V7: zes oorzaken (met Kan niet kiezen)", await p.locator("#blad.open .iv-keuze").count() === 6);
   check("V7: loslaten naar morgen altijd zichtbaar", await p.locator("#blad.open [data-iv-los]").isVisible());
   await p.screenshot({ path: path.join(UIT, "v7-01-oorzaken.png") });
   await p.click('[data-iv-oorzaak="onduidelijk"]'); await wacht(350);
@@ -83,7 +83,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   await p.evaluate(() => openTaakBlad(S.taken.find(t => t.titel === "Was ophangen").id)); await wacht(350);
   check("V7: knop in het taakblad", await p.locator("#blad.open [data-iv]").count() === 1);
   await p.click("#blad.open [data-iv]"); await wacht(350);
-  check("V7: vanuit taakblad naar de oorzaken", await p.locator("#blad.open .iv-keuze").count() === 5);
+  check("V7: vanuit taakblad naar de oorzaken", await p.locator("#blad.open .iv-keuze").count() === 6);
   check("V7: tikvlakken ≥ 44 px", (await tikvlakken(p, "#blad")).length === 0, JSON.stringify(await tikvlakken(p, "#blad")));
   await p.evaluate(() => bladSluit()); await wacht(300);
 
@@ -143,7 +143,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("V3: gedachte naar de mindmap", await p.evaluate(() => { const mm = mmHuidige(); return !!mm && mm.nodes.some(n => /moestuin/.test(n.tekst || n.titel || "")); }));
   await p.fill("#vi-veld", "waar staat mijn dagboek?"); await wacht(250);
   await p.click('[data-vi="op"]'); await wacht(400);
-  check("V3: vraag brengt je naar de plek", await p.evaluate(() => V.view === "dagboek"));
+  check("V3: vraag brengt je naar de plek", await p.evaluate(() => V.view === "terugkijken"));
   // Chat biedt Vastleggen aan bij een datum.
   await p.evaluate(() => { ga("vandaag"); nateOpen(); }); await wacht(400);
   await p.fill("#nc-veld", "vrijdag 10:00 offerte nakijken"); await p.press("#nc-veld", "Enter"); await wacht(300);

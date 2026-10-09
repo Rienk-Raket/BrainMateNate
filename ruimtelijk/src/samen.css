@@ -1,0 +1,15 @@
+/* === Samenvoegen (sectie 107) === */
+.sm-segment { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; margin: 8px 0 12px; padding: 4px; background: var(--bg2, rgba(127,127,127,.1)); border-radius: 14px; }
+.sm-segment button { min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: inherit; font: inherit; font-weight: 600; cursor: pointer; }
+.sm-segment button[aria-pressed="true"] { background: var(--card, #fff); color: var(--accent); box-shadow: 0 1px 4px rgba(15,23,42,.15); }
+.sm-tel { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: var(--accent-text, #fff); font-size: calc(12px * var(--t)); }
+.sm-log p { margin: 0; }
+.sm-logdag { font-weight: 700; margin-top: 8px !important; }
+.sm-logdag:first-child { margin-top: 0 !important; }
+.sm-logregel { display: flex; gap: 8px; padding: 3px 0; }
+.sm-logregel .mono { color: var(--faint); flex: none; }
+.sm-heel { margin-top: 8px; }
+/* De berichten uit de oude Inbox: knoppen op 44px, nu ze in de gewone Inbox staan. */
+.sm-inbox .segment button, .sm-inbox .sectie .actie { min-height: 44px; }
+.sm-inbox .icon-btn { min-width: 44px !important; min-height: 44px !important; }
+.sm-tk .keuze { min-height: 44px; }
