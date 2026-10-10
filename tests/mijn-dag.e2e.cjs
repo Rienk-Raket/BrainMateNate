@@ -119,7 +119,7 @@ const wacht = ms => new Promise(r => setTimeout(r, ms));
   check("Terug: scrollpositie blijft behouden", was > 0 && await p.evaluate(() => Math.abs(document.querySelector("#scherm").scrollTop - 300) < 40), String(was) + " → " + await p.evaluate(() => document.querySelector("#scherm").scrollTop));
   // Tabs: Planning en Ruimtes.
   await p.click('#tabs [data-tab="planning"]'); await wacht(400);
-  check("Planning: week plus planhulpen", await p.evaluate(() => V.view === "planning" && document.querySelectorAll(".nv-chip").length === 4 && document.querySelectorAll('[data-sm="planning"]').length === 3 && (document.querySelector("#titel").textContent === "Planning")));
+  check("Planning: week plus planhulpen", await p.evaluate(() => V.view === "planning" && document.querySelectorAll(".nv-chip").length === 5 && document.querySelectorAll('[data-sm="planning"]').length === 3 && (document.querySelector("#titel").textContent === "Planning")));
   await p.screenshot({ path: path.join(UIT, "nv-02-planning-390.png") });
   check("Planning: tikvlakken ≥ 44 px", (await tikvlakken(p)).length === 0, JSON.stringify(await tikvlakken(p)));
   await p.click('#tabs [data-tab="ruimtes"]'); await wacht(400);

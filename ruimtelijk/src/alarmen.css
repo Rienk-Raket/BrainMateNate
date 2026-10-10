@@ -1,0 +1,21 @@
+/* === Alarmen plannen (sectie 108) === */
+.al-kop { margin-bottom: 12px; }
+.al-stand { margin: 0 0 10px; font-weight: 700; font-size: calc(17px * var(--t)); }
+.al-kop .klein { margin: 8px 0 0; }
+.al-lijst { list-style: none; margin: 0 0 12px; padding: 0; }
+.al-rij { display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 14px; border-top: 1px solid var(--line, rgba(127,127,127,.2)); }
+.al-rij:first-child { border-top: 0; }
+.al-open { flex: 1; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.al-open time { font-size: calc(24px * var(--t)); font-weight: 800; font-variant-numeric: tabular-nums; min-width: 72px; }
+.al-tekst { display: flex; flex-direction: column; gap: 2px; }
+.al-tekst small { color: var(--muted); }
+.al-schakel { flex: none; display: flex; align-items: center; justify-content: center; min-width: 56px; min-height: 44px; background: none; border: 0; cursor: pointer; }
+.al-schakel .toggle { pointer-events: none; }
+.al-uit .al-open { opacity: .45; }
+.al-nieuw { margin: 4px 0 8px; }
+.al-let { margin: 0 0 12px; }
+.al-dagen { border: 0; padding: 0; margin: 0 0 12px; }
+.al-dagen legend { font-weight: 600; margin-bottom: 6px; }
+.al-dagknoppen { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 8px 0; }
+.al-dagknoppen .keuze { min-height: 44px; justify-content: center; padding: 0; }
+.al-dagen .chiprij .keuze { min-height: 44px; }

@@ -389,3 +389,18 @@ Tests: `tests/inclusief.test.mjs` (6), `tests/inclusief.e2e.cjs` (30).
   - Overzicht gaat altijd naar Terugkijken › Week.
   - De beloofde chatzin "hoe was mijn dag" is geschrapt (die gaat terecht naar Mijn dag).
 - Tests: `tests/samen.e2e.cjs` (35).
+
+## Stap 25: Alarmen plannen (Nate alarmen, optie 1; besluit Kas 10 oktober 2026)
+
+`alarmen.js` en `alarmen.css` (sectie 108). Het scherm **Alarmen** werkt zoals een wekker-app. Ingangen: chip in Planning, Meer › Alle schermen, een link op het afspraakscherm, en de chat ("alarmen", "wekker").
+- **Per dag** (vandaag + 6 dagen) alle alarmen:
+  - Uit afspraken: stoppen, voorbereiden en vertrekken (V6).
+  - Eigen alarmen: titel, tijd, één datum of vaste dagen, met sjablonen Werkdagen, Weekend en Elke dag. Optioneel een wekker.
+- **Per alarm aan/uit**. Tik op een rij: een afspraak opent de afspraak, een eigen alarm opent het wijzigblad.
+- **Naar Opdrachten (N)**: één tik geeft alles wat nieuw of veranderd is door, in één link naar de bestaande opdracht "Nate alarmen" (zelfde tekstformaat, de opdracht hoeft niet te veranderen).
+  - Wat al doorgegeven is (`alVerstuurd`: sleutel → moment), gaat niet nog eens; zo komen er geen dubbele herinneringen. "Opnieuw alles doorgeven" kan wel, met een waarschuwing.
+  - De losse knop op het afspraakscherm telt ook als doorgegeven.
+- **Wekker alleen vandaag** (Klok kent geen datum); andere dagen worden een herinnering met melding. Dat staat erbij.
+- Gegevens in instellingen (`alEigen`, `alUit`, `alVerstuurd`, `alLaatst`), dus ze gaan mee in export en import. Oude dagen worden opgeruimd.
+- Tests: `tests/alarmen.test.mjs` (5), `tests/alarmen.e2e.cjs` (22).
+- De oorzaak dat de opdracht bij Kas niet werkt, is nog onbekend (zie "Werkt het niet?").
